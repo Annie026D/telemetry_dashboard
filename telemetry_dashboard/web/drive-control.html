@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <title>Drive & Buttons | SCADA</title>
+
+  <link rel="stylesheet" href="style.css?v=drive-20261030">
+  <link rel="stylesheet" href="drive-control.css?v=drive-20261030">
+</head>
+
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <h2>SCADA</h2>
+
+    <a href="critical-dashboard.html">
+      Critical Dashboard
+    </a>
+
+    <a href="drive-control.html" class="active">
+      Drive &amp; Buttons
+    </a>
+
+    <a href="dashboard.html">Main Dashboard</a>
+
+    <a href="history.html">
+      History
+    </a>
+
+    <a href="topology.html">
+      Topology
+    </a>
+
+    <a href="hmi.html">
+      HMI
+    </a>
+
+    <a href="diagnostic.html">
+      Diagnostics
+    </a>
+  </aside>
+
+  <main class="main">
+
+    <select id="dbSelect" hidden></select>
+
+    <!-- HEADER -->
+    <header class="drive-header">
+
+      <div>
+        <div class="eyebrow">SCADA / DRIVE CONTROL</div>
+        <h1>Drive &amp; Physical Control Panel</h1>
+        <p class="muted">
+          Complete DRIVE telemetry, live trends and physical operator controls
+        </p>
+      </div>
+
+      <div class="drive-header-status">
+
+        <div class="header-status">
+          <span>DRIVE TELEMETRY</span>
+          <strong id="driveConnection">WAITING</strong>
+        </div>
+
+        <div class="header-status">
+          <span>DRIVE FIELDS</span>
+          <strong id="driveFieldCount">0</strong>
+        </div>
+
+        <div class="header-status">
+          <span>LAST RX</span>
+          <strong id="driveLastRx">--</strong>
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- DRIVE SUMMARY -->
+    <section class="drive-summary-section">
+
+      <div class="section-title">
+        <span>DRIVE UNIT</span>
+        <small id="driveSource">SOURCE: --</small>
+      </div>
+
+      <div id="summary" class="drive-summary"></div>
+
+    </section>
+
+
+    <!-- COMPLETE DRIVE TELEMETRY -->
+    <section class="panel-section">
+
+      <div class="section-title">
+        <span>COMPLETE DRIVE TELEMETRY</span>
+
+        <div class="section-tools">
+          <span id="telemetryCount">0 FIELDS</span>
+          <input
+            id="driveSearch"
+            type="search"
+            placeholder="Filter drive fields..."
+            autocomplete="off"
+          >
+        </div>
+      </div>
+
+      <div class="section-tools"><button id="driveTablePrevious" type="button">Previous fields</button><span id="driveTablePage">1/1</span><button id="driveTableNext" type="button">Next fields</button></div>
+      <div class="tableWrap telemetry-table-wrap">
+
+        <table class="drive-table">
+
+          <thead>
+            <tr>
+              <th>FIELD</th>
+              <th>VALUE</th>
+              <th>TYPE</th>
+              <th>SOURCE IP</th>
+              <th>CHANNEL</th>
+              <th>LAST UPDATE</th>
+            </tr>
+          </thead>
+
+          <tbody id="allDriveFields">
+            <tr>
+              <td colspan="6" class="empty-cell">
+                Waiting for DRIVE telemetry...
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+    <!-- AUTOMATIC DRIVE GRAPHS -->
+    <section class="panel-section">
+
+      <div class="section-title">
+        <span>DRIVE TELEMETRY GRAPHS</span>
+        <small>
+          Every numeric DRIVE field is available as a live trend
+        </small>
+      </div>
+
+      <div class="section-tools"><button id="driveGraphPrevious" type="button">Previous graphs</button><span id="driveGraphPage">1/1</span><button id="driveGraphNext" type="button">Next graphs</button></div>
+      <div id="driveGraphs" class="drive-graphs"></div>
+
+    </section>
+
+
+    <!-- PHYSICAL CONTROL PANEL -->
+    <section class="physical-panel-section">
+
+      <div class="section-title">
+
+        <div>
+          <span>PHYSICAL OPERATOR CONTROL PANEL</span>
+          <small>
+            Indication only · actual simulator controls
+          </small>
+        </div>
+
+        <div class="panel-legend">
+          <span><i class="legend-button"></i> BUTTON</span>
+          <span><i class="legend-switch"></i> SWITCH</span>
+          <span><i class="legend-knob"></i> KNOB</span>
+        </div>
+
+      </div>
+
+
+      <div class="physical-panel">
+
+        <!-- MOMENTARY BUTTONS -->
+        <section class="control-group">
+
+          <div class="control-group-header">
+            <div>
+              <span class="control-kicker">MOMENTARY INPUTS</span>
+              <h2>BUTTON PANEL</h2>
+            </div>
+
+            <strong>22 CHANNELS</strong>
+          </div>
+
+          <div id="buttonPanel" class="button-panel"></div>
+
+        </section>
+
+
+        <!-- SWITCHES -->
+        <section class="control-group">
+
+          <div class="control-group-header">
+            <div>
+              <span class="control-kicker">SELECTOR / POWER</span>
+              <h2>SWITCH PANEL</h2>
+            </div>
+
+            <strong>19 CHANNELS</strong>
+          </div>
+
+          <div id="switchPanel" class="switch-panel"></div>
+
+        </section>
+
+
+        <!-- KNOBS -->
+        <section class="control-group">
+
+          <div class="control-group-header">
+            <div>
+              <span class="control-kicker">ROTARY CONTROLS</span>
+              <h2>KNOBS</h2>
+            </div>
+
+            <strong>2 CHANNELS</strong>
+          </div>
+
+          <div id="knobPanel" class="knob-panel"></div>
+
+        </section>
+
+      </div>
+
+    </section>
+
+
+    <!-- ALL CONTROL TELEMETRY -->
+    <section class="panel-section">
+
+      <div class="section-title">
+        <span>CONTROL TELEMETRY</span>
+        <small>
+          Button / switch / knob state mapped to physical controls
+        </small>
+      </div>
+
+      <div class="tableWrap telemetry-table-wrap">
+
+        <table class="drive-table">
+
+          <thead>
+            <tr>
+              <th>CONTROL</th>
+              <th>ID / CHANNEL</th>
+              <th>VALUE</th>
+              <th>DEVICE</th>
+              <th>SOURCE IP</th>
+              <th>LAST UPDATE</th>
+            </tr>
+          </thead>
+
+          <tbody id="controlTelemetry">
+            <tr>
+              <td colspan="6" class="empty-cell">
+                Waiting for control telemetry...
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+
+<script src="common.js?v=drive-20261030"></script>
+<script src="drive-control.js?v=drive-20261030"></script>
+
+</body>
+</html>

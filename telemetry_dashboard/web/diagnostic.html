@@ -1,0 +1,1743 @@
+<!doctype html>
+<!--
+  Packet verification interface. Its embedded controller polls read-only
+  diagnostic APIs and presents receiver, queue, writer, and schema counters.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Packet Verification Center</title>
+  <link rel="stylesheet" href="style.css?v=20261026-ui-2">
+
+  <style>
+    /*
+    --------------------------------------------------
+    PACKET VERIFICATION PAGE
+    --------------------------------------------------
+    Purpose:
+    Clear professional audit page for:
+    Wireshark -> UDP -> Parser -> Database -> GUI/Graph
+    --------------------------------------------------
+    */
+
+    /* Arrange the verification title and header controls responsively. */
+    .verifyHeader {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    /* Style the primary Packet Verification Center heading. */
+    .verifyTitleBlock h1 {
+      margin: 0;
+      font-size: 32px;
+      letter-spacing: .5px;
+    }
+
+    /* Style the explanatory text beneath the verification heading. */
+    .verifyTitleBlock p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      max-width: 850px;
+      line-height: 1.5;
+    }
+
+    /* Arrange diagnostic selectors, inputs, and buttons. */
+    .verifyToolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    /* Style accessible labels in the diagnostic toolbar. */
+    .verifyToolbar label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .verifyToolbar input,
+    /* Define the visual presentation for `.verifyToolbar select`. */
+    .verifyToolbar select {
+      min-width: 190px;
+    }
+
+    /* Define the shared appearance of the overall result banner. */
+    .statusBanner {
+      border-radius: 22px;
+      padding: 22px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(148,163,184,.25);
+      background:
+        linear-gradient(
+          145deg,
+          rgba(15,23,42,.95),
+          rgba(2,6,23,.95)
+        );
+      box-shadow: var(--shadow);
+    }
+
+    /* Apply successful verification colours to the result banner. */
+    .statusBanner.pass {
+      border-color: rgba(34,197,94,.75);
+      box-shadow: 0 0 28px rgba(34,197,94,.12);
+    }
+
+    /* Apply warning colours to an inconclusive or incomplete result. */
+    .statusBanner.warn {
+      border-color: rgba(245,158,11,.8);
+      box-shadow: 0 0 28px rgba(245,158,11,.12);
+    }
+
+    /* Apply failure colours when a pipeline check fails. */
+    .statusBanner.fail {
+      border-color: rgba(239,68,68,.85);
+      box-shadow: 0 0 28px rgba(239,68,68,.14);
+    }
+
+    /* Define the visual presentation for `.statusBanner h2`. */
+    .statusBanner h2 {
+      margin: 0;
+      font-size: 26px;
+    }
+
+    /* Define the visual presentation for `.statusBanner p`. */
+    .statusBanner p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Lay out packet-stage summary cards responsively. */
+    .pipelineGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    /* Define the base presentation of one packet-stage card. */
+    .pipelineCard {
+      border-radius: 20px;
+      padding: 18px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(15,23,42,.96),
+          rgba(2,6,23,.96)
+        );
+      border: 1px solid rgba(0,217,255,.09);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Draw the status strip at the top of a pipeline card. */
+    .pipelineCard::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 3px;
+      background: #64748b;
+    }
+
+    /* Define the visual presentation for `.pipelineCard.pass::before`. */
+    .pipelineCard.pass::before {
+      background: #22c55e;
+    }
+
+    /* Define the visual presentation for `.pipelineCard.warn::before`. */
+    .pipelineCard.warn::before {
+      background: #f59e0b;
+    }
+
+    /* Define the visual presentation for `.pipelineCard.fail::before`. */
+    .pipelineCard.fail::before {
+      background: #ef4444;
+    }
+
+    /* Define the visual presentation for `.pipelineCard h3`. */
+    .pipelineCard h3 {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Define the visual presentation for `.pipelineCard .value`. */
+    .pipelineCard .value {
+      font-size: 30px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 8px;
+    }
+
+    /* Define the visual presentation for `.pipelineCard .sub`. */
+    .pipelineCard .sub {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    /* Provide spacing for each detailed diagnostic section. */
+    .auditPanel {
+      margin-bottom: 20px;
+      padding: 20px;
+    }
+
+    /* Define the visual presentation for `.auditPanel h2`. */
+    .auditPanel h2 {
+      margin: 0 0 10px;
+      font-size: 22px;
+    }
+
+    /* Allow the wide audit table to scroll horizontally. */
+    .auditTableWrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    /* Define the dimensions and collapsed borders of the audit table. */
+    .auditTable {
+      width: 100%;
+      min-width: 950px;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+
+    .auditTable th,
+    /* Define the visual presentation for `.auditTable td`. */
+    .auditTable td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(148,163,184,.15);
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    /* Define the visual presentation for `.auditTable th`. */
+    .auditTable th {
+      color: #e5e7eb;
+      background: rgba(30,41,59,.75);
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: .5px;
+    }
+
+    /* Define the visual presentation for `.auditTable td`. */
+    .auditTable td {
+      color: #cbd5e1;
+    }
+
+    /* Define the shared pill presentation of status badges. */
+    .badgeStatus {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .5px;
+      white-space: nowrap;
+    }
+
+    /* Define the visual presentation for `.badgeStatus.pass`. */
+    .badgeStatus.pass {
+      background: rgba(34,197,94,.15);
+      color: #4ade80;
+      border: 1px solid rgba(34,197,94,.35);
+    }
+
+    /* Define the visual presentation for `.badgeStatus.warn`. */
+    .badgeStatus.warn {
+      background: rgba(245,158,11,.15);
+      color: #facc15;
+      border: 1px solid rgba(245,158,11,.35);
+    }
+
+    /* Define the visual presentation for `.badgeStatus.fail`. */
+    .badgeStatus.fail {
+      background: rgba(239,68,68,.15);
+      color: #f87171;
+      border: 1px solid rgba(239,68,68,.35);
+    }
+
+    /* Lay out per-device verification cards responsively. */
+    .deviceHealthGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    /* Define the shared appearance of a device audit card. */
+    .deviceAuditCard {
+      border-radius: 20px;
+      padding: 18px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(15,23,42,.96),
+          rgba(2,6,23,.96)
+        );
+      border: 1px solid rgba(148,163,184,.14);
+    }
+
+    /* Define the visual presentation for `.deviceAuditCard.pass`. */
+    .deviceAuditCard.pass {
+      border-color: rgba(34,197,94,.55);
+    }
+
+    /* Define the visual presentation for `.deviceAuditCard.warn`. */
+    .deviceAuditCard.warn {
+      border-color: rgba(245,158,11,.65);
+    }
+
+    /* Define the visual presentation for `.deviceAuditCard.fail`. */
+    .deviceAuditCard.fail {
+      border-color: rgba(239,68,68,.7);
+    }
+
+    /* Define the visual presentation for `.deviceAuditHead`. */
+    .deviceAuditHead {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    /* Define the visual presentation for `.deviceAuditHead h3`. */
+    .deviceAuditHead h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    /* Lay out compact UDP-to-GUI stage indicators. */
+    .miniPipeline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    /* Define the shared presentation of a compact pipeline stage. */
+    .miniStep {
+      text-align: center;
+      border-radius: 12px;
+      padding: 8px 5px;
+      font-size: 11px;
+      font-weight: 800;
+      background: rgba(100,116,139,.18);
+      color: #cbd5e1;
+    }
+
+    /* Define the visual presentation for `.miniStep.pass`. */
+    .miniStep.pass {
+      background: rgba(34,197,94,.16);
+      color: #4ade80;
+    }
+
+    /* Define the visual presentation for `.miniStep.warn`. */
+    .miniStep.warn {
+      background: rgba(245,158,11,.16);
+      color: #facc15;
+    }
+
+    /* Define the visual presentation for `.miniStep.fail`. */
+    .miniStep.fail {
+      background: rgba(239,68,68,.16);
+      color: #f87171;
+    }
+
+    /* Define the visual presentation for `.smallRows`. */
+    .smallRows {
+      display: grid;
+      gap: 7px;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    /* Define the visual presentation for `.smallRows div`. */
+    .smallRows div {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(148,163,184,.10);
+      padding-bottom: 6px;
+    }
+
+    /* Define the visual presentation for `.smallRows span`. */
+    .smallRows span {
+      color: var(--muted);
+    }
+
+    /* Define the visual presentation for `.decisionBox`. */
+    .decisionBox {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(15,23,42,.85);
+      border: 1px solid rgba(148,163,184,.16);
+      color: #cbd5e1;
+      line-height: 1.45;
+      font-size: 13px;
+    }
+
+    /* Lay out queue and writer-health counters responsively. */
+    .queueGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    /* Define the appearance of one queue-health card. */
+    .queueCard {
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(15,23,42,.75);
+      border: 1px solid rgba(148,163,184,.16);
+    }
+
+    /* Define the visual presentation for `.queueCard h3`. */
+    .queueCard h3 {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    /* Define the visual presentation for `.queueCard strong`. */
+    .queueCard strong {
+      font-size: 24px;
+      color: white;
+    }
+
+    /* Lay out telemetry field-visibility badges responsively. */
+    .fieldList {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    /* Define the visual presentation for `.fieldChip`. */
+    .fieldChip {
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: rgba(15,23,42,.95);
+      border: 1px solid rgba(148,163,184,.16);
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+
+    /* Define the visual presentation for `.mutedLine`. */
+    .mutedLine {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Define the visual presentation for `.hiddenDetails`. */
+    .hiddenDetails {
+      margin-top: 12px;
+    }
+
+    /* Define the visual presentation for `.hiddenDetails summary`. */
+    .hiddenDetails summary {
+      cursor: pointer;
+      color: #93c5fd;
+      font-weight: 700;
+    }
+
+    /* Define the visual presentation for `.rawBlock`. */
+    .rawBlock {
+      margin-top: 10px;
+      max-height: 180px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(2,6,23,.85);
+      border: 1px solid rgba(148,163,184,.16);
+      color: #cbd5e1;
+    }
+
+    @media (max-width: 800px) {
+      .verifyToolbar input,
+      .verifyToolbar select,
+      /* Define the visual presentation for `.verifyToolbar .btn`. */
+      .verifyToolbar .btn {
+        width: 100%;
+      }
+
+      /* Lay out compact UDP-to-GUI stage indicators. */
+      .miniPipeline {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<!-- Begin the packet-verification page and apply its page-specific styling. -->
+<body class="diagnosticPage">
+<!-- Create the shared navigation and diagnostic-workspace layout. -->
+<div class="layout">
+
+  <!-- Provide navigation to the application's primary monitoring pages. -->
+<aside class="sidebar">
+  <h2>SCADA</h2>
+
+  <a href="critical-dashboard.html">Critical Dashboard</a>
+  <a href="drive-control.html">Drive &amp; Buttons</a>
+  <a href="dashboard.html">Main Dashboard</a>
+  <a href="history.html">History</a>
+  <a href="topology.html">Topology</a>
+  <a href="hmi.html">HMI</a>
+  <a href="diagnostic.html" class="active">Diagnostics</a>
+</aside>
+
+  <!-- Contain all packet-pipeline verification controls and results. -->
+  <main class="main">
+
+    <div class="verifyHeader">
+      <div class="verifyTitleBlock">
+        <h1>Packet Verification Center</h1>
+        <p>
+          Professional audit view for proving whether CRS telemetry packets are received through UDP,
+          accepted by parser, stored in database, and visible on GUI/graph without delay or loss.
+        </p>
+      </div>
+    </div>
+
+    <!-- Provide database, Wireshark reference, filtering, refresh, and pause controls. -->
+    <div class="verifyToolbar">
+      <label for="dbSelect">Database</label>
+      <select id="dbSelect"></select>
+
+      <label for="wireCount">Wireshark packets</label>
+      <input
+        id="wireCount"
+        type="number"
+        min="0"
+        placeholder="Enter Wireshark count"
+      >
+
+      <label for="deviceFilter">Device filter</label>
+      <input
+        id="deviceFilter"
+        type="text"
+        placeholder="IMU, LCU, external_track"
+      >
+
+      <button class="btn" id="refreshBtn">Refresh</button>
+      <button class="btn" id="pauseBtn">Pause</button>
+
+      <span id="diagnosticStatus" class="muted"></span>
+    </div>
+
+    <!-- Show the overall end-to-end verification decision; warning is the initial state. -->
+    <div id="overallStatus" class="statusBanner warn">
+      <h2>Waiting for diagnostic data...</h2>
+      <p>Loading packet verification results.</p>
+    </div>
+
+    <!-- Receive summary cards for UDP, parser, database, and GUI pipeline stages. -->
+    <div id="pipelineGrid" class="pipelineGrid"></div>
+
+    <div class="card auditPanel">
+      <h2>Packet Pipeline Audit</h2>
+      <p class="mutedLine">
+        This table compares packet counts at every stage. Wireshark count is entered manually
+        because the browser cannot read Wireshark directly.
+      </p>
+
+      <div class="auditTableWrap">
+        <table class="auditTable">
+          <thead>
+            <tr>
+              <th>Stage</th>
+              <th>Count</th>
+              <th>Difference from previous</th>
+              <th>Status</th>
+              <th>Meaning</th>
+            </tr>
+          </thead>
+          <!-- Receive the calculated stage-by-stage packet comparison rows. -->
+          <tbody id="pipelineAuditBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card auditPanel">
+      <h2>Device-wise Verification</h2>
+      <p class="mutedLine">
+        Each device must pass UDP, parser, database, and GUI/graph visibility checks.
+      </p>
+      <!-- Receive normalized end-to-end verification cards for each device. -->
+      <div id="deviceVerificationGrid" class="deviceHealthGrid"></div>
+    </div>
+
+    <div class="card auditPanel">
+      <h2>Queue Health</h2>
+      <p class="mutedLine">
+        Queue values must stay low. If ingest or WebSocket queue keeps increasing, the system is receiving
+        faster than it can process or render.
+      </p>
+      <!-- Receive ingestion, pending-write, retry, failure, and WebSocket queue cards. -->
+      <div id="queueGrid" class="queueGrid"></div>
+    </div>
+
+    <div class="card auditPanel">
+      <h2>Field Visibility Check</h2>
+      <p class="mutedLine">
+        Recent fields found in database. Numeric fields from these keys should be available for graphs.
+      </p>
+      <!-- Receive badges identifying telemetry fields visible to the diagnostic API. -->
+      <div id="fieldList" class="fieldList"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Load shared API, escaping, database, normalization, and DOM helpers before the embedded controller. -->
+<script src="common.js?v=20261028-scada-1"></script>
+
+<script>
+  /*
+  --------------------------------------------------
+  PACKET VERIFICATION CENTER SCRIPT
+  --------------------------------------------------
+  Uses existing backend:
+  /api/diagnostic?db=<selected db>
+
+  Important:
+  Wireshark count is manual because browser cannot read
+  Wireshark directly.
+  --------------------------------------------------
+  */
+
+  // Reference the database selector used by diagnostic API requests.
+  const dbSelect = document.getElementById("dbSelect");
+  // Reference the operator-entered Wireshark packet-count field.
+  const wireCountInput = document.getElementById("wireCount");
+  // Reference the text filter applied to per-device audit cards.
+  const deviceFilter = document.getElementById("deviceFilter");
+  // Reference the button that requests an immediate diagnostic refresh.
+  const refreshBtn = document.getElementById("refreshBtn");
+  // Reference the control that pauses and resumes automatic polling.
+  const pauseBtn = document.getElementById("pauseBtn");
+  // Reference the element displaying diagnostic request status.
+  const statusEl = document.getElementById("diagnosticStatus");
+
+  // Reference the overall pass/warning/failure banner.
+  const overallStatusEl = document.getElementById("overallStatus");
+  // Reference the container for packet-pipeline summary cards.
+  const pipelineGridEl = document.getElementById("pipelineGrid");
+  // Reference the body of the stage-by-stage audit table.
+  const pipelineAuditBody = document.getElementById("pipelineAuditBody");
+  // Reference the per-device verification-card container.
+  const deviceVerificationGrid = document.getElementById("deviceVerificationGrid");
+  // Reference the queue-health card container.
+  const queueGrid = document.getElementById("queueGrid");
+  // Reference the telemetry field-visibility container.
+  const fieldList = document.getElementById("fieldList");
+
+  // Hold the automatic diagnostic polling timer.
+  let refreshTimer = null;
+  // Record whether automatic diagnostic polling is paused.
+  let paused = false;
+  // Prevent overlapping diagnostic API requests.
+  let diagnosticRefreshInFlight = false;
+  // Retain the last successful diagnostic response for local rerendering.
+  let lastData = null;
+
+  /**
+   * Converts a diagnostic counter to a safe finite number.
+   */
+  function n(value) {
+    const num = Number(value || 0);
+    return Number.isFinite(num) ? num : 0;
+  }
+
+  /**
+   * Formats a diagnostic number for clear locale-aware display.
+   */
+  function fmt(value) {
+    return n(value).toLocaleString();
+  }
+
+  /**
+   * Returns a display-safe value or a caller-supplied fallback.
+   */
+  function safe(value, fallback = "-") {
+    if (value === null || value === undefined || value === "") {
+      return fallback;
+    }
+
+    return String(value);
+  }
+
+  /**
+   * Calculates a bounded percentage while protecting against division by zero.
+   */
+  function pct(part, total) {
+    const p = n(part);
+    const t = n(total);
+
+    if (t <= 0) {
+      return "0%";
+    }
+
+    return ((p / t) * 100).toFixed(2) + "%";
+  }
+
+  /**
+   * Builds escaped status-badge markup for a diagnostic result.
+   */
+  function statusBadge(status) {
+    const s = String(status || "warn").toLowerCase();
+
+    let cls = "warn";
+    let label = "WARNING";
+
+    if (s === "pass" || s === "ok") {
+      cls = "pass";
+      label = "PASS";
+    } else if (s === "fail" || s === "bad") {
+      cls = "fail";
+      label = "FAIL";
+    }
+
+    return `<span class="badgeStatus ${cls}">${label}</span>`;
+  }
+
+  /**
+   * Classifies packet loss as pass, warning, or failure.
+   */
+  function statusFromLoss(loss) {
+    if (loss === 0) {
+      return "pass";
+    }
+
+    if (loss > 0) {
+      return "warn";
+    }
+
+    return "warn";
+  }
+
+  /**
+   * Updates the page-level diagnostic status message and error styling.
+   */
+  function setStatus(text, isError = false) {
+    statusEl.textContent = text;
+    statusEl.style.color = isError ? "#f87171" : "#94a3b8";
+  }
+
+  /**
+   * Returns the database currently selected for verification.
+   */
+  function getSelectedDb() {
+    return dbSelect.value || App.db || "";
+  }
+
+/**
+ * Normalizes, supplements, and deduplicates per-device diagnostic counters.
+ */
+function normalizeDiagnosticItems(data) {
+  /*
+  --------------------------------------------------
+  NORMALIZE + MERGE DUPLICATE DIAGNOSTIC ITEMS
+  --------------------------------------------------
+  Problem:
+  Backend may return same channel/device more than once, for example:
+  tracker_telemetry twice
+  wcs_control_console twice
+
+  Fix:
+  Merge entries with same normalized name + port + group_ip.
+  This prevents duplicate diagnostic cards and wrong visual confusion.
+  --------------------------------------------------
+  */
+
+  let rawItems = [];
+
+  if (
+    Array.isArray(data.device_traces) &&
+    data.device_traces.length > 0
+  ) {
+    rawItems = data.device_traces.map(item => ({
+      name:
+        item.name ||
+        item.device ||
+        item.channel_name ||
+        "UNKNOWN",
+      group_ip: item.group_ip,
+      port: item.port,
+      udp_received:
+        n(item.udp_received || item.received),
+      parser_accepted:
+        n(item.parser_accepted || item.accepted),
+      parser_rejected:
+        n(item.parser_rejected || item.rejected),
+      db_rows:
+        n(item.db_rows || item.database_rows || item.rows),
+      latest_db_timestamp:
+        item.latest_db_timestamp ||
+        item.last_db_ts ||
+        item.last_seen,
+      gui_visible:
+        Boolean(item.gui_visible || item.gui_mapped),
+      graph_visible:
+        Boolean(item.graph_visible || item.graph_mapped),
+      last_src:
+        item.last_src ||
+        item.source_ip,
+      last_src_port:
+        item.last_src_port ||
+        item.source_port,
+      value_keys:
+        item.value_keys ||
+        item.fields ||
+        [],
+      raw:
+        item
+    }));
+  } else {
+    rawItems = (data.udp_channels || []).map(channel => ({
+      name:
+        channel.name ||
+        channel.channel_name ||
+        "UNKNOWN",
+      group_ip: channel.group_ip,
+      port: channel.port,
+      udp_received:
+        n(channel.received || channel.udp_received),
+      parser_accepted:
+        n(channel.accepted || channel.parser_accepted),
+      parser_rejected:
+        n(channel.rejected || channel.parser_rejected),
+      db_rows:
+        n(channel.db_rows || channel.database_rows || channel.rows),
+      latest_db_timestamp:
+        channel.latest_db_timestamp ||
+        channel.last_db_ts,
+      gui_visible:
+        Boolean(channel.gui_visible || channel.gui_mapped),
+      graph_visible:
+        Boolean(channel.graph_visible || channel.graph_mapped),
+      last_src:
+        channel.last_src ||
+        channel.source_ip,
+      last_src_port:
+        channel.last_src_port ||
+        channel.source_port,
+      value_keys:
+        channel.value_keys ||
+        channel.fields ||
+        [],
+      raw:
+        channel
+    }));
+
+    const driveKeys = [
+      "rpm", "pos_deg", "angle_feedback", "angle_feedback_raw",
+      "angle_feedback_from_can", "actual_current", "dcbus_volt",
+      "drive_connected", "fault_raw"
+    ];
+    const samples = Array.isArray(data.field_samples) ? data.field_samples : [];
+    // Filter the source collection into `presentDriveKeys`.
+    const presentDriveKeys = driveKeys.filter(key => samples.includes(key));
+    const lcuCarrier = rawItems.find(item =>
+      String(item.name || "").toLowerCase() === "lcu_transport"
+    );
+
+    if (presentDriveKeys.length && lcuCarrier) {
+      rawItems.push({
+        ...lcuCarrier,
+        name: "DRIVE_UNIT",
+        db_rows: Math.max(1, n(lcuCarrier.db_rows)),
+        latest_db_timestamp: data.last_timestamp || lcuCarrier.latest_db_timestamp,
+        gui_visible: true,
+        graph_visible: true,
+        value_keys: presentDriveKeys,
+        carrier_note: "Drive feedback is carried inside lcu_transport packets."
+      });
+    }
+  }
+
+  /**
+   * Maps diagnostic aliases to one stable device-family identifier.
+   */
+  function normalizeDiagnosticName(name) {
+    const s = String(name || "").trim();
+
+    if (typeof canonicalDeviceName === "function") {
+      const canonical = canonicalDeviceName(s);
+      if (canonical) return canonical;
+    }
+
+    if (
+      s === "tracker_telemetry" ||
+      s === "tracker_telem"
+    ) {
+      return "CAMERA_UNIT";
+    }
+
+    if (
+      s === "wcs_control_console" ||
+      s === "WCS" ||
+      s === "wcs"
+    ) {
+      return "WCS_CONSOLE";
+    }
+
+    if (s === "tracker_publish") {
+      return "DRIVE_UNIT";
+    }
+
+    if (s === "drive_wcs") {
+      return "DRIVE_UNIT";
+    }
+
+    if (s === "maindisplay" || s === "main_display") {
+      return "MAIN_DISPLAY";
+    }
+
+    if (s === "imu") {
+      return "IMU_UNIT";
+    }
+
+    if (s === "lcu_transport") {
+      return "LCU_UNIT";
+    }
+
+    if (s === "button_led") {
+      return "BUTTON_LED_UNIT";
+    }
+
+    if (s === "joystick") {
+      return "JOYSTICK_UNIT";
+    }
+
+    if (s === "external_track") {
+      return "EXTERNAL_TRACK_UNIT";
+    }
+
+    if (s === "advantec_driver") {
+      return "ADVANTECH_IO";
+    }
+
+    if (s === "cce_gateway") {
+      return "CCE_GATEWAY";
+    }
+
+    return s || "UNKNOWN";
+  }
+
+  const merged = new Map();
+
+  rawItems.forEach(item => {
+    const normalizedName =
+      normalizeDiagnosticName(item.name);
+
+    const key = normalizedName;
+
+    if (!merged.has(key)) {
+      merged.set(key, {
+        ...item,
+        name: normalizedName,
+        endpoints: [`${safe(item.group_ip, "-")}:${safe(item.port, 0)}`],
+        carrier_notes: item.carrier_note ? [item.carrier_note] : [],
+        value_keys:
+          Array.isArray(item.value_keys)
+            ? [...item.value_keys]
+            : []
+      });
+      return;
+    }
+
+    const existing =
+      merged.get(key);
+
+    existing.udp_received += n(item.udp_received);
+    existing.parser_accepted += n(item.parser_accepted);
+    existing.parser_rejected += n(item.parser_rejected);
+    existing.db_rows += n(item.db_rows);
+
+    existing.gui_visible =
+      existing.gui_visible || Boolean(item.gui_visible);
+
+    existing.graph_visible =
+      existing.graph_visible || Boolean(item.graph_visible);
+
+    existing.latest_db_timestamp =
+      item.latest_db_timestamp ||
+      existing.latest_db_timestamp;
+
+    existing.last_src =
+      item.last_src ||
+      existing.last_src;
+
+    existing.last_src_port =
+      item.last_src_port ||
+      existing.last_src_port;
+
+    existing.endpoints = Array.from(new Set([
+      ...(existing.endpoints || []),
+      `${safe(item.group_ip, "-")}:${safe(item.port, 0)}`
+    ]));
+    existing.carrier_notes = Array.from(new Set([
+      ...(existing.carrier_notes || []),
+      ...(item.carrier_note ? [item.carrier_note] : [])
+    ]));
+
+    if (Array.isArray(item.value_keys)) {
+      existing.value_keys =
+        Array.from(
+          new Set([
+            ...existing.value_keys,
+            ...item.value_keys
+          ])
+        );
+    }
+  });
+
+  return Array.from(merged.values());
+}
+
+  /**
+   * Adds one numeric counter across all normalized device items.
+   */
+  function sum(items, key) {
+    return items.reduce((total, item) => {
+      return total + n(item[key]);
+    }, 0);
+  }
+
+  /**
+   * Calculates end-to-end packet, queue, database, and GUI totals.
+   */
+  function computeTotals(data, items) {
+    const wire =
+      n(localStorage.getItem("diagnostic.wiresharkCount"));
+
+    const udpReceived =
+      sum(items, "udp_received");
+
+    const parserAccepted =
+      sum(items, "parser_accepted");
+
+    const parserRejected =
+      sum(items, "parser_rejected");
+
+   /*
+Database packet rows:
+telemetry table count.
+
+Database field rows:
+telemetry_rows table count.
+This can be much higher because one packet can create many value rows.
+*/
+const databasePacketRows =
+  n(data.packet_rows || data.rows);
+
+const databaseFieldRows =
+  n(data.field_rows);
+
+    const writerCommitted =
+      n(data.db_writer_committed);
+
+const databaseStored =
+  writerCommitted;
+
+    const guiDelivered =
+      n(data.ws_delivered || data.gui_rows || data.live_rows || data.ws_messages);
+
+    const wsClients =
+      n(data.ws_clients);
+
+    const wsQueue =
+      n(data.ws_queue_len);
+
+    const ingestQueue =
+      n(data.ingest_queue_len);
+
+    const ingestDropped =
+      n(data.ingest_dropped);
+
+    const dbFailures =
+      n(data.db_failures);
+
+    const dbRetries =
+      n(data.db_retries);
+
+    const dbPending =
+      n(data.db_pending);
+
+    const databaseAccounted =
+      databaseStored + dbPending + ingestQueue;
+
+    const dbLastError =
+      data.db_last_error || "";
+
+    return {
+      wire,
+      udpReceived,
+      parserAccepted,
+      parserRejected,
+      databaseStored,
+      guiDelivered,
+      wsClients,
+      wsQueue,
+      ingestQueue,
+      databasePacketRows,
+      databaseFieldRows,
+      writerCommitted,
+      ingestDropped,
+      dbFailures,
+      dbRetries,
+      dbPending,
+      databaseAccounted,
+      dbLastError
+    };
+  }
+
+  /**
+   * Determines the overall verification result from all pipeline checks.
+   */
+  function decideOverall(totals) {
+    const checks = [];
+
+    if (totals.wire > 0) {
+      checks.push(totals.udpReceived >= totals.wire);
+    }
+
+    checks.push(totals.udpReceived > 0);
+    checks.push(totals.parserAccepted > 0);
+    checks.push(totals.databaseStored > 0);
+    checks.push(
+      totals.parserAccepted === 0 ||
+      totals.databaseStored >= totals.parserAccepted
+    );
+    checks.push(totals.ingestDropped === 0);
+    checks.push(totals.dbFailures === 0);
+    checks.push(totals.wsQueue < 1000);
+    checks.push(totals.ingestQueue < 1000);
+
+    const failed =
+      checks.filter(v => !v).length;
+
+    if (failed === 0) {
+      return {
+        status: "pass",
+        title: "PASS — Packet pipeline is healthy",
+        text:
+          "UDP packets are being received, accepted, stored, and queues are under control."
+      };
+    }
+
+    if (failed <= 2) {
+      return {
+        status: "warn",
+        title: "WARNING — Packet pipeline needs checking",
+        text:
+          "Some stages are not fully confirmed. Check packet count differences and queue values below."
+      };
+    }
+
+    return {
+      status: "fail",
+      title: "FAIL — Packet pipeline is not fully verified",
+      text:
+        "Packet loss, missing database storage, queue overflow, or missing UDP data is detected."
+    };
+  }
+
+  /**
+   * Renders the overall pass, warning, or failure banner.
+   */
+  function renderOverall(totals) {
+    const decision =
+      decideOverall(totals);
+
+    overallStatusEl.className =
+      "statusBanner " + decision.status;
+
+    overallStatusEl.innerHTML = `
+      <h2>${esc(decision.title)}</h2>
+      <p>${esc(decision.text)}</p>
+    `;
+  }
+
+  /**
+   * Renders headline counters for each packet-processing stage.
+   */
+  function renderPipelineCards(totals) {
+    const udpLoss =
+      totals.wire > 0
+        ? Math.max(0, totals.wire - totals.udpReceived)
+        : 0;
+
+    const parserLoss =
+      Math.max(0, totals.udpReceived - totals.parserAccepted);
+
+    const dbLoss =
+      Math.max(0, totals.parserAccepted - totals.databaseAccounted);
+
+    const queueProblem =
+      totals.ingestDropped > 0 ||
+      totals.dbFailures > 0 ||
+      totals.wsQueue >= 1000 ||
+      totals.ingestQueue >= 1000;
+
+    const cards = [
+      {
+        title: "Wireshark Captured",
+        value: totals.wire,
+        sub: "Manual reference count from Wireshark",
+        status: totals.wire > 0 ? "pass" : "warn"
+      },
+      {
+        title: "UDP Received",
+        value: totals.udpReceived,
+        sub:
+          totals.wire > 0
+            ? `UDP match: ${pct(totals.udpReceived, totals.wire)}`
+            : "Backend UDP receiver count",
+        status: udpLoss === 0 && totals.udpReceived > 0 ? "pass" : "warn"
+      },
+      {
+        title: "Parser Accepted",
+        value: totals.parserAccepted,
+        sub: `Rejected: ${fmt(totals.parserRejected)}`,
+        status: parserLoss === 0 && totals.parserAccepted > 0 ? "pass" : "warn"
+      },
+   {
+  title: "DB Stored Packets",
+  value: totals.databaseStored,
+  sub:
+    `Committed telemetry rows. Writer counter: ${fmt(totals.writerCommitted)}, pending: ${fmt(totals.dbPending)}, queued: ${fmt(totals.ingestQueue)}`,
+  status:
+    totals.databaseStored > 0 && totals.dbFailures === 0
+      ? "pass"
+      : "warn"
+},
+      {
+        title: "WebSocket Clients",
+        value: totals.wsClients,
+        sub: "Connected GUI/browser clients",
+        status: totals.wsClients > 0 ? "pass" : "warn"
+      },
+      {
+        title: "Dropped / Queue",
+        value: totals.ingestDropped,
+        sub:
+          `WS queue: ${fmt(totals.wsQueue)}, ingest queue: ${fmt(totals.ingestQueue)}, DB pending: ${fmt(totals.dbPending)}, DB errors: ${fmt(totals.dbFailures)}`,
+        status: queueProblem ? "fail" : "pass"
+      }
+    ];
+
+    pipelineGridEl.innerHTML =
+      cards.map(card => `
+        <div class="pipelineCard ${card.status}">
+          <h3>${esc(card.title)}</h3>
+          <div class="value">${fmt(card.value)}</div>
+          <div class="sub">${esc(card.sub)}</div>
+        </div>
+      `).join("");
+  }
+
+  /**
+   * Builds the stage-by-stage comparison and loss audit table.
+   */
+  function renderPipelineAudit(totals) {
+    const stages = [
+      {
+        stage: "Wireshark captured",
+        count: totals.wire,
+        previous: null,
+        meaning:
+          "Reference packet count from Wireshark. Enter this manually."
+      },
+      {
+        stage: "UDP receiver received",
+        count: totals.udpReceived,
+        previous: totals.wire > 0 ? totals.wire : null,
+        meaning:
+          "Packets that reached your C backend UDP socket."
+      },
+      {
+        stage: "Parser accepted",
+        count: totals.parserAccepted,
+        previous: totals.udpReceived,
+        meaning:
+          "Packets successfully parsed and accepted by backend."
+      },
+      {
+        stage: "Pending DB write / commit",
+        count: totals.dbPending + totals.ingestQueue,
+        previous: null,
+        meaning:
+          `Pending commit: ${fmt(totals.dbPending)}, ingest queue: ${fmt(totals.ingestQueue)}. These are not counted as stored.`
+      },
+      {
+        stage: "Database committed",
+        count: totals.databaseStored,
+        previous: totals.parserAccepted,
+        meaning:
+          "Packets committed by the current backend session. Historical rows in the selected database are shown separately."
+      },
+      {
+        stage: "GUI/WebSocket delivered",
+        count: totals.guiDelivered,
+        previous: null,
+        meaning:
+          "Live GUI delivery count if backend exposes it. Otherwise use WebSocket client/queue status."
+      }
+    ];
+
+    pipelineAuditBody.innerHTML =
+      stages.map(row => {
+        const diff =
+          row.previous === null
+            ? 0
+            : row.count - row.previous;
+
+        const loss =
+          row.previous === null
+            ? 0
+            : Math.max(0, row.previous - row.count);
+
+        const status =
+          row.previous === null
+            ? (row.count > 0 ? "pass" : "warn")
+            : statusFromLoss(loss);
+
+        return `
+          <tr>
+            <td><strong>${esc(row.stage)}</strong></td>
+            <td>${fmt(row.count)}</td>
+            <td>
+              ${
+                row.previous === null
+                  ? "-"
+                  : (
+                      diff === 0
+                        ? "0"
+                        : (diff > 0 ? "+" : "") + fmt(diff)
+                    )
+              }
+            </td>
+            <td>${statusBadge(status)}</td>
+            <td>${esc(row.meaning)}</td>
+          </tr>
+        `;
+      }).join("");
+  }
+
+  /**
+   * Determines one device's end-to-end pipeline status.
+   */
+  function deviceStatus(item) {
+    const udpOk =
+      n(item.udp_received) > 0;
+
+    const parserOk =
+      n(item.parser_accepted) > 0;
+
+    const dbOk =
+      n(item.db_rows) > 0;
+
+    const guiOk =
+      Boolean(item.gui_visible || item.graph_visible);
+
+    if (udpOk && parserOk && dbOk && guiOk) {
+      return "pass";
+    }
+
+    if (udpOk && parserOk && dbOk) {
+      return "warn";
+    }
+
+    return "fail";
+  }
+
+  /**
+   * Filters and renders per-device verification cards.
+   */
+  function renderDeviceCards(items) {
+    const q =
+      deviceFilter.value.trim().toLowerCase();
+
+    const filtered =
+      q
+        ? items.filter(item => {
+            const text = [
+              item.name,
+              item.group_ip,
+              item.port,
+              item.last_src,
+              item.value_keys
+            ].join(" ").toLowerCase();
+
+            return text.includes(q);
+          })
+        : items;
+
+    if (!filtered.length) {
+      deviceVerificationGrid.innerHTML =
+        `<p class="muted">No device verification data available.</p>`;
+      return;
+    }
+
+    deviceVerificationGrid.innerHTML =
+      filtered.map(item => {
+        const status =
+          deviceStatus(item);
+
+        const udpOk =
+          n(item.udp_received) > 0;
+
+        const parserOk =
+          n(item.parser_accepted) > 0;
+
+        const dbOk =
+          n(item.db_rows) > 0;
+
+        const guiOk =
+          Boolean(item.gui_visible || item.graph_visible);
+
+        const keys =
+          Array.isArray(item.value_keys)
+            ? item.value_keys.slice(0, 10).join(", ")
+            : safe(item.value_keys);
+
+        let decision =
+          "This device is fully verified.";
+
+        if (!udpOk) {
+          decision =
+            "No UDP packets detected for this device/channel. Check simulator, multicast IP, port, and network interface.";
+        } else if (!parserOk) {
+          decision =
+            "UDP is reaching backend, but parser is not accepting packets. Check packet format/device mapping.";
+        } else if (!dbOk) {
+          decision =
+            "Packets are accepted but database storage is not confirmed. Check DB insert/API diagnostic fields.";
+        } else if (!guiOk) {
+          decision =
+            "Database has packets, but GUI/graph visibility is not confirmed. Check frontend mapping.";
+        }
+
+        return `
+          <div class="deviceAuditCard ${status}">
+            <div class="deviceAuditHead">
+              <h3>${esc(item.name)}</h3>
+              ${statusBadge(status)}
+            </div>
+
+            <div class="miniPipeline">
+              <div class="miniStep ${udpOk ? "pass" : "fail"}">UDP</div>
+              <div class="miniStep ${parserOk ? "pass" : (udpOk ? "warn" : "fail")}">Parser</div>
+              <div class="miniStep ${dbOk ? "pass" : (parserOk ? "warn" : "fail")}">DB</div>
+              <div class="miniStep ${guiOk ? "pass" : (dbOk ? "warn" : "fail")}">GUI</div>
+            </div>
+
+            <div class="smallRows">
+              <div><span>UDP received</span><strong>${fmt(item.udp_received)}</strong></div>
+              <div><span>Accepted</span><strong>${fmt(item.parser_accepted)}</strong></div>
+              <div><span>Rejected</span><strong>${fmt(item.parser_rejected)}</strong></div>
+              <div><span>DB rows</span><strong>${fmt(item.db_rows)}</strong></div>
+              <div><span>Latest DB time</span><strong>${esc(safe(item.latest_db_timestamp))}</strong></div>
+              <div><span>Last source</span><strong>${esc(safe(item.last_src))}:${esc(safe(item.last_src_port, 0))}</strong></div>
+              <div><span>Channels</span><strong>${esc((item.endpoints || []).join(", "))}</strong></div>
+            </div>
+
+            <div class="decisionBox">
+              ${esc(decision)}
+            </div>
+
+            ${(item.carrier_notes || []).map(note =>
+              `<div class="decisionBox">${esc(note)}</div>`
+            ).join("")}
+
+            ${
+              keys && keys !== "-"
+                ? `
+                  <details class="hiddenDetails">
+                    <summary>Show mapped fields</summary>
+                    <div class="rawBlock">${esc(keys)}</div>
+                  </details>
+                `
+                : ""
+            }
+          </div>
+        `;
+      }).join("");
+  }
+
+  /**
+   * Renders ingestion, WebSocket, retry, and failure queue health.
+   */
+  function renderQueueHealth(data, totals) {
+    const queueCards = [
+      {
+        title: "WebSocket queue",
+        value: totals.wsQueue,
+        note:
+          totals.wsQueue < 1000
+            ? "Healthy"
+            : "High queue. GUI may lag."
+      },
+      {
+        title: "Ingest queue",
+        value: totals.ingestQueue,
+        note:
+          totals.ingestQueue < 1000
+            ? "Healthy"
+            : "High queue. Backend cannot process fast enough."
+      },
+      {
+        title: "Ingest dropped",
+        value: totals.ingestDropped,
+        note:
+          totals.ingestDropped === 0
+            ? "No backend queue drops"
+            : "Packets dropped before database insert."
+      },
+      {
+        title: "Packet rows",
+        value: totals.databaseStored,
+        note: "Current database packet high-water mark"
+      },
+      {
+        title: "Field rows",
+        value: totals.databaseFieldRows,
+        note: "Current database field-row high-water mark"
+      },
+      {
+        title: "Active DB",
+        value: safe(data.db_name, "-"),
+        note: safe(data.db_path, "Backend did not expose database path")
+      },
+      {
+        title: "Devices",
+        value: n(data.devices),
+        note: "Detected devices"
+      },
+      {
+        title: "Metrics",
+        value: n(data.metrics),
+        note: "Detected metrics/keys"
+      }
+    ];
+
+    queueGrid.innerHTML =
+      queueCards.map(card => {
+        const value =
+          typeof card.value === "number"
+            ? fmt(card.value)
+            : esc(safe(card.value));
+
+        return `
+        <div class="queueCard">
+          <h3>${esc(card.title)}</h3>
+          <strong>${value}</strong>
+          <p class="muted">${esc(card.note)}</p>
+        </div>
+      `;
+      }).join("");
+  }
+
+  /**
+   * Renders the telemetry field-visibility verification list.
+   */
+  function renderFields(data) {
+    const fields =
+      Array.isArray(data.field_samples)
+        ? data.field_samples
+        : [];
+
+    if (!fields.length) {
+      fieldList.innerHTML =
+        `<p class="muted">No recent field samples available.</p>`;
+      return;
+    }
+
+    fieldList.innerHTML =
+      fields.slice(0, 80).map(field => `
+        <span class="fieldChip">${esc(field)}</span>
+      `).join("");
+  }
+
+  /**
+   * Persists the operator-entered reference capture count locally.
+   */
+  function saveWiresharkCount() {
+    localStorage.setItem(
+      "diagnostic.wiresharkCount",
+      String(n(wireCountInput.value))
+    );
+  }
+
+  /**
+   * Normalizes one diagnostic response and renders every page section.
+   */
+  function renderAll(data) {
+    lastData = data;
+
+    const items =
+      normalizeDiagnosticItems(data);
+
+    const totals =
+      computeTotals(data, items);
+
+    renderOverall(totals);
+    renderPipelineCards(totals);
+    renderPipelineAudit(totals);
+    renderDeviceCards(items);
+    renderQueueHealth(data, totals);
+    renderFields(data);
+  }
+
+  /**
+   * Fetches and renders one guarded diagnostic API snapshot.
+   */
+  async function renderDiagnostic() {
+    if (paused || diagnosticRefreshInFlight) {
+      return;
+    }
+
+    diagnosticRefreshInFlight = true;
+
+    try {
+      const db =
+        getSelectedDb();
+
+      const url =
+        db
+          ? "/api/diagnostic?db=" + encodeURIComponent(db)
+          : "/api/diagnostic";
+
+      const data =
+        await api(url);
+
+      renderAll(data);
+
+      setStatus(
+        "Last refreshed: " +
+        new Date().toLocaleTimeString(),
+        false
+      );
+
+    } catch (err) {
+      console.error(err);
+      const message =
+        err && err.message
+          ? err.message
+          : "Unknown diagnostic API error.";
+
+      setStatus(
+        "Unable to load diagnostic data: " + message,
+        true
+      );
+
+      overallStatusEl.className =
+        "statusBanner fail";
+
+      overallStatusEl.innerHTML = `
+        <h2>FAIL - Diagnostic API not responding</h2>
+        <p>
+          ${esc(message)}
+        </p>
+      `;
+    } finally {
+      diagnosticRefreshInFlight = false;
+    }
+  }
+
+  /**
+   * Initializes controls, database state, polling, and the first diagnostic refresh.
+   */
+  async function initializeDiagnosticPage() {
+    await loadDbSelect(dbSelect);
+
+    if (dbSelect.options.length > 0) {
+      App.db = dbSelect.value;
+    }
+
+    const savedWire =
+      localStorage.getItem("diagnostic.wiresharkCount");
+
+    if (savedWire) {
+      wireCountInput.value = savedWire;
+    }
+
+    await renderDiagnostic();
+
+    if (refreshTimer) {
+      clearInterval(refreshTimer);
+    }
+
+    refreshTimer =
+      setInterval(renderDiagnostic, 5000);
+  }
+
+  refreshBtn.addEventListener("click", renderDiagnostic);
+
+  pauseBtn.addEventListener("click", () => {
+    paused = !paused;
+
+    pauseBtn.textContent =
+      paused ? "Resume" : "Pause";
+
+    setStatus(
+      paused
+        ? "Auto-refresh paused."
+        : "Auto-refresh resumed.",
+      false
+    );
+
+    if (!paused) {
+      renderDiagnostic();
+    }
+  });
+
+  wireCountInput.addEventListener("input", () => {
+    saveWiresharkCount();
+
+    if (lastData) {
+      renderAll(lastData);
+    }
+  });
+
+  deviceFilter.addEventListener("input", () => {
+    if (lastData) {
+      renderAll(lastData);
+    }
+  });
+
+  dbSelect.addEventListener("change", () => {
+    App.db = dbSelect.value;
+    renderDiagnostic();
+  });
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    initializeDiagnosticPage
+  );
+</script>
+</body>
+</html>

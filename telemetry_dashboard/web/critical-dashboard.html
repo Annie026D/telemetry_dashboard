@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <title>Critical Control Board | SCADA</title>
+
+  <link rel="stylesheet" href="style.css?v=critical-board-20261029">
+  <link rel="stylesheet" href="critical-dashboard.css?v=critical-board-20261029">
+</head>
+
+<body>
+
+<div class="layout">
+
+  <!-- ============================================================
+       SIDEBAR
+       ============================================================ -->
+  <aside class="sidebar">
+    <h2>SCADA</h2>
+
+    <a href="critical-dashboard.html" class="active">
+      Critical Control Board
+    </a>
+
+    <a href="drive-control.html">
+      Drive &amp; Buttons
+    </a>
+
+    <a href="dashboard.html">Main Dashboard</a>
+
+    <a href="history.html">
+      History
+    </a>
+
+    <a href="topology.html">
+      Topology
+    </a>
+
+    <a href="hmi.html">
+      HMI
+    </a>
+
+    <a href="diagnostic.html">
+      Diagnostics
+    </a>
+  </aside>
+
+
+  <!-- ============================================================
+       MAIN CONTROL BOARD
+       ============================================================ -->
+  <main class="main critical-board">
+
+    <select id="dbSelect" hidden></select>
+
+    <!-- ==========================================================
+         HEADER
+         ========================================================== -->
+    <header class="board-header">
+
+      <div class="header-title">
+        <div class="eyebrow">SCADA / OPERATOR CONTROL BOARD</div>
+
+        <h1>Critical Control Board</h1>
+
+        <div class="header-subtitle">
+          Integrated live status, controls, motion, optics,
+          tracking and subsystem telemetry.
+        </div>
+      </div>
+
+      <div class="header-status">
+
+        <div class="header-status-item">
+          <span class="status-label">SYSTEM</span>
+          <strong id="systemState">UNKNOWN</strong>
+        </div>
+
+        <div class="header-status-item">
+          <span class="status-label">TELEMETRY</span>
+          <strong id="telemetryState">WAITING</strong>
+        </div>
+
+        <div class="header-status-item">
+          <span class="status-label">LAST UPDATE</span>
+          <strong id="lastUpdate">--:--:--</strong>
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- ==========================================================
+         DEVICE MICRO BLOCKS
+         ========================================================== -->
+
+    <section class="device-strip-section">
+
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">DEVICE NETWORK</span>
+          <h2>Equipment Status</h2>
+        </div>
+
+        <div class="section-live">
+          <span class="live-dot"></span>
+          LIVE
+        </div>
+      </div>
+
+      <div id="deviceMicroBlocks" class="device-micro-grid"></div>
+
+    </section>
+
+
+    <!-- ==========================================================
+         PRIMARY CONTROL BOARD
+         ========================================================== -->
+
+    <section class="primary-grid">
+
+
+      <!-- ========================================================
+           LEFT — DRIVE / MOTION
+           ======================================================== -->
+
+      <article class="panel drive-panel">
+
+        <div class="panel-header">
+
+          <div>
+            <span class="panel-kicker">MOTION / DRIVE</span>
+            <h2>Drive System</h2>
+          </div>
+
+          <div id="driveIndicator" class="panel-state unknown">
+            UNKNOWN
+          </div>
+
+        </div>
+
+
+        <!-- RPM -->
+        <div class="rpm-instrument">
+
+          <div class="instrument-label">
+            MOTOR SPEED
+          </div>
+
+          <div class="rpm-value">
+            <span id="driveRpm">--</span>
+            <small>RPM</small>
+          </div>
+
+          <div class="rpm-bar">
+            <div id="rpmBar"></div>
+          </div>
+
+          <div class="rpm-chart">
+            <svg
+              id="rpmChart"
+              viewBox="0 0 600 130"
+              preserveAspectRatio="none">
+              <polyline id="rpmLine" points=""></polyline>
+            </svg>
+          </div>
+
+        </div>
+
+
+        <!-- DRIVE VALUES -->
+
+        <div class="drive-value-grid">
+
+          <div class="instrument">
+            <span>ACTUAL CURRENT</span>
+            <strong id="driveCurrent">--</strong>
+            <small>A</small>
+          </div>
+
+          <div class="instrument">
+            <span>DC BUS</span>
+            <strong id="driveVoltage">--</strong>
+            <small>V</small>
+          </div>
+
+          <div class="instrument">
+            <span>DRIVE STATUS</span>
+            <strong id="driveStatus">--</strong>
+          </div>
+
+          <div class="instrument">
+            <span>DRIVE CONNECTION</span>
+            <strong id="driveConnection">--</strong>
+          </div>
+
+          <div class="instrument">
+            <span>FAULT</span>
+            <strong id="driveFault">--</strong>
+          </div>
+
+          <div class="instrument">
+            <span>TORQUE</span>
+            <strong id="driveTorque">--</strong>
+            <small>Nm</small>
+          </div>
+
+        </div>
+
+
+        <!-- PAN / TILT -->
+
+        <div class="motion-position">
+
+          <div class="position-title">
+            POSITION / ORIENTATION
+          </div>
+
+          <div class="position-grid">
+
+            <div>
+              <span>PAN</span>
+              <strong id="panValue">--</strong>
+            </div>
+
+            <div>
+              <span>TILT</span>
+              <strong id="tiltValue">--</strong>
+            </div>
+
+            <div>
+              <span>BEARING</span>
+              <strong id="bearingValue">--</strong>
+            </div>
+
+            <div>
+              <span>ELEVATION</span>
+              <strong id="elevationValue">--</strong>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- GEO -->
+
+        <div class="geo-block">
+
+          <div>
+            <span>LATITUDE</span>
+            <strong id="latitudeValue">--</strong>
+          </div>
+
+          <div>
+            <span>LONGITUDE</span>
+            <strong id="longitudeValue">--</strong>
+          </div>
+
+          <div>
+            <span>ALTITUDE</span>
+            <strong id="altitudeValue">--</strong>
+          </div>
+
+          <div>
+            <span>HEADING</span>
+            <strong id="headingValue">--</strong>
+          </div>
+
+        </div>
+
+      </article>
+
+
+      <!-- ========================================================
+           CENTER — ACTUAL BUTTON PANEL
+           ======================================================== -->
+
+      <article class="panel physical-panel">
+
+        <div class="panel-header">
+
+          <div>
+            <span class="panel-kicker">OPERATOR INTERFACE</span>
+            <h2>Physical Control Panel</h2>
+          </div>
+
+          <div class="panel-state indication">
+            INDICATION ONLY
+          </div>
+
+        </div>
+
+
+        <!-- BUTTONS -->
+
+        <div class="control-group">
+
+          <div class="control-group-title">
+            <span>MOMENTARY BUTTONS</span>
+            <small>22 CHANNELS</small>
+          </div>
+
+          <div id="buttonPanel" class="button-panel"></div>
+
+        </div>
+
+
+        <!-- SWITCHES -->
+
+        <div class="control-group switch-group">
+
+          <div class="control-group-title">
+            <span>SELECTOR / POWER SWITCHES</span>
+            <small>19 CHANNELS</small>
+          </div>
+
+          <div id="switchPanel" class="switch-panel"></div>
+
+        </div>
+
+
+        <!-- KNOBS -->
+
+        <div class="control-group knob-group">
+
+          <div class="control-group-title">
+            <span>ROTARY CONTROLS</span>
+            <small>2 CHANNELS</small>
+          </div>
+
+          <div id="knobPanel" class="knob-panel"></div>
+
+        </div>
+
+      </article>
+
+
+      <!-- ========================================================
+           RIGHT — CAMERA / OPTICS
+           ======================================================== -->
+
+      <article class="panel camera-panel">
+
+        <div class="panel-header">
+
+          <div>
+            <span class="panel-kicker">OPTICS</span>
+            <h2>Camera / Sensor</h2>
+          </div>
+
+          <div id="cameraState" class="panel-state unknown">
+            UNKNOWN
+          </div>
+
+        </div>
+
+
+        <div class="camera-mode">
+
+          <span>CURRENT CAMERA MODE</span>
+
+          <strong id="cameraMode">
+            NO DATA
+          </strong>
+
+        </div>
+
+
+        <div class="camera-values">
+
+          <div>
+            <span>DAY / NIGHT</span>
+            <strong id="cameraDayNight">--</strong>
+          </div>
+
+          <div>
+            <span>THERMAL</span>
+            <strong id="cameraThermal">--</strong>
+          </div>
+
+          <div>
+            <span>LOW LIGHT</span>
+            <strong id="cameraLowLight">--</strong>
+          </div>
+
+          <div>
+            <span>LRF</span>
+            <strong id="cameraLrf">--</strong>
+          </div>
+
+          <div>
+            <span>TRACKING</span>
+            <strong id="cameraTracking">--</strong>
+          </div>
+
+          <div>
+            <span>ZOOM</span>
+            <strong id="cameraZoom">--</strong>
+          </div>
+
+          <div>
+            <span>RANGE</span>
+            <strong id="cameraRange">--</strong>
+          </div>
+
+          <div>
+            <span>BEARING</span>
+            <strong id="cameraBearing">--</strong>
+          </div>
+
+          <div>
+            <span>ELEVATION</span>
+            <strong id="cameraElevation">--</strong>
+          </div>
+
+          <div>
+            <span>HEALTH</span>
+            <strong id="cameraHealth">--</strong>
+          </div>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- ==========================================================
+         SECONDARY SYSTEMS
+         ========================================================== -->
+
+    <section class="secondary-grid">
+
+
+      <!-- RTS -->
+
+      <article class="panel secondary-panel">
+
+        <div class="panel-header">
+          <div>
+            <span class="panel-kicker">TARGETING</span>
+            <h2>RTS / Target</h2>
+          </div>
+
+          <div id="rtsState" class="panel-state unknown">
+            UNKNOWN
+          </div>
+        </div>
+
+        <div class="secondary-values">
+
+          <div>
+            <span>MODE</span>
+            <strong id="rtsMode">--</strong>
+          </div>
+
+          <div>
+            <span>TARGET</span>
+            <strong id="rtsTarget">--</strong>
+          </div>
+
+          <div>
+            <span>RANGE</span>
+            <strong id="rtsRange">--</strong>
+          </div>
+
+          <div>
+            <span>BEARING</span>
+            <strong id="rtsBearing">--</strong>
+          </div>
+
+          <div>
+            <span>ELEVATION</span>
+            <strong id="rtsElevation">--</strong>
+          </div>
+
+          <div>
+            <span>STATUS</span>
+            <strong id="rtsStatus">--</strong>
+          </div>
+
+        </div>
+
+      </article>
+
+
+      <!-- CCE / BCU -->
+
+      <article class="panel secondary-panel">
+
+        <div class="panel-header">
+          <div>
+            <span class="panel-kicker">CONTROL ELECTRONICS</span>
+            <h2>CCE / BCU</h2>
+          </div>
+
+          <div id="cceState" class="panel-state unknown">
+            UNKNOWN
+          </div>
+        </div>
+
+        <div class="secondary-values">
+
+          <div>
+            <span>CCE MODE</span>
+            <strong id="cceMode">--</strong>
+          </div>
+
+          <div>
+            <span>BCU MODE</span>
+            <strong id="bcuMode">--</strong>
+          </div>
+
+          <div>
+            <span>CONTROL SOURCE</span>
+            <strong id="controlSource">--</strong>
+          </div>
+
+          <div>
+            <span>CONNECTION</span>
+            <strong id="cceConnection">--</strong>
+          </div>
+
+          <div>
+            <span>HEARTBEAT</span>
+            <strong id="cceHeartbeat">--</strong>
+          </div>
+
+          <div>
+            <span>STATUS</span>
+            <strong id="cceStatus">--</strong>
+          </div>
+
+        </div>
+
+      </article>
+
+
+      <!-- TRACKER -->
+
+      <article class="panel secondary-panel">
+
+        <div class="panel-header">
+          <div>
+            <span class="panel-kicker">TRACKING</span>
+            <h2>Tracker</h2>
+          </div>
+
+          <div id="trackerState" class="panel-state unknown">
+            UNKNOWN
+          </div>
+        </div>
+
+        <div class="secondary-values">
+
+          <div>
+            <span>MODE</span>
+            <strong id="trackerMode">--</strong>
+          </div>
+
+          <div>
+            <span>TARGET</span>
+            <strong id="trackerTarget">--</strong>
+          </div>
+
+          <div>
+            <span>LOCK</span>
+            <strong id="trackerLock">--</strong>
+          </div>
+
+          <div>
+            <span>RANGE</span>
+            <strong id="trackerRange">--</strong>
+          </div>
+
+          <div>
+            <span>BEARING</span>
+            <strong id="trackerBearing">--</strong>
+          </div>
+
+          <div>
+            <span>HEALTH</span>
+            <strong id="trackerHealth">--</strong>
+          </div>
+
+        </div>
+
+      </article>
+
+
+      <!-- IMU -->
+
+      <article class="panel secondary-panel">
+
+        <div class="panel-header">
+          <div>
+            <span class="panel-kicker">INERTIAL</span>
+            <h2>IMU</h2>
+          </div>
+
+          <div id="imuState" class="panel-state unknown">
+            UNKNOWN
+          </div>
+        </div>
+
+        <div class="secondary-values">
+
+          <div>
+            <span>ROLL</span>
+            <strong id="imuRoll">--</strong>
+          </div>
+
+          <div>
+            <span>PITCH</span>
+            <strong id="imuPitch">--</strong>
+          </div>
+
+          <div>
+            <span>YAW</span>
+            <strong id="imuYaw">--</strong>
+          </div>
+
+          <div>
+            <span>LATITUDE</span>
+            <strong id="imuLatitude">--</strong>
+          </div>
+
+          <div>
+            <span>LONGITUDE</span>
+            <strong id="imuLongitude">--</strong>
+          </div>
+
+          <div>
+            <span>ALTITUDE</span>
+            <strong id="imuAltitude">--</strong>
+          </div>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- ==========================================================
+         ALARM / EVENT AREA
+         ========================================================== -->
+
+    <section class="bottom-grid">
+
+      <article class="panel alarm-panel">
+
+        <div class="panel-header">
+
+          <div>
+            <span class="panel-kicker">ATTENTION</span>
+            <h2>Active Alarms</h2>
+          </div>
+
+          <strong id="alarmCount">0</strong>
+
+        </div>
+
+        <div id="alarmList" class="alarm-list">
+
+          <div class="empty-state">
+            NO ACTIVE ALARMS
+          </div>
+
+        </div>
+
+      </article>
+
+
+      <article class="panel event-panel">
+
+        <div class="panel-header">
+
+          <div>
+            <span class="panel-kicker">LIVE HISTORY</span>
+            <h2>Recent Events</h2>
+          </div>
+
+          <span class="panel-meta">
+            LAST 20
+          </span>
+
+        </div>
+
+        <div id="eventList" class="event-list"></div>
+
+      </article>
+
+    </section>
+
+
+    <!-- ==========================================================
+         COMPLETE LIVE DATA
+         ========================================================== -->
+
+    <section class="panel live-data-panel">
+
+      <div class="panel-header">
+
+        <div>
+          <span class="panel-kicker">RAW OPERATIONAL VIEW</span>
+          <h2>All Live Device Data</h2>
+        </div>
+
+        <span class="panel-meta">
+          LIVE TELEMETRY
+        </span>
+
+      </div>
+
+      <div class="live-table-wrap">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>DEVICE</th>
+              <th>CHANNEL</th>
+              <th>FIELD</th>
+              <th>VALUE</th>
+              <th>SOURCE</th>
+              <th>TIME</th>
+            </tr>
+          </thead>
+
+          <tbody id="liveDataTable"></tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+
+<script src="common.js?v=critical-board-20261029"></script>
+<script src="critical-dashboard.js?v=critical-board-20261029"></script>
+
+</body>
+</html>

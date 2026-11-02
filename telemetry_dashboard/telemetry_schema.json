@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "scaling": {
+    "pan": { "divisor": 100, "raw_column": "raw_pan" },
+    "tilt": { "divisor": 100, "raw_column": "raw_tilt" }
+  },
+  "approved_columns": {
+    "latitude": "REAL", "lat": "REAL", "longitude": "REAL", "lon": "REAL", "lng": "REAL",
+    "altitude": "REAL", "alt": "REAL", "roll": "REAL", "pitch": "REAL", "yaw": "REAL",
+    "heading": "REAL", "speed": "REAL", "rpm": "REAL", "current": "REAL", "voltage": "REAL",
+    "temperature": "REAL", "pressure": "REAL", "azimuth": "REAL", "azimuth_deg": "REAL",
+    "elevation": "REAL", "elevation_deg": "REAL", "range": "REAL", "range_m": "REAL",
+    "bearing": "REAL", "bearing_deg": "REAL", "x": "REAL", "y": "REAL", "z": "REAL",
+    "track_id": "REAL", "trackID": "REAL", "confidence": "REAL", "pan": "REAL", "tilt": "REAL",
+    "raw_pan": "REAL", "raw_tilt": "REAL", "pan_angle": "REAL", "tilt_angle": "REAL",
+    "pan_actual_deg": "REAL", "tilt_actual_deg": "REAL", "pos_deg": "REAL",
+    "angle_feedback": "REAL", "actual_current": "REAL", "dcbus_volt": "REAL", "fault_raw": "REAL",
+    "drive_connected": "REAL", "state": "TEXT", "status": "TEXT", "mode": "TEXT", "health": "TEXT",
+    "alive": "REAL", "connected": "REAL", "tracking": "REAL", "anomaly_flag": "REAL",
+    "alarm": "TEXT", "fault": "TEXT", "error": "TEXT", "button_state": "REAL",
+    "toggle_count": "REAL", "axis_name": "TEXT", "source": "TEXT", "src": "TEXT",
+    "target_bearing": "REAL", "target_range": "REAL", "target_elevation": "REAL",
+    "device_epoch": "REAL", "t_epoch": "REAL", "t_usec": "REAL", "packet_counter": "REAL",
+    "seq": "REAL", "sequence": "REAL"
+  },
+  "device_column_groups": {
+    "common": ["state", "status", "mode", "health", "alive", "connected", "anomaly_flag", "alarm", "fault", "error", "source", "src", "device_epoch", "t_epoch", "t_usec", "packet_counter", "seq", "sequence"],
+    "motion": ["pan", "tilt", "raw_pan", "raw_tilt", "pan_angle", "tilt_angle", "pan_actual_deg", "tilt_actual_deg", "pos_deg", "angle_feedback", "rpm", "current", "voltage", "actual_current", "dcbus_volt", "fault_raw", "drive_connected", "speed", "bearing", "bearing_deg", "range", "range_m"],
+    "orientation": ["roll", "pitch", "yaw", "heading", "x", "y", "z", "temperature", "pressure", "azimuth", "azimuth_deg", "elevation", "elevation_deg"],
+    "tracking": ["latitude", "lat", "longitude", "lon", "lng", "altitude", "alt", "track_id", "trackID", "confidence", "tracking", "target_bearing", "target_range", "target_elevation", "bearing", "bearing_deg", "range", "range_m"],
+    "controls": ["button_state", "toggle_count", "axis_name", "x", "y", "z"],
+    "all": ["*"]
+  },
+  "device_schemas": {
+    "JOYSTICK": ["common", "controls"], "JOYSTICK_UNIT": ["common", "controls"],
+    "BUTTON_LED_UNIT": ["common", "controls"], "CAMERA_UNIT": ["common", "motion", "tracking"],
+    "DRIVE_UNIT": ["common", "motion"], "EXTERNAL_TRACK_UNIT": ["common", "tracking"],
+    "ADVANTECH_IO": ["common", "motion"], "IMU_UNIT": ["common", "orientation"],
+    "CCE_GATEWAY": ["common", "motion", "orientation", "tracking", "controls"],
+    "LCU_UNIT": ["all"], "MAIN_DISPLAY": ["common", "motion", "orientation", "tracking", "controls"],
+    "WCS": ["common", "motion", "orientation", "tracking", "controls"],
+    "WCS_CONSOLE": ["common", "motion", "orientation", "tracking", "controls"],
+    "UNKNOWN_DEVICE": ["all"]
+  },
+  "supported_routes": [
+    "lcu_transport", "joystick", "button_led", "tracker_telemetry", "external_track",
+    "tracker_publish", "imu", "maindisplay", "wcs_control_console", "cce_gateway",
+    "advantec_driver", "drive_wcs", "simulator"
+  ],
+  "supported_devices": [
+    "JOYSTICK", "JOYSTICK_UNIT", "BUTTON_LED_UNIT", "CAMERA_UNIT", "DRIVE_UNIT",
+    "EXTERNAL_TRACK_UNIT", "ADVANTECH_IO", "IMU_UNIT", "CCE_GATEWAY", "LCU_UNIT",
+    "MAIN_DISPLAY", "WCS", "WCS_CONSOLE", "UNKNOWN_DEVICE"
+  ]
+}

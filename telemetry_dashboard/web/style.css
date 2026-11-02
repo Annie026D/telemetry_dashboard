@@ -1,0 +1,8312 @@
+/*
+ * Shared visual system for dashboard, HMI, history, topology, diagnostics, and
+ * device pages. Base tokens and generic components appear first; page-specific
+ * and responsive sections later in the file intentionally refine them through
+ * the CSS cascade. No rule performs network access or stores application state.
+ */
+*{
+  box-sizing:border-box;
+}
+
+:root{
+  /* Shared color and spacing values keep status meaning consistent across all
+   * pages. Changing these values changes appearance only, never telemetry. */
+  --bg:#0b1120;
+  --bg2:#020617;
+  --card:#111827;
+
+  --border:#1f2937;
+  --border2:#334155;
+
+  --text:#e5e7eb;
+  --muted:#94a3b8;
+
+  --blue:#2563eb;
+
+  --green:#22c55e;
+  --yellow:#f59e0b;
+  --red:#ef4444;
+
+  --shadow:
+    0 10px 25px rgba(0,0,0,.25);
+
+  --glass-bg:
+    rgba(8,15,30,.72);
+
+  --glass-border:
+    rgba(0,217,255,.12);
+
+  --glass-shadow:
+    0 8px 30px rgba(0,0,0,.35);
+
+}
+
+html,
+body{
+
+  background:
+  linear-gradient(
+      rgba(5,11,20,.94),
+      rgba(5,11,20,.94)
+  ),
+ url("images/tactical-grid.jpg"); 
+
+  background-size:cover;
+  background-attachment:fixed;
+  background-position:center;
+
+  color:white;
+}
+
+body{
+  min-height:100vh;
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+a{
+  color:inherit;
+}
+
+.layout{
+  display:flex;
+  min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+
+  position:fixed;
+
+  left:0;
+  top:0;
+
+  width:230px;
+
+  min-width:230px;
+
+  height:100vh;
+
+  background:
+    linear-gradient(
+      180deg,
+      #07111f,
+      #020617
+    );
+
+  border-right:
+    1px solid rgba(0,217,255,.15);
+
+  overflow-y:auto;
+
+  z-index:1000;
+}
+.sidebar h2{
+margin:0 0 24px;
+  color:#00d9ff;
+
+  text-shadow:
+    0 0 12px rgba(0,217,255,.5);
+
+  letter-spacing:2px;
+   font-size:24px;
+}
+
+.sidebar a{
+
+  display:block;
+
+  text-decoration:none;
+
+  color:#cbd5e1;
+
+  padding:12px 14px;
+
+  margin:8px 0;
+
+  border-radius:12px;
+
+  transition:.2s;
+}
+
+.sidebar a:hover,
+.sidebar a.active{
+
+  background:var(--blue);
+
+  color:white;
+}
+
+/* MAIN */
+
+.main{
+
+  margin-left:230px;
+
+  width:calc(100% - 230px);
+
+  min-height:100vh;
+
+  padding:24px;
+
+  box-sizing:border-box;
+}
+
+/* PAGE */
+
+.page-head{
+  margin-bottom:20px;
+}
+
+.page-head h1{
+  margin:0;
+  font-size:30px;
+  font-weight:700;
+}
+
+.page-head p{
+  color:var(--muted);
+  margin-top:6px;
+}
+
+/* CONTROLS */
+
+.controls{
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:12px;
+
+  margin-bottom:20px;
+}
+
+/* INPUTS */
+
+input,
+select{
+
+  background:var(--bg2);
+
+  color:var(--text);
+
+  border:
+    1px solid var(--border2);
+
+  border-radius:12px;
+
+  padding:10px 14px;
+
+  min-width:180px;
+
+  outline:none;
+
+  transition:.2s;
+}
+
+input:focus,
+select:focus{
+
+  border-color:#3b82f6;
+
+  box-shadow:
+0 0 10px rgba(0,255,180,.25);     
+}
+
+/* BUTTON */
+
+.btn{
+
+  background:var(--blue);
+
+  color:white;
+
+  border:0;
+
+  border-radius:12px;
+
+  padding:10px 18px;
+
+  cursor:pointer;
+
+  transition:.2s;
+}
+
+.btn:hover{
+  opacity:.9;
+  transform:translateY(-1px);
+}
+
+/* GRID */
+
+.grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(auto-fit,minmax(280px,1fr));
+
+  gap:18px;
+}
+
+/* CARDS */
+
+.card{
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15,23,42,.95),
+      rgba(2,6,23,.95)
+    );
+
+  border:
+    1px solid rgba(0,217,255,.08);
+
+  border-radius:22px;
+
+  box-shadow:
+    0 10px 40px rgba(0,0,0,.4);
+
+  overflow:hidden;
+
+  position:relative;
+}
+.card::before{
+
+  content:"";
+
+  position:absolute;
+
+  top:0;
+  left:0;
+
+  width:100%;
+  height:3px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #00ff88,
+      #00d9ff
+    );
+}
+
+.card h3{
+  margin-top:0;
+}
+
+/* CHARTS */
+
+.chartBox{
+
+  position:relative;
+
+  width:100%;
+
+  height:420px;
+
+  overflow:hidden;
+}
+
+.chartBox.small{
+  height:260px;
+}
+
+canvas{
+
+  width:100% !important;
+  height:100% !important;
+
+  border-radius:14px;
+
+  background:var(--bg2);
+}
+
+/* TABLE */
+
+table{
+
+  width:100%;
+
+  border-collapse:collapse;
+
+  margin-top:12px;
+
+  min-width:900px;
+}
+
+thead{
+  background:#1e293b;
+}
+
+th,
+td{
+
+  padding:12px;
+
+  text-align:left;
+
+  border-bottom:
+    1px solid var(--border);
+
+  font-size:13px;
+}
+
+th{
+  color:white;
+}
+
+tbody tr:hover{
+  background:rgba(255,255,255,.03);
+}
+
+/* BADGES */
+
+.badge,
+.status{
+
+  display:inline-flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  padding:5px 12px;
+
+  border-radius:999px;
+
+  font-size:11px;
+
+  font-weight:700;
+}
+
+.badge.good{
+  background:rgba(34,197,94,.15);
+  color:#4ade80;
+}
+
+.badge.bad{
+  background:rgba(239,68,68,.15);
+  color:#f87171;
+}
+
+.badge.warn{
+  background:rgba(245,158,11,.15);
+  color:#facc15;
+}
+
+/* MUTED */
+
+.muted{
+  color:var(--muted);
+}
+
+/* DEVICE CARD */
+
+.device-card{
+  cursor:pointer;
+  transition:.2s;
+}
+
+.device-card:hover{
+
+  border-color:#3b82f6;
+
+  transform:translateY(-2px);
+}
+
+/* LEGEND */
+
+.legendBox{
+
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin-top:12px;
+
+  max-height:100px;
+
+  overflow-y:auto;
+}
+
+.legendItem{
+
+  font-size:12px;
+
+  color:#cbd5e1;
+
+  background:var(--bg2);
+
+  border:
+    1px solid var(--border);
+
+  padding:6px 10px;
+
+  border-radius:999px;
+}
+
+.legendColor{
+
+  display:inline-block;
+
+  width:10px;
+  height:10px;
+
+  border-radius:50%;
+
+  margin-right:6px;
+}
+
+/* TOPOLOGY */
+
+.topology-wrap{
+  position:relative;
+  margin-top:20px;
+}
+
+.topology-root{
+
+  display:flex;
+
+  justify-content:center;
+
+  margin-bottom:20px;
+
+  position:relative;
+
+  z-index:2;
+}
+
+.root-node{
+  min-width:280px;
+}
+
+#topologyDevices{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(auto-fit,minmax(300px,1fr));
+
+  gap:18px;
+
+  padding:10px;
+}
+
+.topology-node{
+
+  background:var(--card);
+
+  border:
+    1px solid var(--border2);
+
+  border-radius:16px;
+
+  padding:14px;
+
+  box-shadow:var(--shadow);
+
+  transition:.25s;
+
+  overflow:hidden;
+
+  min-height:210px;
+
+  position:relative;
+}
+
+.topology-node:hover{
+
+  transform:translateY(-3px);
+
+  border-color:#3b82f6;
+}
+
+.topology-header{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  gap:12px;
+
+  margin-bottom:14px;
+}
+
+.topology-header h3{
+
+  margin:0;
+
+  font-size:18px;
+
+  word-break:break-word;
+}
+
+.topology-body p{
+
+  margin:8px 0;
+
+  font-size:13px;
+
+  color:#cbd5e1;
+}
+
+.topology-meta{
+
+  display:flex;
+
+  gap:14px;
+
+  flex-wrap:wrap;
+
+  font-size:12px;
+
+  margin-bottom:10px;
+
+  color:var(--muted);
+}
+
+.topology-status{
+
+  padding:6px 12px;
+
+  border-radius:999px;
+
+  font-size:11px;
+
+  font-weight:700;
+
+  white-space:nowrap;
+}
+
+/* NODE STATUS */
+
+.topology-node.online{
+  border-color:var(--green);
+}
+
+.topology-node.online .topology-status{
+  background:rgba(34,197,94,.15);
+  color:#4ade80;
+}
+
+.topology-node.warning{
+  border-color:var(--yellow);
+}
+
+.topology-node.warning .topology-status{
+  background:rgba(245,158,11,.15);
+  color:#facc15;
+}
+
+.topology-node.offline{
+  border-color:var(--red);
+}
+
+.topology-node.offline .topology-status{
+  background:rgba(239,68,68,.15);
+  color:#f87171;
+}
+
+/* MINI CHART */
+
+.miniChart{
+
+  width:100%;
+
+  height:100px;
+
+  margin-top:10px;
+
+  position:relative;
+}
+
+.miniChart canvas{
+
+  width:100% !important;
+  height:100px !important;
+}
+
+/* PROCESS CHARTS */
+
+#processCharts{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(auto-fit,minmax(420px,1fr));
+
+  gap:20px;
+
+  margin-top:20px;
+}
+
+/* SVG LINKS */
+
+#topologySvg{
+
+  position:absolute;
+
+  inset:0;
+
+  width:100%;
+  height:100%;
+
+  pointer-events:none;
+
+  overflow:visible;
+
+  z-index:1;
+}
+
+#topologySvg path{
+
+  fill:none;
+
+  stroke-width:3;
+}
+
+.link-online{
+
+  stroke:var(--green);
+
+  stroke-width:4;
+
+  stroke-dasharray:12;
+
+  animation:flow 1s linear infinite;
+}
+
+.link-warning{
+
+  stroke:var(--yellow);
+
+  stroke-width:4;
+
+  stroke-dasharray:12;
+
+  animation:flow 2s linear infinite;
+}
+
+.link-offline{
+
+  stroke:var(--red);
+
+  stroke-width:3;
+
+  opacity:.45;
+}
+
+@keyframes flow{
+
+  from{
+    stroke-dashoffset:24;
+  }
+
+  to{
+    stroke-dashoffset:0;
+  }
+}
+
+/* LOADING */
+
+.loading{
+
+  padding:30px;
+
+  text-align:center;
+
+  color:var(--muted);
+}
+
+/* ANOMALY */
+
+.anomalyRow{
+  background:rgba(239,68,68,.08);
+}
+
+/* SCROLLBAR */
+
+::-webkit-scrollbar{
+  width:10px;
+  height:10px;
+}
+
+::-webkit-scrollbar-thumb{
+  background:#334155;
+  border-radius:999px;
+}
+
+::-webkit-scrollbar-track{
+  background:#0f172a;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1100px){
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  #topologyDevices{
+    grid-template-columns:1fr;
+  }
+
+  #processCharts{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:640px){
+
+  .controls{
+    flex-direction:column;
+  }
+
+  input,
+  select,
+  .btn{
+    width:100%;
+  }
+
+  .chartBox{
+    height:320px;
+  }
+
+  .chartBox.small{
+    height:220px;
+  }
+
+  table{
+    min-width:700px;
+  }
+}
+.digitalTwinGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
+  margin-bottom:30px;
+}
+
+.twinCard{
+  background:#111827;
+  border-radius:18px;
+  padding:20px;
+  border:1px solid #1f2937;
+  transition:all .25s ease;
+  position:relative;
+  overflow:hidden;
+}
+
+.twinCard.on{
+  border-color:#00ff88;
+  box-shadow:0 0 25px rgba(0,255,136,.15);
+}
+
+.twinCard.off{
+  border-color:#ef4444;
+  box-shadow:0 0 25px rgba(239,68,68,.12);
+}
+
+.twinHeader{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.twinHeader h3{
+  margin:0;
+  color:white;
+  font-size:18px;
+}
+
+.twinDot{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  background:#00ff88;
+}
+
+.twinCard.off .twinDot{
+  background:#ef4444;
+}
+
+.twinState{
+  font-size:28px;
+  font-weight:700;
+  margin-bottom:20px;
+  color:white;
+}
+
+.twinMeta{
+  display:grid;
+  gap:12px;
+}
+
+.twinMeta span{
+  display:block;
+  color:#9ca3af;
+  font-size:12px;
+  margin-bottom:4px;
+}
+
+.twinMeta strong{
+  color:white;
+  font-size:14px;
+  word-break:break-word;
+}
+.processFlow{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:16px;
+  margin-bottom:30px;
+}
+
+.processNode{
+  position:relative;
+  min-width:220px;
+  background:#111827;
+  border:1px solid #1f2937;
+  border-radius:18px;
+  padding:20px;
+  overflow:hidden;
+}
+
+.processNode.active{
+  border-color:#00c2ff;
+  box-shadow:0 0 30px rgba(0,194,255,.15);
+}
+
+.processContent h3{
+  margin:0 0 8px 0;
+  color:white;
+}
+
+.processContent p{
+  margin:0;
+  color:#9ca3af;
+  font-size:14px;
+}
+
+.processArrow{
+  font-size:28px;
+  color:#00c2ff;
+  font-weight:bold;
+}
+
+.processPulse{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#00ff88;
+  animation:pulseGlow 1.5s infinite;
+}
+
+@keyframes pulseGlow{
+
+  0%{
+    transform:scale(1);
+    opacity:1;
+  }
+
+  50%{
+    transform:scale(1.6);
+    opacity:.5;
+  }
+
+  100%{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+#deviceHealthBar{
+  margin-bottom:20px;
+}
+
+.healthBar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  padding:24px;
+  border-radius:20px;
+  margin-bottom:20px;
+  background:#111827;
+  border:1px solid #1f2937;
+}
+
+.healthBar.online{
+  border-color:#00ff88;
+  box-shadow:0 0 30px rgba(0,255,136,.15);
+}
+
+.healthBar.warning{
+  border-color:#ffcc00;
+  box-shadow:0 0 30px rgba(255,204,0,.15);
+}
+
+.healthBar.offline{
+  border-color:#ef4444;
+  box-shadow:0 0 30px rgba(239,68,68,.15);
+}
+
+.healthLeft{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.healthLeft h2{
+  margin:0;
+  color:white;
+}
+
+.healthLeft p{
+  margin:4px 0 0;
+  color:#9ca3af;
+}
+
+.healthPulse{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:#00ff88;
+  animation:pulseGlow 1.2s infinite;
+}
+
+.healthBar.warning .healthPulse{
+  background:#ffcc00;
+}
+
+.healthBar.offline .healthPulse{
+  background:#ef4444;
+}
+
+.healthRight{
+  display:flex;
+  gap:24px;
+  flex-wrap:wrap;
+}
+
+.healthMetric span{
+  display:block;
+  color:#9ca3af;
+  font-size:12px;
+}
+
+.healthMetric strong{
+  color:white;
+  font-size:18px;
+}
+
+#alarmPanel{
+  display:grid;
+  gap:16px;
+  margin-bottom:30px;
+}
+
+.alarmCard{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:18px;
+  border-radius:18px;
+  background:#111827;
+}
+
+.alarmCard.warning{
+  border:1px solid #ffcc00;
+}
+
+.alarmCard.critical{
+  border:1px solid #ef4444;
+}
+
+.alarmCard.healthy{
+  border:1px solid #00ff88;
+}
+
+.alarmCard h3{
+  margin:0 0 4px 0;
+  color:white;
+}
+
+.alarmCard p{
+  margin:0;
+  color:#9ca3af;
+}
+
+.alarmIcon{
+  font-size:24px;
+}
+
+.scadaHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:24px;
+  margin-bottom:20px;
+}
+
+.globalGrid{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+}
+
+.globalCard{
+  position:relative;
+  min-width:110px;
+  padding:18px;
+  border-radius:18px;
+  background:#111827;
+  border:1px solid #1f2937;
+  text-align:center;
+  overflow:hidden;
+}
+
+.globalCard h3{
+  margin:0;
+  color:white;
+  font-size:28px;
+}
+
+.globalCard p{
+  margin:6px 0 0;
+  color:#9ca3af;
+  font-size:12px;
+  letter-spacing:1px;
+}
+
+.globalCard.online{
+  border-color:#00ff88;
+  box-shadow:0 0 25px rgba(0,255,136,.15);
+}
+
+.globalCard.warning{
+  border-color:#ffcc00;
+  box-shadow:0 0 25px rgba(255,204,0,.15);
+}
+
+.globalCard.offline{
+  border-color:#ef4444;
+  box-shadow:0 0 25px rgba(239,68,68,.15);
+}
+
+.globalCard.anomaly{
+  border-color:#00c2ff;
+  box-shadow:0 0 25px rgba(0,194,255,.15);
+}
+
+.globalPulse{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#00ff88;
+  animation:pulseGlow 1.5s infinite;
+}
+.topologyHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:20px;
+  margin-bottom:20px;
+}
+
+.topologyStatsGrid{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+}
+
+.topologyStat{
+  min-width:100px;
+  padding:16px;
+  border-radius:16px;
+  text-align:center;
+  background:#111827;
+  border:1px solid #1f2937;
+}
+
+.topologyStat h3{
+  margin:0;
+  color:white;
+  font-size:26px;
+}
+
+.topologyStat p{
+  margin:6px 0 0;
+  color:#9ca3af;
+  font-size:12px;
+}
+
+.topologyStat.online{
+  border-color:#00ff88;
+  box-shadow:0 0 20px rgba(0,255,136,.15);
+}
+
+.topologyStat.warning{
+  border-color:#ffcc00;
+  box-shadow:0 0 20px rgba(255,204,0,.15);
+}
+
+.topologyStat.offline{
+  border-color:#ef4444;
+  box-shadow:0 0 20px rgba(239,68,68,.15);
+}
+
+.topologyStat.links{
+  border-color:#00c2ff;
+  box-shadow:0 0 20px rgba(0,194,255,.15);
+}
+
+.flowDot{
+  fill:#00ff88;
+  filter:drop-shadow(0 0 6px #00ff88);
+}
+
+.link-online{
+  stroke:#00ff88;
+  stroke-width:3;
+  fill:none;
+  filter:drop-shadow(0 0 8px #00ff88);
+}
+
+.link-warning{
+  stroke:#ffcc00;
+  stroke-width:3;
+  fill:none;
+  filter:drop-shadow(0 0 8px #ffcc00);
+}
+
+.link-offline{
+  stroke:#ef4444;
+  stroke-width:2;
+  fill:none;
+  opacity:.5;
+}
+.replayPanel{
+  margin-top:20px;
+  margin-bottom:20px;
+}
+
+.replayControls{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+#timelineInfo{
+  margin-top:12px;
+}
+
+.timelineMeta{
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+  align-items:center;
+  color:white;
+}
+
+.timelineMeta span{
+  color:#9ca3af;
+}
+.simulationPanel{
+  margin-bottom:24px;
+}
+
+.simulationHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.simulationControls{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.simulationStatus{
+  padding:10px 16px;
+  border-radius:999px;
+  background:#1e293b;
+  color:#cbd5e1;
+  border:1px solid #334155;
+  font-weight:700;
+  letter-spacing:1px;
+}
+
+.simulationStatus.running{
+  background:#052e16;
+  color:#34d399;
+  border-color:#34d399;
+}
+
+.simulationStatus.ok{
+  background:#082f49;
+  color:#38bdf8;
+  border-color:#38bdf8;
+}
+
+.simulationStatus.error{
+  background:#450a0a;
+  color:#f87171;
+  border-color:#f87171;
+}
+
+.simulationStatus.stopped{
+  background:#1e293b;
+  color:#cbd5e1;
+  border-color:#334155;
+}
+.aiPanel{
+  margin-bottom:24px;
+}
+
+.aiHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+
+.aiStatus{
+  padding:10px 16px;
+  border-radius:999px;
+  background:#052e16;
+  color:#00ff88;
+  border:1px solid #00ff88;
+  font-weight:700;
+  letter-spacing:1px;
+}
+
+#aiAlerts{
+  display:grid;
+  gap:14px;
+}
+
+.aiAlert{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:18px;
+  border-radius:18px;
+  background:#111827;
+  border:1px solid #1f2937;
+}
+
+.aiAlert.warning{
+  border-color:#ffcc00;
+  box-shadow:0 0 20px rgba(255,204,0,.12);
+}
+
+.aiAlert.critical{
+  border-color:#ef4444;
+  box-shadow:0 0 20px rgba(239,68,68,.15);
+}
+
+.aiAlert.healthy{
+  border-color:#00ff88;
+  box-shadow:0 0 20px rgba(0,255,136,.12);
+}
+
+.aiAlert h3{
+  margin:0 0 4px;
+  color:white;
+}
+
+.aiAlert p{
+  margin:0;
+  color:#9ca3af;
+}
+
+.aiPulse{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  background:#00ff88;
+  animation:pulseGlow 1.2s infinite;
+}
+
+.aiAlert.warning .aiPulse{
+  background:#ffcc00;
+}
+
+.aiAlert.critical .aiPulse{
+  background:#ef4444;
+}
+.cyclographPanel{
+  margin-bottom:24px;
+}
+
+.cyclographHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  margin-bottom:20px;
+}
+
+.cyclographStatus{
+  padding:10px 18px;
+  border-radius:999px;
+  border:1px solid #00ff88;
+  color:#00ff88;
+  background:#052e16;
+  font-weight:700;
+}
+
+.cyclographWrap{
+  width:100%;
+  overflow:auto;
+}
+
+#cyclographSvg{
+  width:100%;
+  min-height:520px;
+}
+
+.cycloLine{
+  stroke:#00c2ff;
+  stroke-width:2;
+  opacity:.5;
+  filter:drop-shadow(0 0 8px #00c2ff);
+}
+.cycloRadarRing{
+  fill:none;
+  stroke:#1f2937;
+  stroke-width:2;
+}
+
+.cycloHub{
+  fill:#0f172a;
+  stroke:#00c2ff;
+  stroke-width:4;
+  filter:drop-shadow(0 0 18px #00c2ff);
+}
+
+.cycloHubText{
+  fill:white;
+  font-size:28px;
+  font-weight:bold;
+}
+.cycloNode{
+  fill:#111827;
+  stroke:#00ff88;
+  stroke-width:4;
+  cursor:pointer;
+  transition:.2s;
+  filter:drop-shadow(0 0 10px #00ff88);
+}
+
+.cycloNode.anomaly{
+  stroke:#ef4444;
+  filter:drop-shadow(0 0 12px #ef4444);
+}
+
+.cycloText{
+  fill:white;
+  font-size:12px;
+  font-weight:bold;
+}
+.cycloTooltip{
+  position:fixed;
+  z-index:9999;
+  pointer-events:none;
+  min-width:180px;
+  padding:14px;
+  border-radius:14px;
+  background:#0f172a;
+  border:1px solid #00c2ff;
+  color:white;
+  opacity:0;
+  transition:.15s;
+  box-shadow:0 0 24px rgba(0,194,255,.25);
+}
+
+.cycloTooltip h3{
+  margin:0 0 8px;
+  color:#00ff88;
+}
+.cycloTooltip p{
+  margin:4px 0;
+  color:#cbd5e1;
+}
+/*
+--------------------------------------------------
+HMI SYSTEM
+--------------------------------------------------
+*/
+
+.hmiGrid{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:20px;
+  margin-top:20px;
+}
+
+.hmiComponent{
+  position:relative;
+  padding:18px;
+  border-radius:18px;
+  background:#0f172a;
+  border:1px solid #1f2937;
+  overflow:hidden;
+  transition:.25s;
+}
+
+.hmiComponent.active{
+  border-color:#00ff88;
+  transform:translateY(-3px);
+  box-shadow:
+    0 0 24px rgba(0,255,136,.18);
+}
+
+.hmiComponentHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+}
+
+.hmiComponentHeader h3{
+  margin:0;
+  color:white;
+  font-size:16px;
+}
+
+.hmiIndicator{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  background:#00ff88;
+  box-shadow:
+    0 0 14px #00ff88;
+}
+
+.hmiMetrics{
+  display:grid;
+  gap:12px;
+}
+
+.hmiMetrics div{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.hmiMetrics span{
+  color:#94a3b8;
+  font-size:13px;
+}
+
+.hmiMetrics strong{
+  color:white;
+}
+
+.hmiSidebar{
+  min-height:600px;
+}
+
+.telemetryItem{
+
+  position:relative;
+
+  padding:16px;
+
+  border-radius:16px;
+
+  background:
+    rgba(255,255,255,.03);
+
+  border-left:
+    4px solid #00ff88;
+
+  transition:.3s;
+}
+
+.telemetryItem h3{
+  margin:0 0 6px;
+  color:#00ff88;
+}
+
+.telemetryItem p{
+  margin:0 0 6px;
+  color:white;
+}
+
+.telemetryItem span{
+  color:#94a3b8;
+  font-size:12px;
+}
+
+.hmiInfoGrid{
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fit,minmax(180px,1fr));
+  gap:16px;
+  margin-top:20px;
+}
+
+.hmiInfoCard{
+  padding:18px;
+}
+
+.hmiInfoCard h3{
+  margin:0 0 10px;
+  color:#94a3b8;
+  font-size:13px;
+}
+
+.hmiInfoCard p{
+  margin:0;
+  color:white;
+  font-size:18px;
+}
+
+.onlineText{
+  color:#00ff88 !important;
+}
+
+.hmiLiveStatus{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 18px;
+  border-radius:999px;
+  background:#052e16;
+  color:#00ff88;
+  border:1px solid #00ff88;
+  font-weight:700;
+}
+
+.liveDot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#00ff88;
+  box-shadow:
+    0 0 14px #00ff88;
+}
+
+@media(max-width:1100px){
+
+  .hmiGrid{
+    grid-template-columns:1fr;
+  }
+}
+/*
+==================================================
+TACTICAL HISTORY CENTER
+==================================================
+*/
+
+.historyTopBar{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  gap:20px;
+
+  flex-wrap:wrap;
+}
+
+.historySelectors{
+
+  display:flex;
+
+  gap:12px;
+
+  flex-wrap:wrap;
+}
+
+.historyStatusPanel{
+
+  display:flex;
+
+  gap:14px;
+
+  flex-wrap:wrap;
+}
+
+.historyStatusCard{
+
+  min-width:140px;
+
+  padding:14px;
+
+  border-radius:16px;
+
+  background:#0f172a;
+
+  border:1px solid #1e293b;
+}
+
+.historyStatusCard h3{
+
+  margin:0 0 8px;
+
+  font-size:12px;
+
+  color:#94a3b8;
+}
+
+.historyStatusCard p{
+
+  margin:0;
+
+  color:#00ff88;
+
+  font-weight:700;
+
+  font-size:15px;
+}
+
+/*
+==================================================
+TACTICAL REPLAY
+==================================================
+*/
+
+.replayPanel{
+
+  position:relative;
+
+  overflow:hidden;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0f172a,
+      #111827
+    );
+}
+
+.replayPanel::before{
+
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(0,194,255,.18),
+      transparent 40%
+    );
+
+  pointer-events:none;
+}
+
+.replayHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.replayControls{
+
+  display:flex;
+
+  gap:10px;
+
+  flex-wrap:wrap;
+}
+
+.timelineWrap{
+  margin-top:20px;
+}
+
+#timelineInfo{
+
+  margin-top:14px;
+
+  padding:14px;
+
+  border-radius:14px;
+
+  background:#020617;
+
+  border:1px solid #1e293b;
+}
+
+/*
+==================================================
+TACTICAL CYCLOGRAPH
+==================================================
+*/
+
+.cyclographLayout{
+
+  display:grid;
+
+  grid-template-columns:
+    2fr 1fr;
+
+  gap:20px;
+
+  margin-top:20px;
+}
+
+.cyclographPanel{
+
+  position:relative;
+
+  min-height:760px;
+
+  overflow:hidden;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(0,194,255,.08),
+      #0b1120 70%
+    );
+}
+
+.cyclographPanel::before{
+
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  background-image:
+
+    linear-gradient(
+      rgba(255,255,255,.03) 1px,
+      transparent 1px
+    ),
+
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,.03) 1px,
+      transparent 1px
+    );
+
+  background-size:40px 40px;
+
+  pointer-events:none;
+
+  opacity:.2;
+}
+
+.cyclographHeader{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  margin-bottom:20px;
+}
+
+.cyclographStatus{
+
+  padding:10px 18px;
+
+  border-radius:999px;
+
+  background:#052e16;
+
+  border:1px solid #00ff88;
+
+  color:#00ff88;
+
+  font-weight:700;
+
+  box-shadow:
+    0 0 16px rgba(0,255,136,.25);
+}
+
+.cyclographWrap{
+
+  position:relative;
+
+  width:100%;
+
+  height:680px;
+
+  overflow:hidden;
+
+  border-radius:18px;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(0,255,136,.06),
+      #020617 75%
+    );
+
+  border:1px solid #1e293b;
+}
+
+#cyclographSvg{
+
+  width:100%;
+
+  height:100%;
+}
+
+/*
+==================================================
+TACTICAL FEED
+==================================================
+*/
+
+.cyclographSidebar{
+
+  min-height:760px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #0f172a,
+      #020617
+    );
+}
+
+#cyclographFeed{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:14px;
+
+  margin-top:18px;
+
+  max-height:680px;
+
+  overflow-y:auto;
+}
+
+.feedItem{
+
+  position:relative;
+
+  padding:16px;
+
+  border-radius:16px;
+
+  background:#111827;
+
+  border:1px solid #1f2937;
+
+  overflow:hidden;
+
+  transition:.25s;
+}
+
+.feedItem:hover{
+
+  transform:translateY(-2px);
+
+  border-color:#00c2ff;
+}
+
+.feedItem::before{
+
+  content:"";
+
+  position:absolute;
+
+  left:0;
+  top:0;
+  bottom:0;
+
+  width:4px;
+
+  background:#00ff88;
+}
+
+.feedItem.anomaly::before{
+
+  background:#ef4444;
+}
+
+.feedItem h3{
+
+  margin:0 0 8px;
+
+  color:#00ff88;
+
+  font-size:15px;
+}
+
+.feedItem p{
+
+  margin:4px 0;
+
+  color:#cbd5e1;
+
+  font-size:13px;
+}
+
+.feedItem span{
+
+  display:block;
+
+  margin-top:10px;
+
+  color:#64748b;
+
+  font-size:12px;
+}
+
+/*
+==================================================
+RADAR EFFECTS
+==================================================
+*/
+
+.radarSweep{
+
+  transform-origin:center;
+
+  animation:
+    radarRotate 5s linear infinite;
+}
+
+@keyframes radarRotate{
+
+  from{
+    transform:rotate(0deg);
+  }
+
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+.radarPulse{
+
+  animation:
+    radarPulseAnim 2s infinite;
+}
+
+@keyframes radarPulseAnim{
+
+  0%{
+    opacity:.2;
+    transform:scale(.95);
+  }
+
+  50%{
+    opacity:1;
+    transform:scale(1.05);
+  }
+
+  100%{
+    opacity:.2;
+    transform:scale(.95);
+  }
+}
+
+/*
+==================================================
+RESPONSIVE
+==================================================
+*/
+
+@media(max-width:1200px){
+
+  .cyclographLayout{
+
+    grid-template-columns:1fr;
+  }
+
+  .cyclographSidebar{
+
+    min-height:auto;
+  }
+}
+.cycloArc{
+
+  fill:none;
+
+  stroke:#00c2ff;
+
+  stroke-width:2;
+
+  opacity:.45;
+}
+
+.cycloMiniLabel{
+
+  fill:#cbd5e1;
+
+  font-size:11px;
+
+  letter-spacing:1px;
+}
+
+.radarSweep{
+
+  stroke:#00ff88;
+
+  stroke-width:4;
+
+  opacity:.7;
+
+  filter:
+    drop-shadow(0 0 14px #00ff88);
+}
+.cycloTrail{
+
+  stroke:#00ff88;
+
+  stroke-width:4;
+
+  opacity:.7;
+
+  filter:
+    drop-shadow(
+      0 0 12px #00ff88
+    );
+}
+
+.cycloRadarRing{
+
+  fill:none;
+
+  stroke:
+    rgba(255,255,255,.08);
+
+  stroke-width:2;
+}
+
+.cycloHub{
+
+  fill:#02152b;
+
+  stroke:#00c2ff;
+
+  stroke-width:6;
+
+  filter:
+    drop-shadow(
+      0 0 26px #00c2ff
+    );
+}
+
+.cycloHubText{
+
+  fill:white;
+
+  font-size:42px;
+
+  font-weight:700;
+
+  letter-spacing:2px;
+}
+
+.cycloNode{
+
+  fill:#02152b;
+
+  stroke:#00ff88;
+
+  stroke-width:4;
+
+  filter:
+    drop-shadow(
+      0 0 16px #00ff88
+    );
+
+  transition:.3s;
+}
+
+.cycloNode.anomaly{
+
+  stroke:#ef4444;
+
+  filter:
+    drop-shadow(
+      0 0 18px #ef4444
+    );
+}
+
+.cycloTooltip{
+
+  position:fixed;
+
+  z-index:9999;
+
+  pointer-events:none;
+
+  opacity:0;
+
+  padding:16px;
+
+  border-radius:16px;
+
+  background:#020617;
+
+  border:1px solid #00c2ff;
+
+  color:white;
+
+  min-width:180px;
+
+  transition:.15s;
+
+  box-shadow:
+    0 0 24px rgba(0,194,255,.25);
+}
+/*
+==================================================
+HMI LIVE GRID
+==================================================
+*/
+
+.hmiCanvas{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(auto-fit,minmax(500px,1fr));
+
+  gap:20px;
+
+  align-items:start;
+
+  width:100%;
+}
+
+.hmiTile{
+
+  position:relative;
+
+  padding:18px;
+
+  border-radius:18px;
+
+  background:#0f172a;
+
+  border:1px solid #1e293b;
+
+  overflow:hidden;
+
+  transition:.25s;
+}
+
+.hmiTile.active{
+
+  border-color:#00ff88;
+
+  transform:translateY(-4px);
+
+  box-shadow:
+    0 0 24px rgba(0,255,136,.25);
+}
+
+.tileHeader{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:12px;
+
+  margin-bottom:18px;
+}
+
+.tileDot{
+
+  width:14px;
+
+  height:14px;
+
+  border-radius:50%;
+
+  background:#00ff88;
+
+  box-shadow:
+    0 0 16px #00ff88;
+}
+
+.tileName{
+
+  margin:0;
+
+  color:white;
+
+  font-size:15px;
+}
+
+.tileValue{
+
+  font-size:28px;
+
+  font-weight:700;
+
+  color:#00c2ff;
+
+  margin-bottom:12px;
+
+  word-break:break-word;
+}
+
+.tileMeta{
+
+  color:#94a3b8;
+
+  font-size:12px;
+}
+.transitionPulse{
+
+  stroke:#00c2ff;
+
+  stroke-width:3;
+
+  opacity:.8;
+
+  filter:
+    drop-shadow(
+      0 0 12px #00c2ff
+    );
+
+  animation:
+    transitionFade 1.4s linear;
+}
+
+@keyframes transitionFade{
+
+  from{
+
+    opacity:1;
+  }
+
+  to{
+
+    opacity:0;
+  }
+}
+/*
+==================================================
+DEVICE DIGITAL TWIN
+==================================================
+*/
+
+.devicePanel{
+
+  position:relative;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(15,23,42,.98),
+      rgba(2,6,23,.98)
+    );
+
+  border-radius:20px;
+
+  overflow:hidden;
+
+  border:
+    1px solid rgba(0,255,180,.15);
+
+  box-shadow:
+    0 0 30px rgba(0,255,180,.08);
+
+  padding:18px;
+min-height:unset;
+height:auto;
+
+  transition:.25s;
+
+  backdrop-filter:blur(12px);
+
+}
+.devicePanel::before{
+
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  background:
+    url("images/device-grid.png");
+
+  opacity:.04;
+
+  pointer-events:none;
+}
+
+.deviceTitle{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:14px;
+
+  margin-bottom:22px;
+}
+
+.deviceTitle h2{
+
+  margin:0;
+
+  min-width:0;
+
+  overflow-wrap:anywhere;
+}
+
+.deviceLive{
+
+  width:16px;
+
+  height:16px;
+
+  border-radius:50%;
+
+  background:#00ff88;
+
+  box-shadow:
+    0 0 18px #00ff88;
+}
+
+.devicePanel.warning .deviceLive,
+.devicePanel.offline .deviceLive{
+
+  background:#ef4444;
+
+  box-shadow:
+    0 0 18px rgba(239,68,68,.75);
+}
+
+.devicePanel.warning .deviceLive{
+
+  background:#f59e0b;
+
+  box-shadow:
+    0 0 18px rgba(245,158,11,.75);
+}
+
+.devicePowerBadge{
+
+  margin-left:auto;
+
+  min-width:56px;
+
+  padding:7px 12px;
+
+  border-radius:999px;
+
+  font-size:12px;
+
+  font-weight:800;
+
+  text-align:center;
+
+  letter-spacing:0;
+}
+
+.devicePowerBadge.on{
+
+  color:#052e1b;
+
+  background:#00ff88;
+
+  box-shadow:
+    0 0 18px rgba(0,255,136,.28);
+}
+
+.devicePowerBadge.off{
+
+  color:#fee2e2;
+
+  background:rgba(239,68,68,.2);
+
+  border:1px solid rgba(239,68,68,.55);
+}
+
+.deviceLastSeen{
+
+  margin-top:-10px;
+
+  margin-bottom:16px;
+
+  color:#94a3b8;
+
+  font-size:12px;
+}
+
+.deviceMulticast{
+
+  margin-top:-8px;
+
+  margin-bottom:16px;
+
+  color:#7dd3fc;
+
+  font-size:12px;
+}
+
+.deviceDetailPanel{
+
+  margin-top:18px;
+}
+
+.detailHeader{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:12px;
+
+  margin-bottom:14px;
+}
+
+.detailHeader h3{
+
+  margin:0;
+
+  font-size:16px;
+
+  color:#e5e7eb;
+}
+
+.detailHeader span{
+
+  color:#94a3b8;
+
+  font-size:12px;
+}
+
+.controlSection{
+
+  margin-top:16px;
+}
+
+.controlSection h3{
+
+  margin:0 0 10px;
+
+  color:#38bdf8;
+
+  font-size:13px;
+}
+
+.controlGrid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(170px, 1fr));
+
+  gap:14px;
+}
+
+.controlGrid.knobGrid{
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.controlTile,
+.hatTile{
+
+  min-height:60px;
+
+  padding:10px;
+
+  border-radius:8px;
+
+  background:rgba(2,6,23,.84);
+
+  border:1px solid rgba(148,163,184,.2);
+}
+
+.controlTile.pushButton,
+.controlTile.switch{
+
+  display:flex;
+
+  flex-direction:column;
+
+  justify-content:space-between;
+
+  min-height:108px;
+}
+
+.controlTile.led{
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+
+  text-align:center;
+
+  min-height:118px;
+}
+
+.controlTile.compact{
+
+  min-height:60px;
+}
+
+.controlTile.active{
+
+  border-color:#22c55e;
+
+  box-shadow:
+    0 0 14px rgba(34,197,94,.22);
+}
+
+.controlTile.inactive{
+
+  opacity:.72;
+}
+
+.controlName{
+
+  color:#e5e7eb;
+
+  font-size:12px;
+
+  font-weight:800;
+
+  overflow-wrap:anywhere;
+}
+
+.controlMeta{
+
+  margin-top:4px;
+
+  color:#94a3b8;
+
+  font-size:11px;
+}
+
+.controlTelemetry{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap:4px 8px;
+
+  width:100%;
+
+  margin-top:8px;
+
+  padding-top:8px;
+
+  border-top:1px solid rgba(148,163,184,.14);
+
+  color:#94a3b8;
+
+  font-size:10px;
+
+  line-height:1.25;
+}
+
+.controlHealth{
+
+  display:inline-flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  min-height:18px;
+
+  padding:2px 6px;
+
+  border-radius:4px;
+
+  font-size:10px;
+
+  font-weight:900;
+
+  letter-spacing:.04em;
+
+  border:1px solid rgba(148,163,184,.18);
+}
+
+.controlHealth.nominal{
+
+  color:#86efac;
+
+  background:rgba(34,197,94,.12);
+
+  border-color:rgba(34,197,94,.34);
+}
+
+.controlHealth.delayed{
+
+  color:#fde68a;
+
+  background:rgba(234,179,8,.12);
+
+  border-color:rgba(234,179,8,.34);
+}
+
+.controlHealth.stale{
+
+  color:#fecaca;
+
+  background:rgba(239,68,68,.12);
+
+  border-color:rgba(239,68,68,.34);
+}
+
+.controlValue{
+
+  margin-top:8px;
+
+  color:#22d3ee;
+
+  font-size:18px;
+
+  font-weight:900;
+}
+
+.pushButtonFace{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  min-height:42px;
+
+  margin-top:10px;
+
+  border-radius:8px;
+
+  border:2px solid rgba(255,255,255,.18);
+
+  background:linear-gradient(#7f1d1d, #450a0a);
+
+  box-shadow:
+    inset 0 3px 0 rgba(255,255,255,.16),
+    inset 0 -5px 10px rgba(0,0,0,.35),
+    0 6px 12px rgba(0,0,0,.28);
+
+  color:#fee2e2;
+
+  font-size:13px;
+
+  font-weight:900;
+}
+
+.controlTile.active .pushButtonFace{
+
+  background:linear-gradient(#22c55e, #15803d);
+
+  color:#052e1b;
+
+  border-color:rgba(187,247,208,.72);
+
+  box-shadow:
+    inset 0 3px 0 rgba(255,255,255,.24),
+    inset 0 -5px 10px rgba(0,0,0,.24),
+    0 0 18px rgba(34,197,94,.38);
+}
+
+.ledLamp{
+
+  width:38px;
+
+  height:38px;
+
+  margin-top:12px;
+
+  border-radius:50%;
+
+  background:#7f1d1d;
+
+  border:2px solid #fecaca;
+
+  box-shadow:
+    inset 0 4px 7px rgba(255,255,255,.18),
+    inset 0 -8px 12px rgba(0,0,0,.38),
+    0 0 14px rgba(239,68,68,.38);
+}
+
+.controlTile.active .ledLamp{
+
+  background:#22c55e;
+
+  border-color:#bbf7d0;
+
+  box-shadow:
+    inset 0 4px 7px rgba(255,255,255,.24),
+    inset 0 -8px 12px rgba(0,0,0,.22),
+    0 0 20px rgba(34,197,94,.55);
+}
+
+.controlStateText{
+
+  margin-top:8px;
+
+  font-size:12px;
+
+  font-weight:900;
+
+  color:#fee2e2;
+}
+
+.controlTile.active .controlStateText{
+
+  color:#86efac;
+}
+
+.knobDial{
+
+  position:relative;
+
+  width:46px;
+
+  height:46px;
+
+  margin:10px auto 0;
+
+  border-radius:50%;
+
+  background:radial-gradient(circle at 35% 30%, #64748b, #0f172a 65%);
+
+  border:2px solid rgba(148,163,184,.5);
+}
+
+.knobDial span{
+
+  position:absolute;
+
+  top:6px;
+
+  left:50%;
+
+  width:3px;
+
+  height:16px;
+
+  border-radius:999px;
+
+  background:#e5e7eb;
+
+  transform-origin:50% 17px;
+
+  transform:translateX(-50%) rotate(-45deg);
+}
+
+.knobDial.active span{
+
+  transform:translateX(-50%) rotate(45deg);
+
+  background:#86efac;
+}
+
+.joystickConnected{
+
+  display:inline-flex;
+
+  padding:7px 10px;
+
+  border-radius:999px;
+
+  font-size:12px;
+
+  font-weight:900;
+}
+
+.joystickConnected.active{
+
+  color:#052e1b;
+
+  background:#22c55e;
+}
+
+.joystickConnected.inactive{
+
+  color:#fee2e2;
+
+  background:rgba(239,68,68,.2);
+
+  border:1px solid rgba(239,68,68,.5);
+}
+
+.axisRow{
+
+  display:grid;
+
+  grid-template-columns:88px minmax(120px, 1fr) 56px;
+
+  align-items:center;
+
+  gap:10px;
+
+  margin:8px 0;
+
+  color:#cbd5e1;
+
+  font-size:12px;
+}
+
+.axisTrack{
+
+  position:relative;
+
+  height:16px;
+
+  border-radius:999px;
+
+  background:#020617;
+
+  border:1px solid rgba(148,163,184,.25);
+
+  overflow:hidden;
+}
+
+.axisFill{
+
+  position:absolute;
+
+  top:0;
+
+  bottom:0;
+
+  background:#22c55e;
+}
+
+.axisFill.negative{
+
+  background:#f59e0b;
+}
+
+.axisCenter{
+
+  position:absolute;
+
+  top:-2px;
+
+  bottom:-2px;
+
+  left:50%;
+
+  width:1px;
+
+  background:#94a3b8;
+}
+
+.hatValue{
+
+  margin-top:10px;
+
+  color:#22d3ee;
+
+  font-weight:900;
+}
+
+.hmiPowerSummary{
+
+  display:flex;
+
+  gap:10px;
+
+  flex-wrap:wrap;
+
+  justify-content:flex-end;
+}
+
+.hmiPowerSummary span{
+
+  min-width:72px;
+
+  padding:8px 12px;
+
+  border-radius:999px;
+
+  font-size:12px;
+
+  font-weight:800;
+
+  text-align:center;
+}
+
+.summaryOn{
+
+  color:#052e1b;
+
+  background:#00ff88;
+}
+
+.summaryOff{
+
+  color:#fee2e2;
+
+  background:rgba(239,68,68,.18);
+
+  border:1px solid rgba(239,68,68,.5);
+}
+
+.hmiButton.active{
+
+  border-color:#00ff88;
+
+  box-shadow:
+    0 0 22px rgba(0,255,136,.35);
+}
+
+.hmiButton.inactive{
+
+  border-color:#ef4444;
+
+  opacity:.75;
+}
+
+.hmiButton.pulse{
+
+  transform:scale(1.05);
+}
+
+.hmiBtnName{
+
+  font-size:14px;
+
+  color:#cbd5e1;
+
+  margin-bottom:12px;
+
+  word-break:break-word;
+}
+
+.hmiBtnValue{
+
+  font-size:30px;
+
+  font-weight:700;
+
+  color:white;
+
+  margin-bottom:10px;
+}
+
+.hmiBtnMeta{
+
+  font-size:11px;
+
+  color:#94a3b8;
+}
+.hmiHeader{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  padding-bottom:12px;
+
+  border-bottom:
+    1px solid rgba(255,255,255,.06);
+}
+/*
+==================================================
+CYCLOGRAPH DETAILS
+==================================================
+*/
+
+.cyclographDetails{
+
+  padding:18px;
+
+  border-radius:18px;
+
+  background:#020617;
+
+  border:1px solid #1e293b;
+
+  margin-bottom:20px;
+}
+
+.cyclographDetails h3{
+
+  margin:0 0 14px;
+
+  color:#00c2ff;
+}
+
+.cyclographDetails p{
+
+  margin:8px 0;
+
+  color:#cbd5e1;
+
+  font-size:13px;
+}
+
+.deviceButtons{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,1fr);
+
+  gap:8px;
+
+  margin-top:12px;
+}
+
+.hmiButton {
+
+  background: rgba(255,255,255,.04);
+
+  border: 1px solid rgba(255,255,255,.06);
+
+  border-radius: 14px;
+
+  padding: 12px;
+
+  transition: .3s;
+
+  min-height: 90px;
+}
+
+.hmiButton.active {
+
+  border-color:#ff3b30;
+
+  box-shadow:
+    0 0 15px rgba(0,255,157,.35);
+}
+.hmiButton.inactive {
+
+  opacity: .55;
+}
+
+.hmiBtnName {
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  margin-bottom: 8px;
+
+  color: #fff;
+}
+
+.hmiBtnValue {
+
+  font-size: 22px;
+
+  font-weight: 800;
+
+  color: #00e5ff;
+}
+
+.hmiBtnMeta {
+
+  margin-top: 10px;
+
+  font-size: 11px;
+
+  opacity: .7;
+}
+.configContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.configSection {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.configSection h3 {
+  margin-bottom: 10px;
+  color: #00e5ff;
+}
+.topologyLabel {
+
+  fill: #00e5ff;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  text-anchor: middle;
+
+  filter:
+    drop-shadow(
+      0 0 6px rgba(0,229,255,0.8)
+    );
+}
+.topology-node.activeFlow {
+
+  box-shadow:
+    0 0 30px rgba(0,255,180,0.9);
+
+  transform: scale(1.03);
+}
+
+.link-online {
+
+  filter:
+    drop-shadow(
+      0 0 12px rgba(0,255,200,0.8)
+    );
+}
+.logModal {
+
+  position: fixed;
+
+  inset: 0;
+
+  background: rgba(0,0,0,0.85);
+
+  z-index: 99999;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+}
+
+.logContent {
+
+  width: 90%;
+
+  height: 85%;
+
+  background: #111;
+
+  color: white;
+
+  border-radius: 10px;
+
+  overflow: auto;
+
+  padding: 20px;
+
+  border: 1px solid #333;
+}
+
+.logHeader {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 20px;
+}
+
+.logHeader button {
+
+  background: red;
+
+  color: white;
+
+  border: none;
+
+  padding: 10px 20px;
+
+  cursor: pointer;
+}
+
+.logTable {
+
+  width: 100%;
+
+  border-collapse: collapse;
+}
+
+.logTable th,
+.logTable td {
+
+  border: 1px solid #333;
+
+  padding: 10px;
+
+  text-align: center;
+}
+
+.logTable th {
+
+  background: #222;
+}
+.analyticsGrid {
+
+  display: grid;
+
+  grid-template-columns:
+    1fr 2fr;
+
+  gap: 20px;
+
+  margin-top: 20px;
+  width:100%;
+
+}
+
+.analyticsCard {
+
+  min-height: 420px;
+
+  padding: 20px;
+}
+
+#trendChart {
+
+  width: 100% !important;
+
+  height: 360px !important;
+}
+#cyclographCanvas {
+
+  width: 100% !important;
+
+  height: 380px !important;
+
+  display: block;
+
+  border-radius: 12px;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(0,255,180,0.08),
+      rgba(0,0,0,0.95)
+    );
+
+  box-shadow:
+    inset 0 0 40px rgba(0,255,180,0.08);
+}
+.imuGrid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(180px,1fr));
+
+  gap: 14px;
+
+  margin-top: 16px;
+}
+
+.imuInstrument {
+
+  background:
+    rgba(0,255,180,0.06);
+
+  border:
+    1px solid rgba(0,255,180,0.12);
+
+  border-radius: 12px;
+
+  padding: 10px;
+
+  text-align: center;
+
+  box-shadow:
+    inset 0 0 14px rgba(0,255,180,0.05);
+}
+
+.imuLabel {
+
+  font-size: 12px;
+
+  letter-spacing: 1px;
+
+  opacity: 0.7;
+
+  margin-bottom: 10px;
+}
+
+.imuValue {
+
+  font-size: 28px;
+
+  font-weight: 700;
+
+  color: #00ffb4;
+}
+
+.imuValue.small {
+
+  font-size: 16px;
+
+  line-height: 1.6;
+}
+.cceGrid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(180px,1fr));
+
+  gap: 16px;
+
+  margin-top: 16px;
+}
+
+.cceCard {
+
+  background:
+    rgba(0,255,180,0.05);
+
+  border:
+    1px solid rgba(0,255,180,0.12);
+
+  border-radius: 12px;
+
+  padding: 18px;
+
+  text-align: center;
+
+  box-shadow:
+    inset 0 0 12px rgba(0,255,180,0.05);
+}
+
+.cceLabel {
+
+  font-size: 12px;
+
+  opacity: 0.7;
+
+  letter-spacing: 1px;
+
+  margin-bottom: 12px;
+}
+
+.cceStatus {
+
+  font-size: 20px;
+
+  font-weight: 700;
+
+  color: #d7e7ff;
+}
+
+.cceStatus.ok {
+
+  color: #00ffb4;
+}
+
+.cceStatus.warn {
+
+  color: #ffcc00;
+}
+
+.cceStatus.danger {
+
+  color: #ff4d4d;
+}
+.joystickVectorWrapper {
+
+  display: flex;
+
+  justify-content: center;
+
+  margin-bottom: 20px;
+}
+
+#joystickVectorCanvas {
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(0,255,180,0.08),
+      rgba(0,0,0,0.95)
+    );
+
+  box-shadow:
+    inset 0 0 20px rgba(0,255,180,0.08);
+}
+
+.imuHorizonWrapper {
+
+  display: flex;
+
+  justify-content: center;
+
+  width:100%;
+
+  margin-bottom: 20px;
+}
+
+#imuHorizonCanvas {
+
+  display:block;
+
+  width:100%;
+
+  max-width:760px;
+
+  height:auto;
+
+  border-radius: 12px;
+
+  background: #081018;
+
+  border:
+    1px solid rgba(0,255,180,0.12);
+}
+
+.visualTitle{
+  color:#7dd3fc;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:1.2px;
+  text-align:center
+}
+.navigationVisualGrid{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:14px;margin:0 0 18px}
+.headingCompass,.positionDisplay,.altitudeDisplay,.panTiltVisualizer,.trackScope,.ioRackVisualization{position:relative;overflow:hidden;border:1px solid rgba(56,189,248,.22);border-radius:14px;background:radial-gradient(circle at 50% 40%,rgba(14,116,144,.16),rgba(2,6,23,.92));box-shadow:inset 0 0 24px rgba(14,165,233,.06)}
+.headingCompass,.positionDisplay,.altitudeDisplay{min-height:190px;padding:12px}
+.compassRose{position:relative;width:118px;height:118px;margin:12px auto 5px;border:2px solid #38bdf8;border-radius:50%;background:repeating-conic-gradient(from 0deg,rgba(125,211,252,.55) 0 1deg,transparent 1deg 15deg);transition:transform .25s ease}
+.compassRose span{position:absolute;color:#cbd5e1;font-size:11px;font-weight:800}.compassN{top:5px;left:53px;color:#f87171!important}.compassE{right:7px;top:50px}.compassS{bottom:5px;left:54px}.compassW{left:7px;top:50px}
+.headingPointer{position:absolute;top:37px;left:50%;z-index:2;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:22px solid #facc15;transform:translateX(-50%)}
+.headingCompass strong,.altitudeDisplay strong{display:block;color:#facc15;text-align:center;font-size:18px}
+.positionReticle{position:relative;width:120px;height:120px;margin:12px auto 6px;border:1px solid rgba(56,189,248,.35);border-radius:50%;background:linear-gradient(90deg,transparent 49.5%,rgba(56,189,248,.22) 50%,transparent 50.5%),linear-gradient(transparent 49.5%,rgba(56,189,248,.22) 50%,transparent 50.5%),repeating-radial-gradient(circle,transparent 0 18px,rgba(56,189,248,.15) 19px 20px)}
+.positionReticle span{position:absolute;left:50%;top:50%;width:12px;height:12px;border:2px solid #22c55e;border-radius:50%;box-shadow:0 0 12px #22c55e;transform:translate(-50%,-50%)}
+.coordinateReadout{display:flex;flex-direction:column;gap:3px;color:#e2e8f0;text-align:center;font:700 12px monospace}
+.altitudeTape{position:relative;width:46px;height:124px;margin:12px auto 8px;border:1px solid rgba(125,211,252,.5);background:repeating-linear-gradient(to top,transparent 0 11px,rgba(125,211,252,.25) 12px)}
+.altitudeFill{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(14,165,233,.65),rgba(34,197,94,.45))}.altitudeMarker{position:absolute;left:-8px;width:62px;border-top:3px solid #facc15}
+.panTiltVisualizer{padding:12px;margin:0 0 18px}.panTiltStages{display:flex;justify-content:center;align-items:center;gap:38px;min-height:165px}
+.panDial{position:relative;width:135px;height:135px;border:2px solid #38bdf8;border-radius:50%;background:repeating-conic-gradient(rgba(56,189,248,.42) 0 1deg,transparent 1deg 15deg)}
+.dialCardinal{position:absolute;color:#94a3b8;font-size:10px;font-weight:800}.dialCardinal.north{top:5px;left:62px;color:#f87171}.dialCardinal.east{right:7px;top:61px}.dialCardinal.south{bottom:5px;left:62px}.dialCardinal.west{left:7px;top:61px}
+.panNeedle{position:absolute;left:65px;top:15px;width:4px;height:53px;background:linear-gradient(#facc15,#38bdf8);transform-origin:2px 53px;transition:transform .25s ease}.dialHub{position:absolute;left:59px;top:59px;width:14px;height:14px;border-radius:50%;background:#facc15;box-shadow:0 0 12px #facc15}
+.tiltScale{position:relative;width:72px;height:135px}.tiltTrack{position:absolute;left:34px;top:14px;width:4px;height:106px;background:linear-gradient(#38bdf8,#64748b,#38bdf8)}.tiltMarker{position:absolute;left:22px;width:28px;height:5px;border-radius:3px;background:#facc15;box-shadow:0 0 8px #facc15;transition:top .25s ease}.tiltLabel{position:absolute;right:42px;color:#94a3b8;font-size:9px}.tiltLabel.top{top:8px}.tiltLabel.middle{top:63px}.tiltLabel.bottom{bottom:8px}.visualReadout{display:flex;justify-content:center;gap:28px;color:#e2e8f0;font:700 12px monospace}
+.trackScope{padding:12px;margin:0 0 18px}.scopeFace{position:relative;width:180px;height:180px;margin:12px auto;border:2px solid #38bdf8;border-radius:50%;background:repeating-radial-gradient(circle,transparent 0 28px,rgba(56,189,248,.22) 29px 30px),linear-gradient(90deg,transparent 49.5%,rgba(56,189,248,.2) 50%,transparent 50.5%),linear-gradient(transparent 49.5%,rgba(56,189,248,.2) 50%,transparent 50.5%)}
+.scopeFace>span{position:absolute;color:#94a3b8;font-size:10px;font-weight:800}.scopeNorth{top:4px;left:85px;color:#f87171!important}.scopeEast{right:5px;top:84px}.scopeSouth{bottom:4px;left:85px}.scopeWest{left:5px;top:84px}.scopeSweep{position:absolute;left:88px;top:10px;width:3px;height:80px;background:linear-gradient(#22c55e,transparent);transform-origin:2px 80px}.scopeTarget{position:absolute;width:12px;height:12px;border:2px solid #facc15;border-radius:50%;box-shadow:0 0 12px #facc15;transform:translate(-50%,-50%)}
+.ioRackVisualization{padding:14px;margin:0 0 18px}.ioRackRow{display:grid;grid-template-columns:70px repeat(8,minmax(36px,1fr));gap:7px;align-items:center;margin-top:12px;color:#94a3b8;font-size:10px;font-weight:800}.ioChannel{display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 3px;border:1px solid rgba(100,116,139,.25);border-radius:6px;background:#07101d}.ioChannel i{width:13px;height:13px;border-radius:50%;background:#334155;box-shadow:inset 0 0 4px #020617}.ioChannel.on i{background:#22c55e;box-shadow:0 0 10px #22c55e}.ioChannel.output.on i{background:#38bdf8;box-shadow:0 0 10px #38bdf8}.ioChannel b{color:#cbd5e1;font-size:9px}
+@media (max-width:760px){.ioRackRow{grid-template-columns:55px repeat(4,1fr)}.panTiltStages{gap:16px}}
+
+/* High-contrast IMU GPS instrument */
+.navigationVisualGrid{grid-template-columns:minmax(160px,.85fr) minmax(260px,1.35fr) minmax(150px,.8fr)}
+.gpsPositionDisplay{min-height:310px;padding:18px 22px;border-color:rgba(56,189,248,.42);background:radial-gradient(circle at 50% 45%,rgba(8,47,73,.48),rgba(2,8,23,.98) 68%)}
+.gpsHeader{display:flex;align-items:center;justify-content:space-between;gap:12px}.gpsHeader .visualTitle{font-size:15px;letter-spacing:2px}
+.gpsFix{display:flex;align-items:center;gap:6px;color:#4ade80;font:800 10px monospace;letter-spacing:1px}.gpsFix i{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 9px #22c55e}
+.gpsPositionDisplay .positionReticle{width:min(210px,90%);aspect-ratio:1;height:auto;margin:20px auto 16px;border:2px solid rgba(56,189,248,.72);background:linear-gradient(90deg,transparent 49.65%,rgba(56,189,248,.45) 50%,transparent 50.35%),linear-gradient(transparent 49.65%,rgba(56,189,248,.45) 50%,transparent 50.35%),repeating-radial-gradient(circle,transparent 0 31px,rgba(56,189,248,.42) 32px 34px)}
+.gpsPositionDisplay .gpsPulse{position:absolute;left:50%;top:50%;width:42px;height:42px;border:1px solid rgba(34,197,94,.65);border-radius:50%;transform:translate(-50%,-50%);animation:gpsPulse 1.8s ease-out infinite}
+.gpsTarget{position:absolute;left:50%;top:50%;width:18px;height:18px;border:4px solid #22c55e;border-radius:50%;box-shadow:0 0 16px rgba(34,197,94,.9),inset 0 0 8px rgba(34,197,94,.6);transform:translate(-50%,-50%)}
+.gpsPositionDisplay .coordinateReadout{gap:8px;color:#f8fafc;font:800 clamp(15px,1.7vw,20px) monospace;letter-spacing:.4px;text-shadow:0 0 10px rgba(125,211,252,.18)}
+.coordinateLine{display:grid;grid-template-columns:38px 1fr;align-items:center;text-align:left}.coordinateLine>span{color:#7dd3fc;font-size:10px;letter-spacing:1px}.coordinateLine strong{color:#f8fafc;white-space:nowrap}
+@keyframes gpsPulse{0%{width:18px;height:18px;opacity:1}100%{width:82px;height:82px;opacity:0}}
+
+/* Perspective PTZ camera driven by live pan and tilt */
+.ptzCameraVisualizer{overflow:hidden;margin:0 0 18px;padding:14px 16px;border:1px solid rgba(56,189,248,.3);border-radius:16px;background:radial-gradient(circle at 50% 38%,rgba(14,116,144,.22),rgba(2,6,23,.98) 68%);box-shadow:inset 0 0 35px rgba(14,165,233,.08)}
+.ptzVisualHeader{display:flex;align-items:center;justify-content:space-between;color:#7dd3fc;font-size:12px;font-weight:900;letter-spacing:1.5px}.ptzVisualHeader b{display:flex;align-items:center;gap:7px;color:#4ade80;font:800 10px monospace}.ptzVisualHeader i{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e}
+.ptzScene{position:relative;height:285px;margin:4px auto 8px;perspective:760px;perspective-origin:50% 42%;transform-style:preserve-3d}
+.ptzFloor{position:absolute;left:50%;bottom:6px;width:330px;height:130px;border-radius:50%;background:repeating-radial-gradient(ellipse,transparent 0 27px,rgba(56,189,248,.12) 28px 29px),linear-gradient(90deg,transparent 49.7%,rgba(56,189,248,.18) 50%,transparent 50.3%);transform:translateX(-50%) rotateX(68deg);box-shadow:0 25px 45px rgba(0,0,0,.65)}
+.ptzRig{position:absolute;left:50%;top:32px;width:220px;height:230px;margin-left:-110px;transform-style:preserve-3d;transform-origin:50% 76%;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.ptzBaseFoot{position:absolute;left:47px;bottom:6px;width:126px;height:27px;border-radius:50%;background:linear-gradient(180deg,#64748b,#111827 58%,#020617);border:1px solid #64748b;box-shadow:0 13px 25px rgba(0,0,0,.7)}
+.ptzBase{position:absolute;left:62px;bottom:18px;width:96px;height:55px;border-radius:42% 42% 22% 22%;background:linear-gradient(90deg,#0f172a,#64748b 48%,#1e293b 72%,#020617);border:1px solid #64748b;box-shadow:inset 0 8px 14px rgba(255,255,255,.08)}
+.ptzNeck{position:absolute;left:91px;bottom:65px;width:38px;height:38px;border-radius:8px;background:linear-gradient(90deg,#111827,#94a3b8 50%,#1e293b);border:1px solid #64748b}
+.ptzYoke{position:absolute;left:39px;top:44px;width:142px;height:126px;border:13px solid #334155;border-top:0;border-radius:12px 12px 45px 45px;box-shadow:inset 0 0 8px #020617,0 8px 14px rgba(0,0,0,.4)}
+.ptzArm{position:absolute;top:47px;width:13px;height:34px;border-radius:5px;background:#94a3b8}.ptzArm.left{left:2px}.ptzArm.right{right:2px}
+.ptzTiltHead{position:absolute;left:47px;top:42px;width:126px;height:100px;transform-style:preserve-3d;transform-origin:50% 58%;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.ptzCameraBody{position:absolute;inset:8px 4px 3px;border-radius:15px 15px 22px 22px;background:linear-gradient(115deg,#cbd5e1 0,#475569 35%,#0f172a 75%,#020617);border:1px solid #94a3b8;box-shadow:inset 7px 7px 12px rgba(255,255,255,.1),0 12px 22px rgba(0,0,0,.55);transform:translateZ(18px)}
+.ptzSunShield{position:absolute;left:10px;right:10px;top:-10px;height:22px;border-radius:12px 12px 4px 4px;background:linear-gradient(#64748b,#1e293b);border-top:1px solid #cbd5e1}
+.ptzLens{position:absolute;left:50%;top:51%;width:62px;height:62px;border-radius:50%;background:radial-gradient(circle at 42% 38%,#38bdf8 0 4%,#082f49 10%,#020617 35%,#334155 38%,#020617 58%,#94a3b8 61%,#111827 72%);border:3px solid #0f172a;box-shadow:0 0 18px rgba(56,189,248,.35),inset 0 0 10px #000;transform:translate(-50%,-50%)}
+.ptzLens span{position:absolute;left:18px;top:13px;width:12px;height:8px;border-radius:50%;background:rgba(186,230,253,.7);filter:blur(1px)}.ptzStatusLed{position:absolute;right:14px;bottom:11px;width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e}
+.ptzAimLine{position:absolute;left:50%;top:72px;width:180px;height:1px;transform-origin:0 50%;background:linear-gradient(90deg,rgba(34,197,94,.8),transparent);opacity:.35;transition:transform .45s ease}
+.ptzTelemetryReadout{display:grid;grid-template-columns:repeat(2,minmax(100px,160px));justify-content:center;gap:12px}.ptzTelemetryReadout div{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border:1px solid rgba(56,189,248,.2);border-radius:8px;background:rgba(2,6,23,.72)}.ptzTelemetryReadout span{color:#94a3b8;font:800 10px monospace}.ptzTelemetryReadout strong{color:#f8fafc;font:800 16px monospace}
+@media (max-width:760px){.navigationVisualGrid{grid-template-columns:1fr}.ptzScene{height:260px;transform:scale(.9);margin:-4px -20px}.gpsPositionDisplay{min-height:300px}}
+
+.analyticsGridLarge{
+
+  grid-template-columns:
+    35% 65%;
+
+  display:grid;
+  gap: 18px;
+  min-height: 520px;
+}
+.chartContainer{
+    height:500px;
+    width:100%;
+}
+.missionBanner{
+
+  padding:14px;
+
+  margin-bottom:18px;
+
+  border-radius:14px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0,255,180,.18),
+      rgba(0,194,255,.12)
+    );
+
+  border:
+    1px solid rgba(0,255,180,.3);
+
+  font-weight:700;
+
+  color:#00ffb4;
+
+  text-align:center;
+
+  letter-spacing:1px;
+}
+
+.missionToolbar{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  gap:12px;
+
+  margin-bottom:12px;
+
+  padding:10px 12px;
+
+  border:1px solid rgba(0,217,255,.12);
+
+  border-radius:8px;
+
+  background:rgba(2,6,23,.72);
+}
+
+.missionToolbar label{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  color:#94a3b8;
+
+  font-size:12px;
+
+  font-weight:700;
+
+  text-transform:uppercase;
+}
+
+.missionToolbar select{
+
+  min-width:180px;
+
+  border-radius:6px;
+}
+
+.hmiStatus{
+
+  min-width:150px;
+
+  text-align:right;
+}
+
+.hmiPowerSummary{
+
+  display:flex;
+
+  justify-content:flex-end;
+
+  gap:8px;
+
+  flex-wrap:wrap;
+
+  color:#cbd5e1;
+
+  font-size:12px;
+
+  font-weight:700;
+}
+
+.summaryOn,
+.summaryOff{
+
+  display:inline-flex;
+
+  align-items:center;
+
+  min-height:28px;
+
+  padding:5px 10px;
+
+  border-radius:999px;
+}
+
+.summaryOn{
+
+  color:#22c55e;
+
+  background:rgba(34,197,94,.12);
+}
+
+.summaryOff{
+
+  color:#f59e0b;
+
+  background:rgba(245,158,11,.12);
+}
+
+.telemetryGrid .card{
+padding:20px;
+}
+.telemetryGrid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(auto-fit,minmax(450px,1fr));
+
+  gap:20px;
+
+  margin-top:20px;
+}
+
+.telemetryCard{
+
+  min-height:420px;
+
+  padding:20px;
+
+  border-radius:20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(15,23,42,.95),
+      rgba(2,6,23,.95)
+    );
+
+  border:
+    1px solid rgba(0,255,180,.12);
+
+  box-shadow:
+    0 0 25px rgba(0,255,180,.05);
+}
+
+.telemetryCard h3{
+
+  margin-bottom:16px;
+
+  color:#fff;
+
+  font-size:1.1rem;
+}
+
+.telemetryCard canvas{
+
+  width:100% !important;
+
+  height:320px !important;
+}
+.joystickSvgWrapper{
+
+  width:100%;
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+  padding:20px 0;
+}
+
+.joystickSvg{
+
+  width:320px;
+
+  height:320px;
+
+  filter:
+    drop-shadow(
+      0 0 20px rgba(0,255,180,.35)
+    );
+}
+.devicePanel.imu{
+ background:
+ linear-gradient(rgba(0,0,0,.8),
+ rgba(0,0,0,.8)),
+ url("images/imu-bg.jpg");
+}
+
+.devicePanel.camera{
+ background:
+ linear-gradient(rgba(0,0,0,.8),
+ rgba(0,0,0,.8)),
+ url("images/camera-bg.jpg");
+}
+
+.devicePanel.joystick{
+ background:
+ linear-gradient(rgba(0,0,0,.8),
+ rgba(0,0,0,.8)),
+ url("images/joystick-bg.jpg");
+}
+
+.devicePanel.drive{
+ background:
+ linear-gradient(rgba(0,0,0,.8),
+ rgba(0,0,0,.8)),
+ url("images/radar-grid.jpg");
+}
+.hmiKpiBar{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(180px,1fr));
+
+  gap:18px;
+
+  width:100%;
+
+  margin-bottom:20px;
+}
+.kpiCard{
+
+    background:
+      linear-gradient(
+        145deg,
+        rgba(15,23,42,.95),
+        rgba(2,6,23,.95)
+      );
+
+    border:
+      1px solid rgba(0,255,180,.15);
+
+    border-radius:18px;
+
+    padding:20px;
+
+    text-align:center;
+
+    position:relative;
+
+    overflow:hidden;
+}
+.kpiCard::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:3px;
+
+    background:
+      linear-gradient(
+        90deg,
+        #00ff88,
+        #00d9ff
+      );
+}
+.kpiCard h2{
+
+    margin:10px 0 0;
+
+    color:#00d9ff;
+
+    font-size:34px;
+}
+@media(max-width:900px){
+
+  .hmiKpiBar{
+
+    grid-template-columns:
+      repeat(2,1fr);
+  }
+
+}
+.chartContainer {
+
+  position: relative;
+
+  height: 450px;
+
+  width: 100%;
+
+}
+
+#multiLegendA,
+#multiLegendB {
+
+  max-height: 140px;
+
+  overflow-y: auto;
+
+  margin-top: 12px;
+
+}
+.deviceBlueprint {
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  min-height:180px;
+
+}
+
+.deviceIcon {
+
+  font-size:70px;
+
+  margin-bottom:12px;
+
+  filter:
+    drop-shadow(
+      0 0 15px
+      rgba(59,130,246,.6)
+    );
+
+}
+
+.deviceName {
+
+  font-weight:700;
+
+  text-align:center;
+
+  margin-bottom:8px;
+
+}
+
+.deviceState {
+
+  font-size:12px;
+
+  padding:4px 10px;
+
+  border-radius:999px;
+
+}
+
+.deviceMetrics {
+
+  margin-top:12px;
+
+  display:flex;
+
+  gap:12px;
+
+  font-size:12px;
+
+}
+.deviceBlueprint{
+
+  width:260px;
+
+  min-height:360px;
+
+  background:#0f172a;
+
+  border-radius:20px;
+
+  padding:18px;
+
+  text-align:center;
+
+  position:relative;
+}
+
+.deviceSticker{
+
+  width:90px;
+
+  height:90px;
+
+  object-fit:contain;
+
+  margin-bottom:12px;
+}
+
+.deviceMeta{
+
+  margin-top:8px;
+
+  color:#cbd5e1;
+
+  font-size:13px;
+
+  text-align:left;
+}
+
+.deviceState.online{
+  background:#052e16;
+  color:#00ff88;
+}
+
+.deviceState.warning{
+  background:#3b2f00;
+  color:#ffcc00;
+}
+
+.deviceState.offline{
+  background:#450a0a;
+  color:#ef4444;
+}
+.inspectBtn:hover{
+
+background:#00f0ff33;
+
+transform:translateY(-1px);
+
+}
+/* =====================================================
+PHASE 2 PROFESSIONAL SCADA LAYOUT
+===================================================== */
+
+.hmiGrid{
+
+    display:grid;
+    grid-template-columns: 1.6fr 0.9fr;
+    gap:24px;
+    align-items:start;
+}
+
+.devicePanel:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:
+      0 15px 35px rgba(0,255,180,.12);
+}
+
+.deviceTitle h2{
+
+    font-size:18px;
+}
+
+.hmiButton{
+
+  min-height:58px;
+
+  padding:6px;
+}
+
+.hmiBtnValue{
+
+    font-size:20px;
+}
+
+.hmiInfoGrid{
+
+    grid-template-columns:
+      repeat(5,minmax(150px,1fr));
+
+    margin-bottom:20px;
+}
+
+.hmiInfoCard{
+
+    text-align:center;
+
+    border-radius:18px;
+
+    background:
+      linear-gradient(
+        145deg,
+        rgba(15,23,42,.95),
+        rgba(2,6,23,.95)
+      );
+
+    border:
+      1px solid rgba(0,255,180,.1);
+}
+
+.hmiInfoCard p{
+
+    font-size:28px;
+
+    font-weight:700;
+
+    color:#00d9ff;
+}
+
+.hmiSidebar{
+
+    position:sticky;
+
+    top:20px;
+}
+
+.telemetryItem{
+
+    min-height:90px;
+}
+
+.inspectBtn{
+
+    margin-top:14px;
+
+    background:
+      linear-gradient(
+        90deg,
+        #00d9ff,
+        #00ff88
+      );
+
+    color:#021018;
+
+    font-weight:700;
+}
+.card{
+
+  width:100%;
+}
+
+.hmiCanvas{
+
+  width:100%;
+}
+
+/* ==========================================
+PHASE 2 DEVICE INSPECTOR
+========================================== */
+.jsonInspector {
+    background: #07111d;
+    border: 1px solid rgba(0,255,180,.15);
+    border-radius: 10px;
+    padding: 12px;
+    overflow: auto;
+    max-height: 400px;
+}
+
+.jsonInspector pre {
+    margin: 0;
+    color: #9cffd8;
+    font-size: 12px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+.inspectorTabs {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.inspectorTabs button {
+    border: none;
+    background: #10243f;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.inspectorTabs button:hover {
+    background: #00ffb4;
+    color: #000;
+}
+.alarmRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+
+    padding: 10px;
+    margin-bottom: 8px;
+
+    background: rgba(255,0,0,.08);
+    border-left: 4px solid #ff4444;
+
+    border-radius: 8px;
+}
+
+.alarmRow strong {
+    color: #ff6666;
+}
+
+.alarmRow small {
+    opacity: .7;
+}
+.auditPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+.auditRow {
+
+    display:grid;
+
+    grid-template-columns:
+      120px 1fr 1fr;
+
+    gap:10px;
+
+    align-items:center;
+
+    padding:8px;
+
+    border-radius:8px;
+
+    background:rgba(255,255,255,.03);
+}
+.diagnosticGrid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit,minmax(160px,1fr));
+    gap: 12px;
+}
+#hmiDeviceInfo {
+    max-height: 700px;
+    overflow-y: auto;
+}
+.metricCard{
+
+    background:
+      linear-gradient(
+        145deg,
+        rgba(15,23,42,.95),
+        rgba(2,6,23,.95)
+      );
+
+    border:
+      1px solid rgba(0,255,180,.12);
+
+    border-radius:16px;
+
+    padding:16px;
+
+    text-align:center;
+}
+
+.metricCard span{
+
+    display:block;
+
+    color:#94a3b8;
+
+    font-size:12px;
+
+    margin-bottom:8px;
+}
+
+.metricCard h2{
+
+    margin:0;
+
+    color:#00d9ff;
+
+    font-size:24px;
+}
+.inspectorHeader{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:16px;
+}
+
+.inspectorDeviceName{
+
+    font-size:22px;
+
+    font-weight:700;
+
+    color:#fff;
+}
+
+.inspectorStatus{
+
+    padding:8px 14px;
+
+    border-radius:999px;
+
+    font-weight:700;
+}
+
+.inspectorStatus.online{
+
+    background:#052e16;
+
+    color:#00ff88;
+}
+
+.inspectorStatus.offline{
+
+    background:#450a0a;
+
+    color:#ff5252;
+}
+.cameraPreview{
+
+    position:relative;
+
+    width:100%;
+
+    height:260px;
+
+    overflow:hidden;
+
+    border-radius:14px;
+
+    border:1px solid rgba(0,255,180,.2);
+
+    margin-bottom:16px;
+}
+
+.cameraFeed{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+}
+
+.cameraHud{
+
+    position:absolute;
+
+    top:10px;
+
+    left:10px;
+
+    display:flex;
+
+    gap:10px;
+}
+
+.cameraHud span{
+
+    background:rgba(0,0,0,.6);
+
+    color:#00ff88;
+
+    padding:6px 10px;
+
+    border-radius:999px;
+
+    font-size:12px;
+}
+
+.mainDisplayPreview{
+
+    position:relative;
+
+    width:100%;
+
+    height:380px;
+
+    overflow:hidden;
+
+    border-radius:16px;
+
+    border:1px solid rgba(0,255,180,.2);
+
+    margin-bottom:18px;
+}
+
+.mainDisplayFeed{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+}
+
+.crosshair{
+
+    position:absolute;
+
+    left:50%;
+
+    top:50%;
+
+    width:60px;
+
+    height:60px;
+
+    transform:
+      translate(-50%,-50%);
+
+    border:2px solid #00ff88;
+
+    border-radius:50%;
+}
+.playbackPanel{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+    padding:20px;
+}
+
+.playbackPanel button{
+    padding:10px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+#timelineSlider{
+    width:100%;
+}
+
+#playbackTime{
+    color:#00ffff;
+    font-weight:bold;
+}
+
+/* MAIN PANELS */
+
+.devicePanel,
+.card,
+.telemetryCard,
+.hmiInfoCard{
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(8,15,30,.75),
+      rgba(2,6,23,.82)
+    ) !important;
+
+  backdrop-filter:
+    blur(14px);
+
+  border:
+    1px solid var(--glass-border) !important;
+
+  box-shadow:
+    var(--glass-shadow) !important;
+}
+
+/* REMOVE EXCESSIVE GLOW */
+
+.devicePanel:hover,
+.card:hover{
+
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    0 10px 25px rgba(0,0,0,.4) !important;
+}
+
+/* TITLES */
+
+.deviceTitle h2,
+.card h2,
+.card h3{
+
+  color:#eaf6ff;
+
+  letter-spacing:.5px;
+
+  font-weight:600;
+}
+
+/* KPI CARDS */
+
+.kpiCard{
+
+  background:
+    rgba(8,15,30,.82);
+
+  backdrop-filter:
+    blur(14px);
+
+  border:
+    1px solid rgba(0,217,255,.15);
+
+  box-shadow:
+    0 8px 20px rgba(0,0,0,.35);
+}
+
+.kpiCard h2{
+
+  font-size:42px;
+
+  color:#00d9ff;
+}
+
+/* BUTTONS */
+
+.pushButtonFace{
+
+  border:none !important;
+
+  box-shadow:none !important;
+}
+
+.controlTile.active .pushButtonFace{
+
+  background:
+    linear-gradient(
+      180deg,
+      #2dd36f,
+      #15803d
+    ) !important;
+
+  box-shadow:
+    0 0 12px rgba(45,211,111,.22) !important;
+}
+
+/* LEDS */
+
+.ledLamp{
+
+  transform:
+    scale(.85);
+}
+
+/* SECTION HEADERS */
+
+.controlSection h3{
+
+  color:#38bdf8;
+
+  text-transform:uppercase;
+
+  letter-spacing:1px;
+
+  font-size:11px;
+}
+
+/* DEVICE STATUS */
+
+.deviceLive{
+
+  width:12px;
+  height:12px;
+}
+
+/* SCROLLBARS */
+
+::-webkit-scrollbar{
+
+  width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+
+  background:
+    rgba(0,217,255,.3);
+
+  border-radius:20px;
+}
+
+/* TOP BAR LOOK */
+
+.hmiHeader{
+
+  background:
+    rgba(255,255,255,.02);
+
+  border-radius:16px;
+
+  padding:14px 18px;
+}
+/* ==========================================
+FINAL CARD OVERRIDE
+========================================== */
+
+.card{
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(8,15,30,.92),
+      rgba(2,6,23,.96)
+    ) !important;
+
+  border:
+    1px solid rgba(0,217,255,.12) !important;
+
+  border-radius:20px !important;
+
+  box-shadow:
+    0 8px 30px rgba(0,0,0,.35) !important;
+}
+.healthRow{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:10px;
+}
+
+.healthDevice{
+  width:220px;
+  font-weight:600;
+  color:#fff;
+}
+
+.healthBarWrap{
+  flex:1;
+  height:24px;
+  background:#111827;
+  border-radius:6px;
+  overflow:hidden;
+}
+
+.healthBar{
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-size:12px;
+  font-weight:700;
+}
+
+.healthGood{
+  background:#22c55e;
+}
+
+.healthWarn{
+  background:#f59e0b;
+}
+
+.healthBad{
+  background:#ef4444;
+}
+.historyChartsGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(500px,1fr));
+  gap:18px;
+  margin-top:20px;
+}
+
+.chartBox.small{
+  height:320px;
+}
+
+.chartBox.small canvas{
+  width:100% !important;
+  height:100% !important;
+}
+/* =====================================================
+PROFESSIONAL SCADA COMPACT LAYOUT
+===================================================== */
+
+/* Reduce page spacing */
+
+.main{
+    padding:14px;
+}
+
+.page-head{
+    margin-bottom:10px;
+}
+
+.page-head h1{
+    font-size:24px;
+}
+
+/* KPI row */
+
+.hmiKpiBar{
+    gap:10px;
+    margin-bottom:12px;
+}
+
+.kpiCard{
+    padding:12px;
+}
+
+.kpiCard h2{
+    font-size:28px;
+}
+
+/* Main HMI */
+
+.hmiGrid{
+    gap:12px;
+}
+
+/* Device panels */
+.devicePanel{
+
+    padding:10px;
+    border-radius:12px;
+
+    min-height:140px;
+}
+
+.deviceTitle{
+    margin-bottom:10px;
+}
+
+.deviceTitle h2{
+    font-size:16px;
+}
+
+/* Telemetry grids */
+
+.telemetryGrid{
+    gap:12px;
+}
+
+.telemetryCard{
+    min-height:auto;
+    padding:14px;
+}
+
+.telemetryCard canvas{
+    height:250px !important;
+}
+
+/* Charts */
+
+.chartBox{
+    height:280px;
+}
+
+.chartBox.small{
+    height:220px;
+}
+
+/* Device controls */
+
+.controlGrid{
+    gap:6px;
+}
+
+.controlTile{
+    min-height:50px;
+    padding:8px;
+}
+
+.controlTile.pushButton,
+.controlTile.switch{
+    min-height:70px;
+}
+
+/* Inspector */
+
+#hmiDeviceInfo{
+    max-height:550px;
+}
+
+/* Information cards */
+
+.hmiInfoGrid{
+    gap:10px;
+}
+
+.hmiInfoCard{
+    padding:12px;
+}
+
+.hmiInfoCard p{
+    font-size:20px;
+}
+
+/* Analytics */
+
+.analyticsCard{
+    min-height:auto;
+}
+
+.chartContainer{
+    height:320px;
+}
+
+/* Device blueprint cards */
+
+.deviceBlueprint{
+    min-height:220px;
+    padding:12px;
+}
+
+.deviceSticker{
+    width:60px;
+    height:60px;
+}
+
+/* History */
+
+.historyChartsGrid{
+    gap:12px;
+}
+
+.card{
+    border-radius:14px !important;
+}
+
+/* =====================================
+FIX DASHBOARD KPI VISIBILITY
+===================================== */
+
+.summaryGrid,
+.statsGrid,
+.dashboardStats{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,minmax(260px,1fr));
+
+    gap:16px;
+
+    margin-top:16px;
+}
+
+.summaryCard,
+.statCard{
+
+    min-height:110px;
+
+    padding:18px 22px;
+
+    overflow:visible !important;
+}
+
+.summaryCard h3,
+.statCard h3{
+
+    margin:0 0 10px 0;
+
+    font-size:14px;
+
+    color:#94a3b8;
+
+    font-weight:600;
+}
+
+.summaryCard .value,
+.statCard .value{
+
+    font-size:24px;
+
+    font-weight:700;
+
+    color:#00d9ff;
+
+    line-height:1.3;
+
+    overflow-wrap:anywhere;
+}
+/* =====================================
+REMOVE WASTED VERTICAL SPACE
+===================================== */
+
+.card{
+
+    margin-bottom:12px !important;
+}
+
+.devicePanel{
+
+    margin-bottom:12px !important;
+}
+
+.telemetryCard{
+
+    margin-bottom:12px !important;
+}
+
+.chartBox{
+
+    height:260px !important;
+}
+
+.chartBox.small{
+
+    height:220px !important;
+}
+
+.telemetryCard canvas{
+
+    height:240px !important;
+}
+/* =====================================
+PROFESSIONAL SCADA THEME
+===================================== */
+
+.card,
+.devicePanel,
+.telemetryCard{
+
+    backdrop-filter:blur(8px);
+
+    border:1px solid rgba(0,217,255,.10) !important;
+
+    box-shadow:
+        0 4px 14px rgba(0,0,0,.35) !important;
+}
+
+.card:hover,
+.devicePanel:hover{
+
+    transform:translateY(-1px);
+
+    box-shadow:
+        0 8px 18px rgba(0,0,0,.40) !important;
+}
+
+.deviceTitle h2{
+
+    font-size:16px;
+
+    font-weight:600;
+}
+
+.controlSection h3{
+
+    font-size:11px;
+
+    letter-spacing:1px;
+
+    text-transform:uppercase;
+}
+
+.controlIntelligencePanel{
+
+  margin-top:18px;
+
+  border:1px solid rgba(148,163,184,.18);
+
+  background:rgba(2,6,23,.72);
+
+  border-radius:8px;
+
+  overflow:hidden;
+}
+
+.controlIntelligencePanel h3{
+
+  margin:0;
+
+  padding:10px 12px;
+
+  color:#38bdf8;
+
+  font-size:13px;
+
+  border-bottom:1px solid rgba(148,163,184,.14);
+}
+
+.controlIntelRow{
+
+  display:grid;
+
+  grid-template-columns:
+    minmax(170px, 1.5fr)
+    .8fr
+    .8fr
+    .8fr
+    .6fr
+    .7fr;
+
+  gap:8px;
+
+  align-items:center;
+
+  padding:9px 12px;
+
+  border-bottom:1px solid rgba(148,163,184,.1);
+
+  color:#cbd5e1;
+
+  font-size:12px;
+}
+
+.controlIntelRow:last-child{
+
+  border-bottom:0;
+}
+
+.controlIntelRow strong{
+
+  display:block;
+
+  color:#f8fafc;
+
+  font-size:12px;
+}
+
+.controlIntelRow span{
+
+  display:block;
+
+  color:#94a3b8;
+
+  font-size:11px;
+}
+
+@media (max-width: 900px){
+
+  .controlIntelRow{
+
+    grid-template-columns:1fr;
+  }
+}
+/* ===========================================
+DEFENSE COMMAND CENTER LAYOUT
+=========================================== */
+
+html,
+body{
+
+    overflow-x:hidden;
+    overflow-y:auto;
+
+}
+
+.scadaMain{
+
+    height:100vh;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+    overflow:hidden;
+}
+
+.commandCenterGrid{
+
+    flex:1;
+
+    display:grid;
+
+    grid-template-columns:
+        32% 38% 30%;
+
+    gap:12px;
+
+    min-height:0;
+}
+
+.leftPanel,
+.centerPanel,
+.rightPanel{
+
+    display:flex;
+
+    flex-direction:column;
+
+    overflow:hidden;
+}
+
+.leftPanel{
+
+    min-height:0;
+}
+
+.centerPanel{
+
+    min-height:0;
+}
+
+.rightPanel{
+
+    min-height:0;
+}
+
+#hmiCanvas{
+
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    flex:1;
+
+    margin-top:10px;
+
+    padding-right:4px;
+}
+#hmiDeviceInfo{
+
+    flex:1;
+
+    overflow:auto;
+
+    max-height:none !important;
+}
+
+#telemetryFeed{
+
+    flex:1;
+
+    overflow:auto;
+}
+
+.trendPanel{
+
+    height:300px;
+
+    flex-shrink:0;
+}
+
+.chartContainer{
+
+    height:230px !important;
+}
+
+#trendChart{
+
+    height:230px !important;
+}
+
+.hmiKpiBar{
+
+    margin-bottom:0;
+}
+
+.card{
+
+    margin-bottom:0 !important;
+}
+/* ===========================================
+DEVICE CARDS COMPACT DEFENSE VIEW
+=========================================== */
+
+.deviceTitle{
+
+    margin-bottom:6px !important;
+}
+
+.deviceLastSeen,
+.deviceMulticast{
+
+    margin-bottom:6px !important;
+}
+
+.devicePowerBadge{
+
+    padding:4px 10px !important;
+    font-size:11px !important;
+}
+
+.deviceLive{
+
+    width:10px !important;
+    height:10px !important;
+}
+
+.controlSection{
+
+    margin-top:10px !important;
+}
+
+.controlTelemetry{
+
+    font-size:9px !important;
+}
+
+.devicePanel h2{
+
+    font-size:15px !important;
+}
+
+@media (max-width: 1300px){
+
+  .scadaMain{
+
+    height:auto;
+
+    min-height:100vh;
+
+    overflow:visible;
+  }
+
+  .commandCenterGrid{
+
+    grid-template-columns:1fr;
+
+    overflow:visible;
+  }
+
+  .trendPanel{
+
+    height:auto;
+  }
+}
+
+@media (max-width: 760px){
+
+  .layout{
+
+    display:block;
+  }
+
+  .sidebar{
+
+    position:static;
+
+    width:100%;
+
+    min-width:0;
+
+    height:auto;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    padding:10px;
+
+    overflow-x:auto;
+  }
+
+  .sidebar h2{
+
+    margin:0 10px 0 0;
+
+    font-size:18px;
+
+    white-space:nowrap;
+  }
+
+  .sidebar a{
+
+    margin:0;
+
+    white-space:nowrap;
+  }
+
+  .main{
+
+    margin-left:0;
+
+    width:100%;
+  }
+
+  .missionToolbar{
+
+    align-items:stretch;
+
+    flex-direction:column;
+  }
+
+  .missionToolbar label,
+  .missionToolbar select{
+
+    width:100%;
+  }
+
+  .hmiKpiBar{
+
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+/* FINAL OPERATOR HMI OVERRIDE - keep this at EOF */
+
+.leftPanel{
+  grid-area:control !important;
+  position:sticky !important;
+  top:12px;
+  align-self:start !important;
+  max-height:calc(100vh - 24px) !important;
+  overflow:auto !important;
+}
+
+.rightPanel{
+  grid-area:fleet !important;
+  position:sticky !important;
+  top:12px;
+  align-self:start !important;
+  max-height:calc(100vh - 24px) !important;
+  overflow:hidden !important;
+}
+
+.dynamicTelemetrySection{
+  margin-top:14px !important;
+  border:1px solid rgba(56,189,248,.22) !important;
+  border-radius:8px !important;
+  background:rgba(2,6,23,.42) !important;
+  overflow:hidden !important;
+}
+
+.dynamicTelemetrySection summary{
+  cursor:pointer !important;
+  padding:10px 12px !important;
+  color:#38bdf8 !important;
+  font-weight:800 !important;
+  letter-spacing:0 !important;
+  list-style:none !important;
+}
+
+.dynamicTelemetrySection summary::-webkit-details-marker{
+  display:none !important;
+}
+
+.dynamicTelemetrySection summary::after{
+  content:"SHOW" !important;
+  float:right !important;
+  color:#94a3b8 !important;
+  font-size:11px !important;
+}
+
+.dynamicTelemetrySection[open] summary::after{
+  content:"HIDE" !important;
+}
+
+.dynamicTelemetryGrid{
+  display:grid !important;
+  grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)) !important;
+  gap:10px !important;
+  max-height:min(62vh, 680px) !important;
+  overflow:auto !important;
+  overscroll-behavior:contain !important;
+  scroll-behavior:auto !important;
+  padding:10px !important;
+  border-top:1px solid rgba(148,163,184,.14) !important;
+}
+
+.deviceSvgChartCard{min-width:0}
+.deviceSvgChartHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.deviceSvgChartHeader h3{margin:0;color:#e2e8f0}.deviceSvgChartHeader strong{color:#facc15;font:900 16px monospace}
+.deviceSvgChart{display:block;width:100%;height:230px;border:1px solid rgba(56,189,248,.24);border-radius:8px;background:#020617}
+.deviceSvgChart text{fill:#94a3b8;font:700 10px monospace}.deviceSvgGrid{fill:none;stroke:rgba(71,85,105,.45);stroke-width:1}
+.deviceSvgLine{fill:none;stroke:#38bdf8;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px rgba(56,189,248,.55))}
+.deviceSvgPoint{fill:#facc15;filter:drop-shadow(0 0 5px rgba(250,204,21,.8));pointer-events:none}
+.deviceSvgHoverPoint{fill:transparent;stroke:transparent;cursor:crosshair;pointer-events:all}
+.deviceSvgHoverPoint:hover,.deviceSvgHoverPoint:focus{fill:#facc15;stroke:#fff;stroke-width:1.5;outline:none}
+.deviceSvgChartCard{position:relative}
+.device-chart-tooltip{position:fixed;z-index:10000;max-width:min(420px,calc(100vw - 24px));padding:10px 12px;border:1px solid #45d5e8;border-radius:7px;background:#07111ff2;color:#e7eef7;box-shadow:0 10px 28px #000a;font:12px/1.55 "Segoe UI",Arial,sans-serif;pointer-events:none;overflow-wrap:anywhere}
+.device-chart-tooltip[hidden]{display:none}
+
+.stableTelemetryField{
+  min-height:72px !important;
+  contain:layout paint !important;
+}
+
+.stableTelemetryField .imuValue{
+  overflow-wrap:anywhere !important;
+}
+
+.telemetryValueUpdated{
+  outline:1px solid rgba(56,189,248,.35) !important;
+}
+
+/* Topology compact rollback: readable map nodes, no oversized mini graphs. */
+
+.topology-wrap{
+  position:relative !important;
+  min-height:1080px !important;
+  overflow:auto !important;
+}
+
+/* Final analog-control correction: knobs and axes are values, not ON/OFF lamps. */
+
+.controlTile.knob,
+.controlTile.axis,
+.controlTile.analog{
+  border-color:rgba(56,189,248,.28) !important;
+  background:
+    linear-gradient(180deg, rgba(15,23,42,.96), rgba(2,6,23,.96)) !important;
+  box-shadow:none !important;
+}
+
+.controlTile.knob::before,
+.controlTile.axis::before,
+.controlTile.analog::before{
+  background:linear-gradient(90deg, rgba(56,189,248,.85), rgba(20,184,166,.72)) !important;
+}
+
+.controlTile.knob.active,
+.controlTile.knob.inactive,
+.controlTile.axis.active,
+.controlTile.axis.inactive,
+.controlTile.analog.active,
+.controlTile.analog.inactive{
+  border-color:rgba(56,189,248,.28) !important;
+  box-shadow:none !important;
+}
+
+.knobReadout{
+  display:grid !important;
+  gap:7px !important;
+  width:100% !important;
+  padding:8px 9px !important;
+  border:1px solid rgba(56,189,248,.22) !important;
+  border-radius:6px !important;
+  background:rgba(2,6,23,.42) !important;
+}
+
+.knobReadout strong{
+  color:#e5f7ff !important;
+  font-size:18px !important;
+  line-height:1 !important;
+  letter-spacing:0 !important;
+}
+
+.knobScale{
+  height:7px !important;
+  width:100% !important;
+  overflow:hidden !important;
+  border-radius:999px !important;
+  background:rgba(148,163,184,.18) !important;
+}
+
+.knobScale span{
+  display:block !important;
+  height:100% !important;
+  min-width:2px !important;
+  border-radius:inherit !important;
+  background:linear-gradient(90deg, #38bdf8, #14b8a6) !important;
+}
+
+.analogTelemetry span:first-child{
+  color:#e2e8f0 !important;
+  font-weight:800 !important;
+}
+
+.controlTile.knob .controlHealth,
+.controlTile.axis .controlHealth,
+.controlTile.analog .controlHealth{
+  background:rgba(56,189,248,.10) !important;
+  color:#7dd3fc !important;
+  border-color:rgba(56,189,248,.24) !important;
+}
+
+/* Deployment hardening */
+
+.card{
+  padding:18px;
+  min-width:0;
+}
+
+.chartContainer{
+  position:relative;
+  width:100%;
+  height:420px;
+  min-height:260px;
+}
+
+.tableWrap{
+  width:100%;
+  overflow:auto;
+}
+
+td,
+th{
+  max-width:260px;
+  overflow-wrap:anywhere;
+}
+
+.legendItem{
+  max-width:100%;
+  overflow-wrap:anywhere;
+}
+
+.historyOpsGrid{
+  display:grid;
+  grid-template-columns:minmax(320px, .9fr) minmax(360px, 1.1fr);
+  gap:18px;
+  margin:20px 0;
+}
+
+.replayControls{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:12px 0;
+}
+
+.replayControls .btn,
+.replayControls select{
+  min-width:0;
+}
+
+.timelineInfo{
+  margin-top:12px;
+  color:#cbd5e1;
+  overflow-wrap:anywhere;
+}
+
+.latest25Panel{
+  display:grid;
+  gap:8px;
+  max-height:240px;
+  overflow:auto;
+  margin-top:14px;
+}
+
+.latestRow{
+  display:grid;
+  grid-template-columns:minmax(120px, 1.1fr) minmax(90px, .9fr) minmax(70px, .6fr);
+  gap:10px;
+  padding:8px 10px;
+  border:1px solid rgba(148,163,184,.16);
+  border-radius:8px;
+  background:rgba(2,6,23,.55);
+  font-size:12px;
+  overflow-wrap:anywhere;
+}
+
+.cyclographPanel{
+  min-height:420px;
+}
+
+#cyclographSvg{
+  width:100%;
+  height:420px;
+  display:block;
+}
+
+@media(max-width:1100px){
+  .layout{
+    display:block;
+  }
+
+  .sidebar{
+    position:relative;
+    width:100%;
+    min-width:0;
+    height:auto;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px;
+    overflow-x:auto;
+  }
+
+  .sidebar h2{
+    margin:0 12px 0 0;
+    white-space:nowrap;
+    font-size:18px;
+  }
+
+  .sidebar a{
+    margin:0;
+    white-space:nowrap;
+  }
+
+  .main{
+    margin-left:0;
+    width:100%;
+    padding:16px;
+  }
+
+  .scadaHeader,
+  .topologyHeader,
+  .healthBar{
+    flex-direction:column;
+  }
+
+  .historyOpsGrid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:640px){
+  .chartContainer{
+    height:300px;
+  }
+
+  .globalCard,
+  .topologyStat{
+    min-width:calc(50% - 8px);
+  }
+
+  .latestRow{
+    grid-template-columns:1fr;
+  }
+}
+
+/* ===========================================
+FINAL HMI COMMAND CONSOLE LAYOUT
+=========================================== */
+
+.scadaMain{
+
+  height:100dvh !important;
+
+  max-height:100dvh;
+
+  gap:8px;
+
+  overflow:hidden !important;
+}
+
+.missionBanner{
+
+  padding:8px 12px !important;
+
+  margin-bottom:0 !important;
+
+  border-radius:8px;
+
+  font-size:12px;
+}
+
+.missionToolbar{
+
+  margin-bottom:0 !important;
+
+  padding:6px 10px !important;
+}
+
+.hmiKpiBar{
+
+  grid-template-columns:repeat(4, minmax(0, 1fr)) !important;
+
+  gap:8px !important;
+}
+
+.kpiCard{
+
+  min-height:62px;
+
+  padding:8px 10px !important;
+
+  border-radius:8px !important;
+}
+
+.kpiCard span{
+
+  font-size:11px;
+}
+
+.kpiCard h2{
+
+  margin-top:4px !important;
+
+  font-size:24px !important;
+}
+
+.commandCenterGrid{
+
+  flex:1 1 auto;
+
+  display:grid;
+
+  grid-template-columns:
+    minmax(230px, 260px)
+    minmax(520px, 1fr)
+    minmax(320px, 380px) !important;
+
+  grid-template-areas:"control inspector fleet";
+
+  gap:8px !important;
+
+  min-height:0;
+}
+
+.leftPanel{
+
+  grid-area:control;
+}
+
+.centerPanel{
+
+  grid-area:inspector;
+}
+
+.rightPanel{
+
+  grid-area:fleet;
+}
+
+.leftPanel,
+.centerPanel,
+.rightPanel{
+
+  border-radius:10px !important;
+
+  padding:0;
+
+  min-height:0 !important;
+
+  overflow:hidden !important;
+}
+
+.hmiHeader{
+
+  padding:8px 10px !important;
+
+  border-radius:0 !important;
+
+  min-height:38px;
+}
+
+.hmiHeader h2{
+
+  margin:0;
+
+  font-size:14px;
+
+  line-height:1.2;
+}
+
+.playbackPanel{
+
+  grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+
+  gap:6px !important;
+
+  padding:8px !important;
+
+  border-bottom:1px solid rgba(148,163,184,.12);
+}
+
+.playbackPanel button{
+
+  min-height:30px;
+
+  padding:5px 6px !important;
+
+  font-size:11px !important;
+}
+
+.playbackPanel input{
+
+  height:22px;
+}
+
+.playbackPanel #playbackTime{
+
+  min-height:20px;
+
+  color:#38bdf8;
+
+  font-size:11px;
+
+  text-align:center;
+}
+
+#alarmCenter{
+
+  max-height:112px !important;
+
+  padding:8px;
+
+  border-bottom:1px solid rgba(148,163,184,.12);
+}
+
+.alarmRow{
+
+  grid-template-columns:1fr;
+
+  display:grid !important;
+
+  align-items:start !important;
+
+  gap:2px !important;
+
+  margin-bottom:6px !important;
+
+  padding:7px 8px !important;
+
+  font-size:11px;
+}
+
+#telemetryFeed{
+
+  padding:8px;
+
+  overflow:hidden !important;
+}
+
+.telemetryItem{
+
+  padding:7px 8px !important;
+
+  margin-bottom:6px;
+
+  font-size:11px;
+}
+
+.telemetryValue{
+
+  font-size:12px;
+}
+
+#hmiDeviceInfo{
+
+  padding:10px;
+
+  overflow:hidden !important;
+}
+
+.inspectorHeader{
+
+  margin-bottom:8px !important;
+}
+
+.inspectorDeviceName{
+
+  font-size:18px !important;
+}
+
+.inspectorStatus{
+
+  padding:5px 9px !important;
+
+  font-size:11px;
+}
+
+.inspectorTabs{
+
+  gap:6px !important;
+
+  margin:8px 0 10px !important;
+}
+
+.inspectorTabs button{
+
+  flex:1;
+
+  padding:7px 10px !important;
+
+  border-radius:6px !important;
+
+  font-size:12px;
+}
+
+.inspectorTabs button.active{
+
+  background:#38bdf8;
+
+  color:#020617;
+
+  font-weight:700;
+}
+
+.selectedDeviceDetail{
+
+  max-height:calc(100dvh - 305px);
+
+  overflow:hidden !important;
+}
+
+.detailHeader{
+
+  margin-bottom:8px;
+}
+
+.detailHeader h3{
+
+  font-size:15px !important;
+}
+
+.detailHeader span{
+
+  font-size:11px;
+}
+
+.imuGrid,
+.cceGrid,
+.diagnosticGrid,
+.inspectorTelemetryGrid,
+.inspectorGrid{
+
+  grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)) !important;
+
+  gap:8px !important;
+}
+
+.imuInstrument,
+.cceCard,
+.metricCard,
+.telemetryCard{
+
+  border-radius:8px !important;
+
+  padding:10px !important;
+
+  min-height:70px !important;
+}
+
+.imuLabel,
+.cceLabel,
+.metricCard span,
+.telemetryCard span{
+
+  font-size:10px !important;
+
+  letter-spacing:.04em;
+}
+
+.imuValue,
+.cceStatus,
+.metricCard h2,
+.telemetryCard h2{
+
+  font-size:18px !important;
+
+  line-height:1.15;
+}
+
+.controlGrid{
+
+  grid-template-columns:repeat(auto-fill, minmax(92px, 1fr)) !important;
+
+  gap:6px !important;
+}
+
+.controlTile,
+.hatTile{
+
+  min-height:64px !important;
+
+  padding:6px !important;
+}
+
+.controlName{
+
+  font-size:10px;
+}
+
+.pushButtonFace{
+
+  min-height:24px !important;
+}
+
+.rightPanel #hmiCanvas{
+
+  display:grid;
+
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+
+  grid-auto-rows:minmax(82px, auto);
+
+  gap:7px;
+
+  padding:8px;
+
+  overflow:hidden !important;
+}
+
+.rightPanel .devicePanel{
+
+  min-height:82px !important;
+
+  margin:0 !important;
+
+  padding:8px !important;
+
+  border-radius:8px !important;
+}
+
+.rightPanel .deviceTitle{
+
+  display:grid;
+
+  grid-template-columns:auto 1fr auto;
+
+  align-items:center;
+
+  gap:6px;
+
+  margin-bottom:4px !important;
+}
+
+.rightPanel .deviceTitle h2{
+
+  font-size:11px !important;
+
+  line-height:1.15;
+}
+
+.rightPanel .devicePowerBadge{
+
+  padding:2px 6px !important;
+
+  font-size:9px !important;
+}
+
+.rightPanel .deviceHealthBar{
+
+  height:4px;
+
+  margin:4px 0;
+}
+
+.rightPanel .deviceStats{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  gap:4px;
+
+  font-size:9px;
+}
+
+.rightPanel .deviceLastSeen,
+.rightPanel .deviceMulticast{
+
+  font-size:9px;
+
+  margin-bottom:2px !important;
+}
+
+.trendPanel{
+
+  height:180px !important;
+
+  flex:0 0 180px !important;
+}
+
+.trendPanel .hmiHeader{
+
+  min-height:32px;
+}
+
+.trendPanel .chartContainer,
+.trendPanel #trendChart{
+
+  height:136px !important;
+}
+
+.inspectorHistoryPanel{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:8px;
+
+  min-height:0;
+
+  max-height:calc(100dvh - 305px);
+
+  overflow:hidden;
+}
+
+.historySummaryLine{
+
+  display:flex;
+
+  gap:8px;
+
+  align-items:center;
+
+  padding:8px 10px;
+
+  border:1px solid rgba(148,163,184,.14);
+
+  border-radius:8px;
+
+  background:rgba(2,6,23,.52);
+
+  color:#cbd5e1;
+
+  font-size:12px;
+}
+
+.historySummaryLine strong{
+
+  color:#38bdf8;
+
+  font-size:18px;
+}
+
+.inspectorHistoryTable{
+
+  width:100%;
+
+  min-width:0 !important;
+
+  margin:0 !important;
+
+  table-layout:fixed;
+
+  border-collapse:separate;
+
+  border-spacing:0;
+
+  overflow:hidden;
+
+  border:1px solid rgba(148,163,184,.14);
+
+  border-radius:8px;
+}
+
+.inspectorHistoryTable th,
+.inspectorHistoryTable td{
+
+  padding:7px 8px !important;
+
+  font-size:11px !important;
+
+  line-height:1.25;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+
+  white-space:nowrap;
+}
+
+.inspectorHistoryTable th{
+
+  position:static;
+
+  color:#93c5fd;
+
+  background:#0f172a;
+}
+
+.inspectorHistoryTable td:nth-child(1){
+
+  width:110px;
+
+  color:#94a3b8;
+}
+
+.inspectorHistoryTable td:nth-child(2){
+
+  color:#e5e7eb;
+}
+
+.inspectorHistoryTable td:nth-child(3){
+
+  color:#86efac;
+}
+
+@media (max-width: 1300px){
+
+  .scadaMain{
+
+    height:auto !important;
+
+    max-height:none;
+
+    overflow:auto !important;
+  }
+
+  .commandCenterGrid{
+
+    grid-template-columns:1fr !important;
+
+    grid-template-areas:
+      "inspector"
+      "fleet"
+      "control";
+  }
+
+  .rightPanel #hmiCanvas{
+
+    grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
+
+    overflow:auto !important;
+  }
+}
+
+/* ===========================================
+HMI RENDER ISOLATION AND OVERLAP GUARDS
+=========================================== */
+
+.scadaMain,
+.commandCenterGrid,
+.leftPanel,
+.centerPanel,
+.rightPanel,
+.trendPanel,
+#hmiCanvas,
+#hmiDeviceInfo,
+#telemetryFeed,
+.playbackPanel,
+.controlGrid,
+.imuGrid,
+.cceGrid,
+.diagnosticGrid,
+.inspectorTelemetryGrid,
+.controlIntelligencePanel{
+
+  min-width:0;
+}
+
+.scadaMain{
+
+  height:100dvh;
+
+  overflow:hidden;
+}
+
+.commandCenterGrid{
+
+  grid-template-columns:
+    minmax(300px, 32%)
+    minmax(380px, 38%)
+    minmax(300px, 30%);
+
+  grid-template-rows:minmax(0, 1fr);
+
+  min-height:0;
+}
+
+.leftPanel,
+.centerPanel,
+.rightPanel,
+.trendPanel{
+
+  min-height:0;
+
+  contain:layout paint;
+}
+
+.hmiHeader,
+.missionBanner,
+.missionToolbar,
+.hmiKpiBar,
+.playbackPanel,
+#alarmCenter{
+
+  flex-shrink:0;
+}
+
+#alarmCenter{
+
+  max-height:160px;
+
+  overflow:auto;
+
+  padding-right:4px;
+}
+
+#hmiCanvas,
+#hmiDeviceInfo,
+#telemetryFeed{
+
+  min-height:0;
+
+  max-width:100%;
+
+  overflow:auto;
+
+  overscroll-behavior:contain;
+
+  contain:layout paint;
+}
+
+#hmiDeviceInfo{
+
+  padding-right:4px;
+}
+
+#hmiDeviceInfo *,
+#telemetryFeed *,
+#hmiCanvas *{
+
+  max-width:100%;
+}
+
+.playbackPanel{
+
+  display:grid !important;
+
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+
+  gap:8px;
+
+  padding:12px !important;
+}
+
+.playbackPanel button{
+
+  min-width:0;
+
+  width:100%;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+
+  white-space:nowrap;
+
+  border-radius:8px;
+
+  border:1px solid rgba(0,217,255,.16);
+
+  background:#0f172a;
+
+  color:#e5e7eb;
+}
+
+.playbackPanel input,
+.playbackPanel #playbackTime{
+
+  grid-column:1 / -1;
+}
+
+.telemetryItem,
+.devicePanel,
+.metricCard,
+.imuInstrument,
+.cceCard,
+.inspectorCard,
+.auditRow,
+.alarmRow,
+.controlTile,
+.hatTile,
+.axisRow,
+.controlIntelRow{
+
+  min-width:0;
+
+  overflow:hidden;
+}
+
+.telemetryItem{
+
+  min-height:auto !important;
+
+  padding:10px 12px;
+
+  border:1px solid rgba(148,163,184,.12);
+
+  border-radius:8px;
+
+  background:rgba(2,6,23,.58);
+}
+
+.telemetryHead,
+.telemetryValue,
+.telemetryTime,
+.deviceTitle h2,
+.deviceLastSeen,
+.deviceMulticast,
+.controlName,
+.controlMeta,
+.controlValue,
+.hatValue,
+.imuLabel,
+.imuValue,
+.cceLabel,
+.cceStatus,
+.inspectorDeviceName,
+.auditRow span,
+.alarmRow span,
+.alarmRow strong,
+.controlIntelRow,
+.jsonInspector pre{
+
+  overflow-wrap:anywhere;
+
+  word-break:break-word;
+}
+
+.detailHeader{
+
+  align-items:flex-start;
+
+  gap:12px;
+
+  min-width:0;
+}
+
+.detailHeader h3,
+.detailHeader span{
+
+  min-width:0;
+
+  overflow-wrap:anywhere;
+}
+
+.imuGrid,
+.cceGrid,
+.diagnosticGrid,
+.inspectorTelemetryGrid,
+.inspectorGrid{
+
+  display:grid;
+
+  grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));
+
+  gap:10px;
+}
+
+.inspectorTelemetryGrid .telemetryCard{
+
+  min-height:0 !important;
+
+  height:auto;
+
+  padding:14px;
+}
+
+.inspectorTelemetryGrid .telemetryCard h2{
+
+  font-size:clamp(18px, 2.2vw, 26px);
+
+  line-height:1.15;
+
+  overflow-wrap:anywhere;
+}
+
+.controlGrid{
+
+  display:grid;
+
+  grid-template-columns:repeat(auto-fill, minmax(118px, 1fr)) !important;
+
+  gap:8px !important;
+
+  align-items:stretch;
+}
+
+.controlGrid.knobGrid{
+
+  grid-template-columns:repeat(auto-fill, minmax(130px, 1fr)) !important;
+}
+
+.controlTile,
+.hatTile{
+
+  display:flex;
+
+  flex-direction:column;
+
+  justify-content:space-between;
+
+  gap:6px;
+
+  min-height:78px !important;
+
+  padding:8px !important;
+}
+
+.pushButtonFace{
+
+  width:100%;
+
+  min-height:30px;
+
+  flex-shrink:0;
+}
+
+.controlTelemetry{
+
+  display:grid;
+
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+
+  gap:3px 6px;
+
+  width:100%;
+
+  line-height:1.25;
+
+  overflow:hidden;
+}
+
+.controlTelemetry span{
+
+  min-width:0;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+
+  white-space:nowrap;
+}
+
+.axisRow{
+
+  grid-template-columns:minmax(80px, .7fr) minmax(120px, 1fr) minmax(52px, auto);
+
+  gap:8px;
+}
+
+.axisRow .controlTelemetry{
+
+  grid-column:1 / -1;
+}
+
+.joystickSvgWrapper,
+.imuHorizonWrapper,
+.mainDisplayPreview,
+.cameraPreview{
+
+  overflow:hidden;
+}
+
+.joystickSvg,
+#imuHorizonCanvas,
+.imuHorizonWrapper canvas{
+
+  display:block;
+
+  max-width:100%;
+}
+
+.jsonInspector,
+.auditPanel,
+.controlIntelligencePanel{
+
+  max-width:100%;
+
+  overflow:auto;
+}
+
+.selectedDeviceDetail{
+
+  display:block;
+
+  min-width:0;
+
+  max-width:100%;
+
+  overflow:auto;
+
+  padding:2px 2px 10px;
+
+  contain:layout paint;
+}
+
+.selectedDeviceDetail > .detailHeader:first-child{
+
+  margin-top:0;
+}
+
+.controlIntelRow{
+
+  grid-template-columns:
+    minmax(140px, 1.4fr)
+    minmax(70px, .7fr)
+    minmax(80px, .8fr)
+    minmax(80px, .8fr)
+    minmax(50px, .5fr)
+    minmax(70px, .7fr);
+}
+
+.chartContainer,
+#trendChart{
+
+  min-width:0;
+
+  overflow:hidden;
+}
+
+@media (max-width: 1300px){
+
+  .scadaMain{
+
+    height:auto;
+
+    overflow:visible;
+  }
+
+  .commandCenterGrid{
+
+    grid-template-columns:1fr;
+
+    grid-template-rows:auto;
+  }
+
+  .leftPanel,
+  .centerPanel,
+  .rightPanel{
+
+    min-height:420px;
+  }
+}
+
+@media (max-width: 760px){
+
+  .playbackPanel{
+
+    grid-template-columns:1fr;
+  }
+
+  .hmiKpiBar{
+
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+
+  .imuGrid,
+  .cceGrid,
+  .diagnosticGrid,
+  .inspectorTelemetryGrid,
+  .inspectorGrid{
+
+    grid-template-columns:1fr;
+  }
+}
+
+/* ABSOLUTE FINAL HMI LAYOUT OVERRIDE */
+
+.scadaMain{
+  height:auto !important;
+  min-height:100vh !important;
+  max-height:none !important;
+  overflow:visible !important;
+}
+
+.commandCenterGrid{
+  display:grid !important;
+  grid-template-columns:220px minmax(560px, 1fr) 300px !important;
+  grid-template-areas:"control inspector fleet" !important;
+  align-items:start !important;
+  gap:12px !important;
+  min-height:auto !important;
+}
+
+.leftPanel{
+  grid-area:control !important;
+  position:sticky !important;
+  top:12px !important;
+  align-self:start !important;
+  max-height:calc(100vh - 24px) !important;
+  overflow:auto !important;
+}
+
+.centerPanel{
+  grid-area:inspector !important;
+  align-self:start !important;
+}
+
+.rightPanel{
+  grid-area:fleet !important;
+  position:sticky !important;
+  top:12px !important;
+  align-self:start !important;
+  max-height:calc(100vh - 24px) !important;
+  overflow:hidden !important;
+}
+
+.playbackPanel{
+  grid-template-columns:1fr !important;
+  padding:10px !important;
+}
+
+.playbackPanel button{
+  min-height:34px !important;
+  font-size:12px !important;
+}
+
+.playbackPanel input,
+.playbackPanel #playbackTime{
+  grid-column:auto !important;
+}
+
+#alarmCenter{
+  max-height:160px !important;
+  overflow:auto !important;
+}
+
+#telemetryFeed{
+  max-height:260px !important;
+  overflow:auto !important;
+}
+
+.rightPanel #hmiCanvas{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:8px !important;
+  max-height:calc(100vh - 88px) !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  padding:10px !important;
+}
+
+.rightPanel .devicePanel{
+  flex:0 0 auto !important;
+  min-height:108px !important;
+  width:100% !important;
+}
+
+.trendPanel{
+  height:560px !important;
+  min-height:560px !important;
+  flex:0 0 auto !important;
+  margin-top:14px !important;
+}
+
+.trendPanel .chartContainer,
+.trendPanel #trendChart{
+  height:496px !important;
+  min-height:496px !important;
+}
+
+.trendPanel canvas{
+  background:#050a18 !important;
+}
+
+.cameraOverviewGrid{
+  display:grid !important;
+  grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)) !important;
+  gap:12px !important;
+}
+
+.cameraMetric.ok{
+  border-color:rgba(34,197,94,.45) !important;
+}
+
+.cameraMetric.warn{
+  border-color:rgba(245,158,11,.45) !important;
+}
+
+.cameraMetric.bad{
+  border-color:rgba(239,68,68,.48) !important;
+}
+
+@media (max-width: 980px){
+  .commandCenterGrid{
+    grid-template-columns:1fr !important;
+    grid-template-areas:
+      "inspector"
+      "fleet"
+      "control" !important;
+  }
+
+  .leftPanel,
+  .rightPanel{
+    position:static !important;
+    max-height:none !important;
+  }
+
+  .rightPanel #hmiCanvas{
+    display:grid !important;
+    grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)) !important;
+    max-height:none !important;
+  }
+}
+
+/* HMI repair: keep inspector readable, fleet compact, and analytics stable. */
+.commandCenterGrid{
+  grid-template-columns:220px minmax(620px, 1fr) 300px !important;
+}
+
+.centerPanel{
+  min-width:0 !important;
+  overflow:visible !important;
+}
+
+#hmiDeviceInfo{
+  max-height:none !important;
+  overflow:visible !important;
+  padding:14px !important;
+}
+
+.selectedDeviceDetail{
+  max-height:none !important;
+  overflow:visible !important;
+  contain:none !important;
+  padding-bottom:16px !important;
+}
+
+.detailHeader{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:12px !important;
+}
+
+.controlGrid{
+  grid-template-columns:repeat(auto-fill, minmax(130px, 1fr)) !important;
+  gap:10px !important;
+}
+
+.controlTile,
+.hatTile{
+  min-height:112px !important;
+  padding:10px !important;
+}
+
+.controlTelemetry{
+  display:grid !important;
+  grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+  gap:4px 8px !important;
+}
+
+.rightPanel #hmiCanvas{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:10px !important;
+  max-height:calc(100vh - 88px) !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  padding:10px !important;
+}
+
+.rightPanel .devicePanel{
+  min-height:116px !important;
+  padding:10px !important;
+}
+
+.rightPanel .deviceStats{
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:4px !important;
+  font-size:10px !important;
+}
+
+.rightPanel .deviceLastSeen,
+.rightPanel .deviceMulticast{
+  font-size:10px !important;
+  line-height:1.25 !important;
+  margin:3px 0 !important;
+}
+
+.rightPanel .deviceMiniStatus{
+  display:none !important;
+}
+
+.trendPanel{
+  width:100% !important;
+  height:520px !important;
+  min-height:520px !important;
+  overflow:hidden !important;
+}
+
+.trendPanel .chartContainer{
+  width:100% !important;
+  height:452px !important;
+  min-height:452px !important;
+  overflow:hidden !important;
+}
+
+.trendPanel #trendChart{
+  display:block !important;
+  width:100% !important;
+  height:452px !important;
+  min-height:452px !important;
+}
+
+@media (max-width: 1180px){
+  .commandCenterGrid{
+    grid-template-columns:1fr !important;
+    grid-template-areas:
+      "inspector"
+      "fleet"
+      "control" !important;
+  }
+
+  .leftPanel,
+  .rightPanel{
+    position:static !important;
+    max-height:none !important;
+  }
+
+  .rightPanel #hmiCanvas{
+    display:grid !important;
+    grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)) !important;
+    max-height:none !important;
+  }
+}
+.topologyCanvas {
+  position: relative;
+  height: 560px;
+  background: radial-gradient(circle at center, #111827, #020617);
+  border: 1px solid #1e293b;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+#topologySvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.topology-node {
+  position: absolute;
+  width: 135px;
+  min-height: 105px;
+  padding: 10px;
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.96);
+  border: 2px solid #334155;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.deviceSticker {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.deviceName {
+  font-weight: 700;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.deviceState {
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.deviceState.online {
+  color: #22c55e;
+}
+
+.deviceState.warning {
+  color: #facc15;
+}
+
+.deviceState.offline {
+  color: #ef4444;
+}
+
+.topologyLabel {
+  fill: #67e8f9;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.link-online {
+  stroke: #22c55e;
+  stroke-width: 3;
+  fill: none;
+}
+
+.link-warning {
+  stroke: #facc15;
+  stroke-width: 3;
+  fill: none;
+}
+
+.link-offline {
+  stroke: #ef4444;
+  stroke-width: 2;
+  fill: none;
+  opacity: 0.65;
+}
+
+.topology-wrap {
+  position: relative;
+  min-height: 760px;
+}
+
+#topologyDevices {
+  position: relative;
+  min-height: 760px;
+  z-index: 2;
+}
+
+.topology-node {
+  position: absolute;
+  width: 180px;
+  min-height: 140px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(10, 20, 45, 0.96);
+  border: 2px solid #334155;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+
+.topology-node.online {
+  border-color: #22c55e;
+}
+
+.topology-node.warning {
+  border-color: #facc15;
+}
+
+.topology-node.offline {
+  border-color: #ef4444;
+}
+
+.deviceMeta.compact {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.link-online {
+  stroke: #22c55e;
+  stroke-width: 3;
+  stroke-dasharray: 10 8;
+  fill: none;
+}
+
+.link-warning {
+  stroke: #facc15;
+  stroke-width: 3;
+  stroke-dasharray: 10 8;
+  fill: none;
+}
+
+.link-offline {
+  stroke: #ef4444;
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+  fill: none;
+  opacity: 0.6;
+}
+
+.flowDot {
+  fill: #22d3ee;
+}
+
+.topologyLabel {
+  fill: #67e8f9;
+  font-size: 12px;
+  font-weight: 700;
+}
+.topologyDashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.topologyCard {
+  overflow: hidden;
+}
+
+.topologyCanvas {
+  position: relative;
+  height: 880px;
+  background:
+    radial-gradient(circle at center, rgba(14, 165, 233, 0.10), transparent 35%),
+    linear-gradient(135deg, #020617, #0f172a);
+  border: 1px solid #1e293b;
+  border-radius: 20px;
+  overflow: hidden;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#topologySvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#topologyDevices,
+.topology-fixed-map {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.topology-node {
+  position: absolute;
+  width: 145px;
+  min-height: 118px;
+  padding: 10px;
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.96);
+  border: 2px solid #334155;
+  text-align: center;
+  box-sizing: border-box;
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.45),
+    inset 0 0 20px rgba(15, 23, 42, 0.8);
+}
+
+.topology-node.online {
+  border-color: #22c55e;
+  box-shadow:
+    0 0 18px rgba(34, 197, 94, 0.35),
+    0 12px 28px rgba(0, 0, 0, 0.45);
+}
+
+.topology-node.warning {
+  border-color: #facc15;
+  box-shadow:
+    0 0 18px rgba(250, 204, 21, 0.35),
+    0 12px 28px rgba(0, 0, 0, 0.45);
+}
+
+.topology-node.offline {
+  border-color: #ef4444;
+  box-shadow:
+    0 0 18px rgba(239, 68, 68, 0.28),
+    0 12px 28px rgba(0, 0, 0, 0.45);
+}
+
+.deviceSticker {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  margin-bottom: 6px;
+}
+.deviceSticker {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  margin-bottom: 5px;
+}
+
+.deviceName {
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.3px;
+  color: #f8fafc;
+  word-break: break-word;
+}
+
+.deviceMeta.compact {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #cbd5e1;
+}
+
+.deviceState {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.deviceState.online {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.12);
+}
+
+.deviceState.warning {
+  color: #facc15;
+  background: rgba(250, 204, 21, 0.12);
+}
+
+.deviceState.offline {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.link-online {
+  stroke: #22c55e;
+  stroke-width: 3;
+  stroke-dasharray: 12 8;
+  fill: none;
+  filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.8));
+}
+
+.link-warning {
+  stroke: #facc15;
+  stroke-width: 3;
+  stroke-dasharray: 12 8;
+  fill: none;
+  filter: drop-shadow(0 0 6px rgba(250, 204, 21, 0.7));
+}
+
+.link-offline {
+  stroke: #ef4444;
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+  fill: none;
+  opacity: 0.65;
+}
+
+.flowDot {
+  fill: #22d3ee;
+  filter: drop-shadow(0 0 8px #22d3ee);
+}
+
+.topologyLabel {
+  fill: #67e8f9;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-shadow: 0 0 8px rgba(34, 211, 238, 0.8);
+}
+
+/* Professional IMU instrument cluster */
+.imuDisplayCluster{width:100%;max-width:1060px;margin:0 auto;padding:4px 0 12px}
+.imuDisplayCluster .imuHorizonWrapper{box-sizing:border-box;width:100%;max-width:1040px;margin:0 auto 16px;padding:7px;border:1px solid rgba(71,85,105,.72);border-radius:14px;background:linear-gradient(145deg,#1e293b,#020617);box-shadow:0 16px 34px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.05)}
+.imuDisplayCluster #imuHorizonCanvas{display:block;width:100%;max-width:1040px;height:auto;border:0;border-radius:9px;background:#07111d}
+.imuDisplayCluster .navigationVisualGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:0}
+.imuDisplayCluster .headingCompass,.imuDisplayCluster .positionDisplay,.imuDisplayCluster .altitudeDisplay{box-sizing:border-box;min-height:270px;padding:16px;border:1px solid rgba(71,85,105,.62);border-radius:12px;background:linear-gradient(155deg,rgba(15,23,42,.98),rgba(2,6,23,.98));box-shadow:0 10px 24px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.035)}
+.imuDisplayCluster .visualTitle{color:#7dd3fc;font-size:11px;letter-spacing:1.5px}
+.imuDisplayCluster .compassRose{width:142px;height:142px;margin:18px auto 10px;border-color:#38bdf8;background:repeating-conic-gradient(from 0deg,rgba(125,211,252,.6) 0 1deg,transparent 1deg 15deg),radial-gradient(circle,rgba(14,116,144,.12),rgba(2,6,23,.8));box-shadow:inset 0 0 25px rgba(14,165,233,.08)}
+.imuDisplayCluster .compassRose span{transform:rotate(var(--heading));transform-origin:center;transition:transform .25s ease}.imuDisplayCluster .compassN{left:65px}.imuDisplayCluster .compassS{left:66px}.imuDisplayCluster .compassE,.imuDisplayCluster .compassW{top:62px}
+.imuDisplayCluster .headingPointer{top:44px;border-bottom-color:#facc15}.imuDisplayCluster .headingCompass strong{font:800 21px monospace;color:#facc15}
+.imuDisplayCluster .gpsPositionDisplay{min-height:270px;padding:16px;border-color:rgba(71,85,105,.62);background:linear-gradient(155deg,rgba(15,23,42,.98),rgba(2,6,23,.98))}
+.imuDisplayCluster .gpsHeader .visualTitle{font-size:11px}.imuDisplayCluster .gpsPositionDisplay .positionReticle{width:150px;margin:17px auto 13px;border-width:1px;background:linear-gradient(90deg,transparent 49.65%,rgba(56,189,248,.4) 50%,transparent 50.35%),linear-gradient(transparent 49.65%,rgba(56,189,248,.4) 50%,transparent 50.35%),repeating-radial-gradient(circle,transparent 0 23px,rgba(56,189,248,.34) 24px 25px)}
+.imuDisplayCluster .gpsPositionDisplay .coordinateReadout{gap:6px;font-size:14px}.imuDisplayCluster .coordinateLine{grid-template-columns:34px 1fr}.imuDisplayCluster .coordinateLine strong{font-size:14px}
+.imuDisplayCluster .altitudeTape{width:58px;height:154px;margin:18px auto 10px;border-color:rgba(125,211,252,.45);background:repeating-linear-gradient(to top,transparent 0 14px,rgba(125,211,252,.18) 15px)}
+.imuDisplayCluster .altitudeTape>span{position:absolute;z-index:2;left:66px;color:#64748b;font:700 8px monospace}.imuDisplayCluster .altMax{top:0}.imuDisplayCluster .altMin{bottom:0}.imuDisplayCluster .altitudeDisplay strong{font:800 21px monospace;color:#facc15}.imuDisplayCluster .altitudeDisplay small{display:block;margin-top:4px;color:#64748b;font:700 9px monospace;text-align:center;letter-spacing:1px}
+@media (max-width:760px){.imuDisplayCluster .navigationVisualGrid{grid-template-columns:1fr}.imuDisplayCluster .headingCompass,.imuDisplayCluster .positionDisplay,.imuDisplayCluster .altitudeDisplay{min-height:250px}}
+
+/* Offline GPS mini-map: local live fixes only, with no external map dependency */
+.imuDisplayCluster .headingCompass,.imuDisplayCluster .positionDisplay,.imuDisplayCluster .altitudeDisplay{min-height:380px}
+.gpsLocalPlot{width:100%;margin:8px auto 2px}.gpsLocalPlot svg{display:block;width:100%;height:auto;max-height:230px}.gpsPlotBackground{fill:#050d1d;stroke:rgba(56,189,248,.48);stroke-width:1}.gpsGridLine{fill:none;stroke:rgba(56,189,248,.12);stroke-width:1}.gpsCardinalAxis{stroke:rgba(125,211,252,.42);stroke-width:1;stroke-dasharray:4 4}.gpsCardinalLabel{fill:#7dd3fc;font:900 8px monospace;text-anchor:middle}.gpsScaleLabel{fill:#94a3b8;font:700 7px monospace;letter-spacing:.3px}.gpsScaleBar{stroke:#e2e8f0;stroke-width:2}.gpsTrailShadow{fill:none;stroke:rgba(2,6,23,.9);stroke-width:6;stroke-linecap:round;stroke-linejoin:round}.gpsTrail{fill:none;stroke:#38bdf8;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px rgba(56,189,248,.75))}.gpsReferencePoint{fill:#0f172a;stroke:#cbd5e1;stroke-width:2}.gpsCurrentHalo{fill:rgba(34,197,94,.14);stroke:#22c55e;stroke-width:2}.gpsCurrentPoint{fill:#4ade80;filter:drop-shadow(0 0 5px #22c55e)}.gpsHeadingArrow line{stroke:#facc15;stroke-width:2}.gpsHeadingArrow path{fill:#facc15;filter:drop-shadow(0 0 3px rgba(250,204,21,.8))}
+.gpsPositionStatus{min-height:14px;margin:3px 0 7px;color:#7dd3fc;font:800 9px monospace;letter-spacing:.4px;text-align:center}.gpsPositionStatus strong{color:#facc15}.gpsTrailLegend{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 11px;margin:0 0 9px;color:#94a3b8;font:700 7px monospace;letter-spacing:.4px}.gpsTrailLegend span{display:flex;align-items:center;gap:4px}.gpsTrailLegend i{display:inline-block;width:8px;height:8px;border-radius:50%}.gpsTrailLegend .reference{border:1px solid #cbd5e1;background:#0f172a}.gpsTrailLegend .trail{width:12px;height:2px;border-radius:0;background:#38bdf8;box-shadow:0 0 4px #38bdf8}.gpsTrailLegend .heading{width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:9px solid #facc15;border-radius:0}
+.gpsNoFix{display:grid;place-items:center;min-height:218px;margin:10px 0;color:#f59e0b;border:1px dashed rgba(245,158,11,.35);border-radius:8px;font:800 10px monospace;letter-spacing:1px}
+.imuDisplayCluster .gpsPositionDisplay .coordinateReadout{margin-top:4px}.imuDisplayCluster .gpsPositionDisplay .positionReticle{display:none}
+@media (max-width:760px){.imuDisplayCluster .headingCompass,.imuDisplayCluster .positionDisplay,.imuDisplayCluster .altitudeDisplay{min-height:340px}.gpsLocalPlot svg{max-height:250px}}
+
+/* Large offline navigation map and tactical target-bearing instruments */
+.imuDisplayCluster .navigationVisualGrid{
+  grid-template-columns:minmax(220px,.32fr) minmax(0,1.68fr);
+  align-items:stretch;
+}
+.imuDisplayCluster .gpsMissionPanel{
+  min-height:580px;
+  padding:18px;
+  background:linear-gradient(145deg,rgba(3,10,24,.98),rgba(2,6,23,.98));
+}
+.gpsHeader small,.tacticalBearingHeader small{display:block;margin-top:4px;color:#64748b;font:800 9px monospace;letter-spacing:1px}
+.gpsMissionLayout{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:16px;margin-top:14px}
+.gpsMapColumn{min-width:0;border:1px solid rgba(56,189,248,.32);border-radius:10px;background:#020817;overflow:hidden}
+.gpsLocalPlot{margin:0!important}
+.gpsLocalPlot svg{width:100%;max-height:none!important;min-height:430px}
+.gpsTelemetryRail{display:grid;grid-template-rows:auto 1fr;gap:12px}
+.gpsCoordinateCards{display:grid;gap:9px}
+.gpsCoordinateCards>div,.bearingDataCards>div{padding:12px;border:1px solid rgba(71,85,105,.7);border-radius:8px;background:rgba(15,23,42,.82)}
+.gpsCoordinateCards span,.bearingDataCards span,.gpsAltitudeGauge>span{display:block;color:#64748b;font:800 9px monospace;letter-spacing:1px}
+.gpsCoordinateCards strong,.bearingDataCards strong{display:block;margin-top:5px;color:#e2e8f0;font:900 14px monospace}
+.gpsAltitudeGauge{display:grid;place-items:center;align-content:center;min-height:250px;padding:14px;border:1px solid rgba(56,189,248,.28);border-radius:8px;background:rgba(8,20,38,.78)}
+.gpsAltitudeGauge .altitudeTape{height:150px;margin:12px auto}
+.gpsAltitudeGauge>strong{color:#facc15;font:900 22px monospace}.gpsAltitudeGauge small{color:#64748b;font:800 8px monospace}
+.tacticalFullscreenButton{flex:none;padding:8px 11px;border:1px solid rgba(56,189,248,.55);border-radius:6px;color:#7dd3fc;background:rgba(8,47,73,.48);font:900 9px monospace;letter-spacing:.6px;cursor:pointer}
+.tacticalFullscreenButton:hover{border-color:#67e8f9;color:#fff;background:rgba(14,116,144,.55)}
+.gpsMissionPanel:fullscreen,.tacticalBearingPanel:fullscreen{box-sizing:border-box;width:100vw;height:100vh;padding:24px;overflow:auto;background:#020617}
+.gpsMissionPanel:fullscreen .gpsMissionLayout{grid-template-columns:minmax(0,1fr) 280px}.gpsMissionPanel:fullscreen .gpsLocalPlot svg{height:calc(100vh - 170px)}
+
+.tacticalBearingPanel{min-height:720px;padding:20px;border-color:rgba(34,211,238,.42);background:radial-gradient(circle at 40% 42%,rgba(8,47,73,.45),rgba(2,6,23,.98) 62%)}
+.tacticalBearingHeader{display:flex;align-items:center;gap:14px;margin-bottom:18px}.tacticalBearingHeader>div:first-child{flex:1}
+.bearingDetection{display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;font:900 9px monospace;letter-spacing:.8px}.bearingDetection i{width:8px;height:8px;border-radius:50%}
+.bearingDetection.active{color:#4ade80;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.4)}.bearingDetection.active i{background:#22c55e;box-shadow:0 0 10px #22c55e}
+.bearingDetection.lost{color:#fb7185;background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.4)}.bearingDetection.lost i{background:#f43f5e}
+.tacticalBearingLayout{display:grid;grid-template-columns:minmax(340px,1fr) 220px;gap:22px;align-items:center}
+.tacticalCompass{position:relative;width:min(470px,92%);aspect-ratio:1;margin:auto;border:2px solid #22d3ee;border-radius:50%;background:repeating-conic-gradient(from 0deg,rgba(103,232,249,.7) 0 1deg,transparent 1deg 5deg),radial-gradient(circle,transparent 0 18%,rgba(8,47,73,.12) 18.5% 19%,transparent 19.5% 38%,rgba(8,47,73,.18) 38.5% 39%,transparent 39.5% 61%,rgba(34,211,238,.25) 61.5% 62%,rgba(2,6,23,.94) 62.5%);box-shadow:0 0 35px rgba(34,211,238,.12),inset 0 0 40px rgba(34,211,238,.08)}
+.tacticalCompass>span{position:absolute;z-index:5;color:#cbd5e1;font:900 16px monospace}.bearingNorth{top:12px;left:50%;transform:translateX(-50%);color:#fb7185!important}.bearingSouth{bottom:12px;left:50%;transform:translateX(-50%)}.bearingEast{right:15px;top:50%;transform:translateY(-50%)}.bearingWest{left:15px;top:50%;transform:translateY(-50%)}
+.bearingUncertaintyCone{position:absolute;z-index:2;inset:5%;border-radius:50%;background:conic-gradient(from calc(var(--bearing) - var(--uncertainty)),rgba(250,204,21,.22) 0deg var(--uncertainty-span),transparent var(--uncertainty-span) 360deg);mask:radial-gradient(circle,transparent 0 28%,#000 29% 100%);pointer-events:none}
+.bearingArrow{position:absolute;z-index:4;left:50%;top:7%;width:8px;height:43%;transform-origin:50% 100%;background:linear-gradient(to top,#f59e0b,#fde047);clip-path:polygon(50% 0,100% 18%,68% 18%,68% 100%,32% 100%,32% 18%,0 18%);filter:drop-shadow(0 0 8px rgba(250,204,21,.85));transition:transform .18s linear}
+.bearingCenter{position:absolute;z-index:7;inset:50% auto auto 50%;display:grid;place-items:center;width:130px;height:130px;transform:translate(-50%,-50%);border:2px solid #facc15;border-radius:50%;background:#07101f;box-shadow:0 0 22px rgba(250,204,21,.2)}.bearingCenter strong{color:#facc15;font:900 27px monospace}.bearingCenter span{color:#7dd3fc;font:900 16px monospace}
+.bearingDataCards{display:grid;gap:9px}.bearingDataCards strong{font-size:17px;color:#f8fafc}
+.bearingHistory{margin-top:22px;padding:13px;border:1px solid rgba(56,189,248,.25);border-radius:8px;background:rgba(2,8,23,.82)}.bearingHistory>div{display:flex;justify-content:space-between;color:#7dd3fc;font:900 9px monospace;letter-spacing:1px}.bearingHistory small{color:#64748b}.bearingHistory svg{display:block;width:100%;height:120px;margin-top:8px}.bearingHistoryGrid{fill:none;stroke:rgba(71,85,105,.45);stroke-width:1}.bearingHistoryLine{fill:none;stroke:#facc15;stroke-width:2.5;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 4px rgba(250,204,21,.55))}
+.tacticalBearingPanel:fullscreen .tacticalBearingLayout{grid-template-columns:minmax(450px,1fr) 300px}.tacticalBearingPanel:fullscreen .tacticalCompass{max-height:62vh}
+
+@media (max-width:900px){
+  .imuDisplayCluster .navigationVisualGrid,.gpsMissionLayout,.tacticalBearingLayout{grid-template-columns:1fr}
+  .imuDisplayCluster .headingCompass{min-height:250px}
+  .gpsTelemetryRail{grid-template-columns:1fr 1fr;grid-template-rows:auto}
+  .tacticalBearingPanel{min-height:0}.tacticalCompass{width:min(430px,96%)}
+}
+@media (max-width:560px){
+  .gpsTelemetryRail{grid-template-columns:1fr}.gpsLocalPlot svg{min-height:300px}
+  .gpsHeader,.tacticalBearingHeader{align-items:flex-start;flex-wrap:wrap}
+  .tacticalFullscreenButton{width:100%}
+}
+
+/* Restore the compact IMU and external-track layout. These rules override the
+   superseded large tactical experiment without affecting other HMI panels. */
+.imuDisplayCluster .navigationVisualGrid{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+}
+.imuDisplayCluster .gpsLocalPlot{margin:8px auto 2px!important}
+.imuDisplayCluster .gpsLocalPlot svg{
+  min-height:0;
+  height:auto;
+  max-height:230px!important;
+}
+@media (max-width:760px){
+  .imuDisplayCluster .navigationVisualGrid{grid-template-columns:1fr}
+  .imuDisplayCluster .gpsLocalPlot svg{max-height:250px!important}
+}
+
+/* Always-visible live IMU key/value signals */
+.imuSignalSection{max-width:1060px;margin:16px auto 4px;padding:16px;border:1px solid rgba(71,85,105,.62);border-radius:12px;background:linear-gradient(155deg,rgba(15,23,42,.96),rgba(2,6,23,.98));box-shadow:0 10px 24px rgba(0,0,0,.18)}
+.imuSignalHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(71,85,105,.35)}.imuSignalHeader h4{margin:0;color:#e2e8f0;font-size:13px;letter-spacing:.4px}.imuSignalHeader span{color:#4ade80;font:800 9px monospace;letter-spacing:1px}
+.imuSignalKeyValueGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}.imuSignalPair{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;min-height:38px;padding:8px 10px;border:1px solid rgba(51,65,85,.55);border-radius:7px;background:rgba(2,6,23,.52)}
+.imuSignalKey{min-width:0;overflow:hidden;color:#94a3b8;font-size:9px;font-weight:800;letter-spacing:.65px;text-overflow:ellipsis;white-space:nowrap}.imuSignalValue{color:#f8fafc;font:800 13px monospace;text-align:right}.imuSignalValue small{color:#7dd3fc;font-size:9px;font-weight:700}
+@media (max-width:560px){.imuSignalHeader{align-items:flex-start;flex-direction:column}.imuSignalKeyValueGrid{grid-template-columns:1fr}}
+
+/* Responsive topology page */
+.topologyPage{overflow-x:hidden}.topologyPage .main{min-width:0;overflow-x:hidden}.topologyPage .topologyDashboard,.topologyPage .topologyCard{min-width:0;max-width:100%}
+.topologyPage .topologyHeader{display:grid;grid-template-columns:minmax(220px,.55fr) minmax(0,1.45fr);align-items:start;gap:18px}.topologyPage #topologyStats{min-width:0}.topologyPage .topologyStatsGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:10px;width:100%}.topologyPage .topologyStat{box-sizing:border-box;min-width:0;padding:12px 8px;border-radius:12px}.topologyPage .topologyStat h3{font-size:22px}.topologyPage .topologyStat p{font-size:10px}
+.topologyPage .controls{align-items:center;margin-bottom:14px;padding:9px 12px;border:1px solid rgba(56,189,248,.16);border-radius:9px;background:rgba(2,6,23,.5)}
+.topologyPage .topologyCanvas{box-sizing:border-box;width:100%;height:760px;padding:12px;overflow:hidden}.topologyPage .topologyCanvas.topologyCanvasCompact{height:940px}.topologyPage #topologyDevices,.topologyPage .topology-fixed-map{position:relative;display:block;width:100%;height:100%;padding:0}.topologyPage #topologySvg{width:100%;height:100%;overflow:hidden}
+.topologyPage .topology-node{width:145px;min-height:118px;padding:10px}.topologyPage .deviceName{font-size:11px;line-height:1.2}.topologyPage .deviceMeta.compact{font-size:10px;line-height:1.35}.topologyPage .topologyLabel{font-size:9px;paint-order:stroke;stroke:#020617;stroke-width:3px;stroke-linejoin:round}
+.topologyTableWrap{width:100%;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}.topologyPage .topologyCard table{margin:10px 0 0;table-layout:fixed}.topologyPage .topologyDeviceTable{min-width:760px}.topologyPage .topologyLinkTable{min-width:1080px}.topologyPage .topologyCard th,.topologyPage .topologyCard td{box-sizing:border-box;padding:10px;font-size:11px;vertical-align:middle}.topologyPage .topologyCard th{position:sticky;top:0;z-index:1;white-space:normal}.topologyPage .topologyCard td{white-space:normal}
+@media (max-width:1200px){.topologyPage .topologyHeader{grid-template-columns:1fr}.topologyPage .topologyStatsGrid{grid-template-columns:repeat(auto-fit,minmax(90px,1fr))}}
+@media (max-width:760px){.topologyPage .main{padding:12px}.topologyPage .topologyCard{padding:12px}.topologyPage .topologyCanvas{padding:6px}.topologyPage .topology-node{width:132px}.topologyPage .topologyStatsGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* Industrial Button LED control panel */
+.buttonLedIndustrialPanel{padding:14px;border:1px solid rgba(100,116,139,.55);border-radius:12px;background:repeating-linear-gradient(100deg,rgba(255,255,255,.018) 0 1px,transparent 1px 5px),linear-gradient(145deg,#182230,#070c14 58%,#111827);box-shadow:inset 0 1px rgba(255,255,255,.06),inset 0 -18px 40px rgba(0,0,0,.2),0 16px 34px rgba(0,0,0,.25)}
+.buttonLedIndustrialPanel>.detailHeader{margin:-2px -2px 14px;padding:0 2px 12px;border-bottom:1px solid rgba(148,163,184,.2)}.buttonLedIndustrialPanel>.detailHeader h3{color:#f8fafc;font-size:17px;letter-spacing:.5px}.buttonLedLiveStamp{display:flex;align-items:center;gap:7px;font:700 10px monospace!important;color:#94a3b8!important}.buttonLedLiveStamp i{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 9px rgba(34,197,94,.9)}
+.buttonLedSection{margin-top:12px!important;padding:12px;border:1px solid rgba(71,85,105,.55);border-radius:9px;background:linear-gradient(180deg,rgba(30,41,59,.62),rgba(2,6,23,.62));box-shadow:inset 0 1px rgba(255,255,255,.035)}.buttonLedSectionHeader{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(71,85,105,.45)}.buttonLedSectionHeader h3{margin:0!important;color:#cbd5e1!important;font-size:11px!important;letter-spacing:1.2px!important}.buttonLedSectionHeader span{color:#64748b;font:800 8px monospace;letter-spacing:.8px}
+.buttonLedIndustrialPanel .controlGrid{grid-template-columns:repeat(auto-fill,minmax(145px,1fr))!important;gap:10px!important}.buttonLedIndustrialPanel .switchSection .controlGrid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))!important}.buttonLedIndustrialPanel .knobGrid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))!important}.buttonLedIndustrialPanel .ledSection .controlGrid{grid-template-columns:repeat(auto-fill,minmax(125px,1fr))!important}
+.buttonLedIndustrialPanel .controlTile{position:relative;box-sizing:border-box;min-height:172px!important;padding:10px!important;border:1px solid #475569;border-radius:7px!important;background:linear-gradient(145deg,#293544,#111827 48%,#080d15)!important;box-shadow:inset 1px 1px rgba(255,255,255,.07),inset -1px -1px rgba(0,0,0,.65),0 5px 10px rgba(0,0,0,.28)!important;opacity:1!important;cursor:default}.buttonLedIndustrialPanel .controlTile::after{content:"";position:absolute;inset:5px;border:1px solid rgba(148,163,184,.08);border-radius:4px;pointer-events:none}.buttonLedIndustrialPanel .controlTile.active{border-color:#64748b!important}.buttonLedIndustrialPanel .controlName{position:relative;z-index:1;min-height:28px;color:#f1f5f9;font-size:10px;font-weight:800;line-height:1.3;letter-spacing:.35px;text-align:center}.buttonLedIndustrialPanel .controlMeta{position:relative;z-index:1;margin:2px auto 0;width:max-content;padding:2px 6px;border:1px solid rgba(100,116,139,.35);border-radius:3px;background:#080d15;color:#64748b;font:700 8px monospace}
+.buttonLedIndustrialPanel .controlTelemetry{position:relative;z-index:1;margin-top:9px;padding-top:7px;border-top:1px solid rgba(100,116,139,.24);font-size:8px}.buttonLedIndustrialPanel .controlTelemetry span{color:#94a3b8}.buttonLedIndustrialPanel .controlHealth{min-height:15px;padding:1px 4px;font-size:8px}
+
+/* Industrial pilot lamps */
+.pilotLightAssembly{position:relative;z-index:1;display:grid;place-items:center;gap:6px;margin-top:7px}.pilotLightBezel{display:grid;place-items:center;width:58px;height:58px;border:1px solid #94a3b8;border-radius:50%;background:radial-gradient(circle at 35% 28%,#e2e8f0 0 4%,#64748b 18%,#1e293b 54%,#020617 73%);box-shadow:inset 0 2px 5px rgba(255,255,255,.28),inset 0 -4px 8px rgba(0,0,0,.72),0 4px 8px rgba(0,0,0,.45)}.buttonLedIndustrialPanel .ledLamp{position:relative;width:35px;height:35px;margin:0;border:2px solid #7f1d1d;background:radial-gradient(circle at 36% 30%,#fca5a5 0 7%,#991b1b 28%,#3f0808 72%);box-shadow:inset 0 3px 5px rgba(255,255,255,.2),inset 0 -7px 10px rgba(0,0,0,.55),0 0 5px rgba(239,68,68,.22)}.buttonLedIndustrialPanel .ledLamp span{position:absolute;left:8px;top:6px;width:10px;height:6px;border-radius:50%;background:rgba(255,255,255,.38);transform:rotate(-25deg)}.buttonLedIndustrialPanel .controlTile.led.active .ledLamp{border-color:#86efac;background:radial-gradient(circle at 36% 30%,#dcfce7 0 6%,#4ade80 22%,#15803d 60%,#052e16 100%);box-shadow:inset 0 3px 6px rgba(255,255,255,.36),inset 0 -7px 10px rgba(0,0,0,.35),0 0 18px rgba(34,197,94,.82)}.industrialStatePlate{min-width:44px;padding:3px 8px;border:1px solid #475569;border-radius:3px;background:#05080d;color:#fca5a5;font:900 8px monospace;letter-spacing:1px;text-align:center}.controlTile.active .industrialStatePlate{color:#86efac;border-color:rgba(34,197,94,.45)}
+
+/* Industrial toggle switches */
+.switchStateBanner{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:8px;width:calc(100% - 14px);min-height:34px;margin:8px auto 5px;border:1px solid #475569;border-radius:5px;background:linear-gradient(180deg,#172033,#080d17);color:#e2e8f0;box-shadow:inset 0 1px rgba(255,255,255,.08)}.switchStateBanner>span:last-child{display:grid;line-height:1}.switchStateBanner strong{font:900 13px monospace;letter-spacing:1.4px}.switchStateBanner small{margin-top:4px;color:#94a3b8;font:700 7px monospace;letter-spacing:.8px}.switchStateLamp{width:11px;height:11px;border:2px solid #64748b;border-radius:50%;background:#1e293b;box-shadow:inset 0 1px 2px #020617}.controlTile.switch.active{border-color:#22c55e;box-shadow:inset 0 0 0 1px rgba(34,197,94,.18),0 4px 14px rgba(0,0,0,.3)}.controlTile.switch.active .switchStateBanner{border-color:#22c55e;background:linear-gradient(180deg,rgba(22,101,52,.78),rgba(5,46,22,.92));color:#dcfce7}.controlTile.switch.active .switchStateLamp{border-color:#bbf7d0;background:#22c55e;box-shadow:0 0 13px #22c55e,inset 0 1px 2px #dcfce7}.controlTile.switch.inactive .switchStateBanner{border-color:#64748b;background:linear-gradient(180deg,#293548,#111827);color:#f8fafc}.industrialSwitchAssembly{position:relative;z-index:1;display:grid;grid-template-columns:58px;grid-template-rows:18px 60px 18px;align-items:center;justify-content:center;justify-items:center;gap:2px;margin-top:2px}.switchLegend{min-width:48px;padding:2px 8px;border-radius:3px;color:#64748b;font:900 9px monospace;letter-spacing:1px;text-align:center}.toggleBezel{display:grid;place-items:center;width:56px;height:58px;border:1px solid #94a3b8;border-radius:9px;background:linear-gradient(145deg,#94a3b8,#334155 42%,#0f172a 75%);box-shadow:inset 2px 2px 5px rgba(255,255,255,.2),inset -3px -4px 6px rgba(0,0,0,.5),0 5px 9px rgba(0,0,0,.4)}.toggleLever{position:relative;width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#cbd5e1,#475569 45%,#111827 76%);box-shadow:0 2px 5px rgba(0,0,0,.5)}.toggleLever span{position:absolute;left:11px;top:-25px;width:10px;height:42px;border:1px solid #cbd5e1;border-radius:6px 6px 4px 4px;background:linear-gradient(90deg,#334155,#e2e8f0 42%,#64748b 72%,#1e293b);box-shadow:2px 3px 5px rgba(0,0,0,.5);transform:rotate(24deg);transform-origin:50% 36px;transition:transform .28s cubic-bezier(.2,.8,.2,1)}.controlTile.switch.active .toggleLever span{transform:rotate(-24deg)}.controlTile.switch.active .switchOnLegend{background:#14532d;color:#dcfce7;box-shadow:0 0 10px rgba(34,197,94,.35)}.controlTile.switch.inactive .switchOffLegend{background:#334155;color:#fff;box-shadow:0 0 0 1px #64748b}.controlTile.switch.active .switchOffLegend,.controlTile.switch.inactive .switchOnLegend{opacity:.42}
+
+/* Industrial rotary selector knobs */
+.buttonLedIndustrialPanel .controlTile.knob{min-height:238px!important}.industrialKnobAssembly{position:relative;z-index:1;display:grid;place-items:center;margin-top:6px}.rotaryScale{position:absolute;top:0;width:116px;height:116px;border-radius:50%;border:1px solid rgba(148,163,184,.18)}.rotaryScale i{position:absolute;left:56px;top:2px;width:2px;height:9px;background:#94a3b8;transform-origin:1px 56px}.rotaryScale i:nth-child(1){transform:rotate(-120deg)}.rotaryScale i:nth-child(2){transform:rotate(-80deg)}.rotaryScale i:nth-child(3){transform:rotate(-40deg)}.rotaryScale i:nth-child(4){transform:rotate(0deg);background:#e2e8f0}.rotaryScale i:nth-child(5){transform:rotate(40deg)}.rotaryScale i:nth-child(6){transform:rotate(80deg)}.rotaryScale i:nth-child(7){transform:rotate(120deg)}.rotaryKnob{position:relative;width:78px;height:78px;margin:19px 0 10px;border:2px solid #94a3b8;border-radius:50%;background:repeating-conic-gradient(from 0deg,#111827 0 6deg,#334155 6deg 10deg),radial-gradient(circle,#475569,#0f172a);box-shadow:inset 4px 5px 8px rgba(255,255,255,.08),inset -7px -8px 12px rgba(0,0,0,.65),0 7px 12px rgba(0,0,0,.48);transform:rotate(var(--knob-angle));transition:transform .32s ease}.knobPointer{position:absolute;left:36px;top:6px;width:5px;height:25px;border-radius:3px;background:#facc15;box-shadow:0 0 5px rgba(250,204,21,.45)}.knobHub{position:absolute;left:29px;top:29px;width:16px;height:16px;border:2px solid #64748b;border-radius:50%;background:#111827}.knobValuePlate{display:grid;grid-template-columns:auto auto;align-items:end;gap:4px 8px;min-width:112px;padding:6px 9px;border:1px solid #475569;border-radius:4px;background:#03070c;box-shadow:inset 0 0 8px rgba(0,0,0,.7)}.knobValuePlate strong{color:#7dd3fc;font:900 17px monospace}.knobValuePlate small{color:#64748b;font:800 7px monospace;letter-spacing:.7px}
+
+/* Industrial momentary push buttons */
+.industrialPushButton{position:relative;z-index:1;display:grid;place-items:center;margin-top:8px}.pushButtonBezel{display:grid;place-items:center;width:68px;height:68px;border:1px solid #94a3b8;border-radius:50%;background:radial-gradient(circle at 35% 28%,#cbd5e1,#475569 35%,#111827 68%);box-shadow:inset 0 2px 5px rgba(255,255,255,.22),inset 0 -4px 8px rgba(0,0,0,.65),0 5px 9px rgba(0,0,0,.42)}.buttonLedIndustrialPanel .pushButtonFace{display:grid;place-items:center;width:48px!important;height:48px;min-height:48px!important;margin:0;border:2px solid #fecaca;border-radius:50%;background:radial-gradient(circle at 35% 28%,#ef4444,#991b1b 48%,#450a0a 82%);box-shadow:inset 0 3px 5px rgba(255,255,255,.2),inset 0 -7px 9px rgba(0,0,0,.4),0 3px 5px rgba(0,0,0,.45);color:#fff;font-size:9px}.buttonLedIndustrialPanel .controlTile.pushButton.active .pushButtonFace{border-color:#bbf7d0;background:radial-gradient(circle at 35% 28%,#4ade80,#15803d 52%,#052e16 85%);box-shadow:inset 0 3px 5px rgba(255,255,255,.26),inset 0 -7px 9px rgba(0,0,0,.35),0 0 14px rgba(34,197,94,.5)}
+.buttonLedEmptyOn{margin-top:12px;padding:16px;border:1px solid rgba(71,85,105,.55);border-radius:8px;background:rgba(2,6,23,.55);color:#94a3b8;font:800 12px monospace;letter-spacing:.6px;text-align:center}
+@media (max-width:620px){.buttonLedIndustrialPanel{padding:9px}.buttonLedIndustrialPanel .controlGrid,.buttonLedIndustrialPanel .switchSection .controlGrid,.buttonLedIndustrialPanel .ledSection .controlGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.buttonLedIndustrialPanel .knobGrid{grid-template-columns:1fr!important}}
+
+/* Data-driven device cards and generic inspectors. */
+.deviceLiveSignals{position:relative;z-index:1;display:grid;gap:4px;margin-top:8px;padding-top:7px;border-top:1px solid rgba(71,85,105,.4)}
+.deviceSignalRow{display:grid;grid-template-columns:minmax(0,1fr) minmax(54px,auto);align-items:center;gap:8px;min-height:20px;color:#94a3b8;font:700 9px monospace}
+.deviceSignalRow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.deviceSignalRow strong{max-width:130px;overflow:hidden;color:#e2e8f0;text-align:right;text-overflow:ellipsis;white-space:nowrap}
+.deviceSignalEmpty{color:#64748b;font:700 9px monospace;text-align:center}
+.genericDevicePanel{width:100%}.genericDevicePanel>.detailHeader{margin-bottom:12px}.genericTelemetryGrid{max-height:560px!important;padding:0!important;border-top:0!important}
+.genericTelemetryGrid .imuInstrument{min-width:0}.genericTelemetryGrid .imuValue{overflow-wrap:anywhere}
+
+/* Pages hosted by desktop.html use the shell navigation instead of nested sidebars. */
+body.desktopEmbedded{min-width:0!important;overflow-x:hidden!important}
+body.desktopEmbedded .layout{display:block!important;min-width:0!important;min-height:100vh!important}
+body.desktopEmbedded .sidebar{display:none!important}
+body.desktopEmbedded .main{box-sizing:border-box!important;width:100%!important;max-width:none!important;min-width:0!important;margin:0!important}
+
+/* Live state-change popups */
+.hmiAlertStack{position:fixed;right:18px;top:18px;z-index:9999;display:grid;gap:9px;width:min(360px,calc(100vw - 36px));pointer-events:none}
+.hmiStatePopup{display:grid;gap:3px;padding:12px 14px;border:1px solid rgba(74,222,128,.55);border-radius:8px;background:rgba(5,13,24,.96);box-shadow:0 12px 26px rgba(0,0,0,.35),inset 0 1px rgba(255,255,255,.06);color:#e2e8f0;animation:hmiPopupIn .18s ease-out}
+.hmiStatePopup strong{color:#86efac;font-size:11px;letter-spacing:.8px;text-transform:uppercase}
+.hmiStatePopup span{color:#f8fafc;font:800 13px monospace;overflow-wrap:anywhere}
+.hmiStatePopup.hide{opacity:0;transform:translateY(-8px);transition:opacity .28s ease,transform .28s ease}
+@keyframes hmiPopupIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Inspector process visualization */
+.inspectorGraphPanel{display:grid;gap:14px;min-height:430px;padding:16px;border:1px solid rgba(56,189,248,.28);border-radius:8px;background:linear-gradient(180deg,rgba(15,23,42,.76),rgba(2,6,23,.9))}
+.graphHeader{display:flex;align-items:center;justify-content:space-between;gap:12px}.graphHeader h3{margin:0;color:#e2e8f0;font-size:18px}.graphHeader span{display:block;margin-top:4px;color:#7dd3fc;font:800 11px monospace;letter-spacing:.5px}.graphHeader button{min-height:34px;padding:0 14px;border:1px solid rgba(56,189,248,.45);border-radius:6px;background:#0f2740;color:#e0f2fe;font-weight:800;cursor:pointer}
+.inspectorGraphGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;align-items:stretch}
+.inspectorGraphTile{display:grid;grid-template-rows:auto auto minmax(190px,1fr);gap:7px;min-width:0;min-height:260px;padding:12px;border:1px solid rgba(71,85,105,.55);border-radius:8px;background:rgba(3,7,18,.72)}
+.inspectorGraphTileHeader{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 10px;min-height:24px}
+.inspectorGraphTileHeader strong{min-width:0;color:#e2e8f0;font-size:12px;font-weight:900;letter-spacing:.25px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inspectorGraphTileHeader span{color:#facc15;font:900 12px monospace;white-space:nowrap}
+.inspectorGraphTileHeader .graphLiveReadout{grid-column:1 / -1;min-width:0;color:#89f7ff;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inspectorGraphScale{display:flex;justify-content:space-between;gap:8px;color:#94a3b8;font:800 9px monospace}
+.inspectorGraphCanvasWrap{position:relative;min-height:190px;height:100%;border:1px solid rgba(30,41,59,.9);border-radius:6px;background:#030712;padding:8px}.inspectorGraphCanvasWrap canvas{display:block;width:100%!important;height:100%!important}
+.inspectorGraphLoading,.inspectorGraphEmpty{display:grid;place-items:center;min-height:220px;border:1px dashed rgba(100,116,139,.5);border-radius:8px;color:#94a3b8;font:900 12px monospace;letter-spacing:.4px;text-align:center}
+.inspectorGraphMeta{min-height:18px;color:#94a3b8;font:800 11px monospace;letter-spacing:.35px}
+@media (max-width:620px){.inspectorGraphPanel{padding:10px}.graphHeader{align-items:flex-start;flex-direction:column}.graphHeader button{width:100%}.inspectorGraphGrid{grid-template-columns:1fr}.inspectorGraphTile{min-height:240px}.inspectorGraphCanvasWrap{min-height:175px}}
+
+/* ===========================================
+DASHBOARD CLEAN GRAPH + ALL DEVICE FIX
+Added to keep the SCADA dashboard readable and to show tracker/external tracker
+telemetry in the Motion / Operator / Tracker graph.
+=========================================== */
+
+.scadaHeader{
+  flex-wrap:wrap;
+  align-items:stretch;
+  row-gap:16px;
+}
+
+.scadaHeader > div:first-child{
+  min-width:280px;
+  flex:1 1 320px;
+}
+
+#globalStatus{
+  flex:0 1 560px;
+  min-width:280px;
+}
+
+.globalGrid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(105px,1fr));
+  gap:12px;
+}
+
+.globalCard{
+  min-width:0;
+  padding:14px 12px;
+}
+
+.globalCard h3{
+  font-size:24px;
+}
+
+.dashboardChartCard{
+  margin-top:18px;
+}
+
+.graphTimelineControl{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-top:18px;
+  padding:14px 18px;
+}
+
+.graphTimelineControl > div{flex:1 1 auto}
+.graphTimelineControl h2,
+.graphTimelineControl p{margin:0}
+.graphTimelineControl label{color:#cbd5e1;font-size:12px;font-weight:800}
+.graphTimelineControl select{min-width:150px}
+.graphRangeStatus{min-width:130px;color:#67e8f9;font:800 11px monospace}
+
+@media (max-width:700px){
+  .graphTimelineControl{align-items:stretch;flex-direction:column}
+  .graphTimelineControl select,
+  .graphRangeStatus{width:100%}
+}
+
+.dashboardChartCard h2,
+.sectionTitle{
+  margin:0 0 8px;
+  line-height:1.25;
+}
+
+.sectionTitle{
+  margin-top:24px;
+  margin-bottom:12px;
+  text-shadow:none;
+}
+
+.chartHint{
+  margin:0 0 14px;
+  font-size:13px;
+}
+
+.chartContainer{
+  position:relative;
+  height:390px;
+  min-height:300px;
+  overflow:hidden;
+  border-radius:16px;
+  background:#020617;
+}
+
+.chartEmpty{
+  display:none;
+  position:absolute;
+  inset:0;
+  align-items:center;
+  justify-content:center;
+  padding:28px;
+  color:#94a3b8;
+  text-align:center;
+  border:1px dashed rgba(148,163,184,.30);
+  border-radius:16px;
+  background:rgba(2,6,23,.65);
+}
+
+.compactLegend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  max-height:92px;
+  overflow:auto;
+  padding:10px 4px 2px;
+}
+
+.compactLegend .legendItem{
+  max-width:260px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-size:11px;
+  padding:5px 9px;
+}
+
+#devices.grid{
+  margin-top:10px;
+}
+
+.tableWrap{
+  margin-top:10px;
+  max-height:520px;
+  overflow:auto;
+}
+
+@media(max-width:980px){
+  .globalGrid{
+    grid-template-columns:repeat(2,minmax(120px,1fr));
+  }
+
+  .chartContainer{
+    height:330px;
+  }
+}
+
+@media(max-width:560px){
+  .globalGrid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .compactLegend .legendItem{
+    max-width:100%;
+  }
+}
+/*
+--------------------------------------------------
+GLOBAL PAGE SCROLL + CENTER FIX
+--------------------------------------------------
+This fixes:
+1. Page stuck on left side
+2. No vertical scrolling
+3. Content cut from top/bottom
+4. Dashboard not using full width properly
+--------------------------------------------------
+*/
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/*
+Allow the full page to scroll.
+Do not lock dashboard pages to only 100vh.
+*/
+body {
+  min-height: 100vh;
+}
+
+/*
+Main dashboard wrapper should not be fixed or clipped.
+*/
+.layout,
+.dashboard-layout,
+.scada-layout,
+.page,
+.main,
+.main-content,
+.dashboard-page,
+.scada-page {
+  position: relative;
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+  overflow: visible;
+}
+
+/*
+Center the main content area.
+This prevents everything from sticking only to the left side.
+*/
+.main,
+.main-content,
+.dashboard-page,
+.scada-page {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+  box-sizing: border-box;
+}
+
+/*
+If any page section was accidentally fixed, make it normal.
+*/
+.mission-page,
+.command-center,
+.scada-command-center,
+.dashboard-container {
+  position: relative;
+  width: 100%;
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+/*
+Cards and panels should not clip page scrolling.
+*/
+.card,
+.panel,
+.device-panel,
+.device-fleet,
+.device-inspector,
+.analytics-panel,
+.chart-card,
+.telemetry-card {
+  overflow: visible;
+}
+
+/*
+Charts may scroll inside only horizontally if needed,
+but should not stop full page vertical scrolling.
+*/
+.chart-wrap,
+.chart-container,
+.telemetry-chart,
+.analytics-chart {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+/*
+Tables can scroll horizontally, not the whole page.
+*/
+.table-wrap,
+.table-container,
+.telemetry-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+/*
+Fix top mission status so it does not cover page content.
+*/
+.mission-status,
+.status-banner,
+.top-banner {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+Make sure fixed backgrounds do not block scrolling/clicks.
+*/
+body::before,
+body::after,
+.bg,
+.background,
+.dashboard-bg,
+.scada-bg {
+  pointer-events: none;
+}
+
+/*
+Mobile and smaller screen support.
+*/
+@media (max-width: 900px) {
+  .main,
+  .main-content,
+  .dashboard-page,
+  .scada-page {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .mission-page,
+  .command-center,
+  .scada-command-center,
+  .dashboard-container {
+    max-width: 100%;
+  }
+}
+/*
+--------------------------------------------------
+FINAL HMI SCROLL OVERRIDE
+--------------------------------------------------
+This must stay at the bottom of style.css.
+
+It prevents the HMI page from locking to 100dvh and blocking page scroll.
+--------------------------------------------------
+*/
+
+.scadaMain {
+  height: auto !important;
+  min-height: 100vh !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+.commandCenterGrid {
+  min-height: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.leftPanel,
+.centerPanel,
+.rightPanel,
+.trendPanel {
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+#hmiCanvas,
+#hmiDeviceInfo,
+#telemetryFeed {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+/*
+==================================================
+FINAL GLOBAL SIDEBAR + HMI RIGHT FLEET FIX
+Paste this at the VERY BOTTOM of style.css.
+This must be the last CSS block.
+==================================================
+*/
+
+:root {
+  --final-sidebar-width: 230px;
+}
+
+/*
+--------------------------------------------------
+1. Stop sidebar from overlapping page content
+--------------------------------------------------
+*/
+
+html,
+body {
+  width: 100% !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+.layout {
+  display: block !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  overflow: visible !important;
+}
+
+.sidebar {
+  position: fixed !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: var(--final-sidebar-width) !important;
+  min-width: var(--final-sidebar-width) !important;
+  max-width: var(--final-sidebar-width) !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+.sidebar h2 {
+  font-size: 22px !important;
+  line-height: 1.1 !important;
+  word-break: break-word !important;
+}
+
+.sidebar a {
+  font-size: 15px !important;
+  padding: 12px 14px !important;
+  margin: 6px 0 !important;
+  border-radius: 10px !important;
+}
+
+.main {
+  margin-left: var(--final-sidebar-width) !important;
+  width: calc(100vw - var(--final-sidebar-width)) !important;
+  max-width: calc(100vw - var(--final-sidebar-width)) !important;
+  min-height: 100vh !important;
+  padding: 18px !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+}
+
+/*
+This prevents wide cards/tables from going under the sidebar.
+*/
+.main > * {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/*
+--------------------------------------------------
+2. Fix diagnostic/verification page width
+--------------------------------------------------
+*/
+
+.diagnosticPage .main {
+  overflow-y: visible !important;
+}
+
+.diagnosticPage .pipelineGrid,
+.diagnosticPage .deviceHealthGrid,
+.diagnosticPage .queueGrid {
+  max-width: 100% !important;
+}
+
+.diagnosticPage .statusBanner,
+.diagnosticPage .auditPanel {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.diagnosticPage .auditTableWrap {
+  width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+/*
+--------------------------------------------------
+3. HMI page must scroll normally
+--------------------------------------------------
+*/
+
+.scadaMain {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  min-height: 100vh !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding-bottom: 24px !important;
+}
+
+/*
+--------------------------------------------------
+4. HMI professional 3-column layout
+
+Left  = Device Inspector / controls
+Middle = Mission telemetry analytics / selected device detail
+Right = Device Fleet
+
+This keeps Device Fleet on the opposite/right side.
+--------------------------------------------------
+*/
+
+.commandCenterGrid {
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(260px, 300px)
+    minmax(520px, 1fr)
+    minmax(300px, 360px) !important;
+
+  grid-template-areas:
+    "control inspector fleet" !important;
+
+  gap: 14px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  align-items: start !important;
+}
+
+.leftPanel {
+  grid-area: control !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  overflow: visible !important;
+}
+
+.centerPanel {
+  grid-area: inspector !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  overflow: visible !important;
+}
+
+.rightPanel {
+  grid-area: fleet !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  max-height: calc(100vh - 36px) !important;
+  position: sticky !important;
+  top: 18px !important;
+  align-self: start !important;
+  overflow: hidden !important;
+}
+
+/*
+Device Fleet list stays inside right side and scrolls internally.
+*/
+.rightPanel #hmiCanvas {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+
+  width: 100% !important;
+  max-width: 100% !important;
+
+  max-height: calc(100vh - 110px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+
+  padding: 10px !important;
+  box-sizing: border-box !important;
+}
+
+.rightPanel .devicePanel {
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  min-height: 115px !important;
+  padding: 10px !important;
+  box-sizing: border-box !important;
+}
+
+.rightPanel .deviceTitle h2 {
+  font-size: 16px !important;
+  line-height: 1.2 !important;
+  word-break: break-word !important;
+}
+
+.rightPanel .deviceStats {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 6px !important;
+  font-size: 11px !important;
+}
+
+.rightPanel .deviceLastSeen,
+.rightPanel .deviceMulticast {
+  font-size: 11px !important;
+  line-height: 1.3 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/*
+--------------------------------------------------
+5. Center graph/analytics should not hide behind sidebar
+--------------------------------------------------
+*/
+
+.trendPanel,
+.analyticsPanel,
+.chartContainer,
+#hmiDeviceInfo,
+#telemetryFeed {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+}
+
+.trendPanel {
+  height: auto !important;
+  min-height: 520px !important;
+  margin-top: 14px !important;
+}
+
+.trendPanel .chartContainer {
+  height: 480px !important;
+  min-height: 480px !important;
+}
+
+/*
+--------------------------------------------------
+6. Responsive layout
+--------------------------------------------------
+*/
+
+@media (max-width: 1200px) {
+  :root {
+    --final-sidebar-width: 210px;
+  }
+
+  .commandCenterGrid {
+    grid-template-columns:
+      minmax(240px, 280px)
+      minmax(420px, 1fr)
+      minmax(260px, 320px) !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .sidebar {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+  }
+
+  .main {
+    margin-left: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
+
+  .commandCenterGrid {
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "inspector"
+      "fleet"
+      "control" !important;
+  }
+
+  .rightPanel {
+    position: static !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .rightPanel #hmiCanvas {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+    max-height: none !important;
+  }
+}
+/*
+==================================================
+FINAL FULL PAGE MOUSE WHEEL SCROLL FIX
+Paste this at the VERY BOTTOM of style.css.
+==================================================
+*/
+
+html,
+body {
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+body {
+  position: static !important;
+}
+
+.layout {
+  height: auto !important;
+  min-height: 100vh !important;
+  overflow: visible !important;
+}
+
+.main {
+  height: auto !important;
+  min-height: 100vh !important;
+  overflow: visible !important;
+}
+
+/*
+Cards and panels must not trap vertical mouse wheel.
+*/
+.card,
+.auditPanel,
+.statusBanner,
+.pipelineGrid,
+.deviceHealthGrid,
+.queueGrid,
+.scadaMain,
+.commandCenterGrid,
+.leftPanel,
+.centerPanel,
+.trendPanel,
+.analyticsPanel {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/*
+Tables can scroll horizontally only.
+They should not trap vertical scroll.
+*/
+.auditTableWrap,
+.table-wrap,
+.table-container,
+.telemetry-table-wrap {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  max-height: none !important;
+}
+
+/*
+Only the HMI device fleet can have internal scroll.
+*/
+.rightPanel {
+  overflow: visible !important;
+}
+
+.rightPanel #hmiCanvas {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  max-height: calc(100vh - 120px) !important;
+}
+
+/*
+==================================================
+FINAL HMI WIDTH CONTAINMENT FIX
+Keeps the HMI grid inside the screen after the fixed sidebar.
+==================================================
+*/
+
+body.hmiPage {
+  overflow-x: hidden !important;
+}
+
+body.hmiPage .main.scadaMain {
+  width: calc(100vw - var(--final-sidebar-width)) !important;
+  max-width: calc(100vw - var(--final-sidebar-width)) !important;
+  min-width: 0 !important;
+  margin-left: var(--final-sidebar-width) !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+}
+
+body.hmiPage .hmiKpiBar,
+body.hmiPage .commandCenterGrid,
+body.hmiPage .trendPanel {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+body.hmiPage .commandCenterGrid {
+  grid-template-columns:
+    minmax(210px, 0.72fr)
+    minmax(0, 1.9fr)
+    minmax(230px, 0.82fr) !important;
+  grid-template-areas: "left center right" !important;
+  gap: 14px !important;
+  overflow: visible !important;
+}
+
+body.hmiPage .leftPanel,
+body.hmiPage .centerPanel,
+body.hmiPage .rightPanel {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+body.hmiPage .rightPanel {
+  grid-area: right !important;
+  position: sticky !important;
+  top: 18px !important;
+  overflow: hidden !important;
+}
+
+body.hmiPage .rightPanel #hmiCanvas {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+body.hmiPage .rightPanel .devicePanel,
+body.hmiPage .rightPanel .deviceTitle,
+body.hmiPage .rightPanel .deviceStats,
+body.hmiPage .rightPanel .deviceLastSeen,
+body.hmiPage .rightPanel .deviceMulticast {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 1200px) {
+  body.hmiPage .commandCenterGrid {
+    grid-template-columns:
+      minmax(190px, 0.7fr)
+      minmax(0, 1.7fr)
+      minmax(210px, 0.8fr) !important;
+    gap: 12px !important;
+  }
+}
+
+@media (max-width: 980px) {
+  body.hmiPage .main.scadaMain {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin-left: 0 !important;
+  }
+
+  body.hmiPage .commandCenterGrid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas:
+      "center"
+      "right"
+      "left" !important;
+  }
+
+  body.hmiPage .rightPanel {
+    position: static !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  body.hmiPage .rightPanel #hmiCanvas {
+    max-height: none !important;
+  }
+}
+.storageHealthBanner {
+  position: fixed; right: 16px; bottom: 16px; z-index: 10000;
+  max-width: min(560px, calc(100vw - 32px)); padding: 10px 14px;
+  border-radius: 8px; color: #e2e8f0; background: #334155;
+  box-shadow: 0 8px 24px #0008; font-size: 13px;
+}
+.storageHealthBanner.healthy { background: #14532d; }
+.storageHealthBanner.failed { background: #991b1b; font-weight: 700; }
+.storageHealthBanner.unavailable { background: #854d0e; }
+.monitorDevicePicker { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:8px; margin:12px 0; }
+.monitorDevicePicker label { padding:9px; border:1px solid #334155; border-radius:7px; }
+.healthCompareGrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px; margin-top:16px; }
+.healthCompareCard { border-left:5px solid #64748b; }
+.healthCompareCard.online { border-left-color:#22c55e; }
+.healthCompareCard.warning { border-left-color:#f59e0b; }
+.healthCompareCard.offline, .healthCompareCard.abnormal { border-left-color:#ef4444; }
+.diagnosticSelectRow { display:flex; flex-wrap:wrap; gap:12px; align-items:end; }
+.diagnosticSelectRow label { display:grid; gap:6px; min-width:190px; color:#94a3b8; font-size:13px; }
+.diagnosticDeviceSelect { min-width:290px; max-width:440px; margin:0; padding:7px 9px 9px; border:1px solid #334155; border-radius:8px; }
+.diagnosticDeviceSelect legend { padding:0 5px; color:#94a3b8; font-size:13px; }
+.diagnosticDevicePicker { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px; max-height:116px; overflow-y:auto; }
+.diagnosticDevicePicker label { display:grid; grid-template-columns:auto minmax(0,1fr); align-items:center; gap:7px; min-width:0; padding:6px 8px; border:1px solid #273449; border-radius:6px; cursor:pointer; }
+.diagnosticDevicePicker label:has(input:checked) { border-color:#38bdf8; background:#0c4a6e55; color:#e2e8f0; }
+.diagnosticDevicePicker input { margin:0; }
+.diagnosticDevicePicker span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.diagnosticSelectRow input[type="date"] { min-height:42px; padding:8px 11px; border:1px solid #334155; border-radius:8px; background:#020617; color:#e2e8f0; color-scheme:dark; }
+.diagnosticSelectRow .btn { min-height:42px; }
+.diagnosticZoomControls { display:flex; flex-wrap:wrap; gap:7px; }
+.btn.secondary { background:#1e293b; border-color:#475569; color:#e2e8f0; }
+.btn.secondary:hover { background:#334155; }
+.featureHeader,.diagnosticChartToolbar { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:16px; }
+.diagnosticFeaturePicker { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(240px,100%),1fr)); gap:8px; max-height:280px; overflow-y:auto; overflow-x:hidden; padding:6px 2px; }
+.diagnosticDeviceFeatures { display:grid; gap:12px; }
+.deviceFeaturePanel { border:1px solid #334155; border-radius:9px; padding:10px; }
+.deviceFeaturePanel h4 { margin:0 0 7px; color:#7dd3fc; }
+.diagnosticFeaturePicker label { display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:8px; min-width:0; padding:9px; border:1px solid #334155; border-radius:7px; cursor:pointer; }
+.diagnosticFeaturePicker input { margin:0; }
+.diagnosticFeaturePicker span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.diagnosticFeaturePicker label:has(input:checked) { border-color:#38bdf8; background:#0c4a6e55; }
+.diagnosticFeaturePicker small { color:#64748b; white-space:nowrap; }
+.diagnosticChartBox { height:460px; margin-top:12px; }
+.diagnosticViewport { width:100%; accent-color:#38bdf8; }
+.diagnosticLegend { display:flex; flex-wrap:wrap; gap:12px; margin-top:10px; }
+.diagnosticLegend span { display:flex; align-items:center; gap:6px; padding:7px 9px; border:1px solid #273449; border-radius:7px; background:#081120; font-size:13px; }
+.diagnosticLegend i { width:18px; height:3px; }
+.diagnosticLowerGrid { display:grid; grid-template-columns:minmax(300px,.8fr) minmax(420px,1.2fr); gap:16px; margin-top:16px; }
+.diagnosticEventList { max-height:520px; overflow:auto; display:grid; gap:7px; }
+.diagnosticEvent { width:100%; display:grid; grid-template-columns:72px 1fr; gap:9px; text-align:left; padding:9px; border:1px solid #334155; border-radius:7px; background:#0f172a; color:#e2e8f0; cursor:pointer; }
+.diagnosticEvent:hover { border-color:#38bdf8; }
+.diagnosticEvent small,.diagnosticContextTable small { display:block; color:#94a3b8; margin-top:3px; }
+.eventType { display:inline-flex; align-items:center; justify-content:center; height:24px; padding:0 7px; border-radius:999px; background:#475569; font-size:11px; text-transform:uppercase; }
+.eventType.alarm,.eventType.outlier { background:#991b1b; }.eventType.change { background:#9a3412; }.eventType.missing { background:#854d0e; }.eventType.sample { background:#075985; }
+.diagnosticEventHeading { display:flex; gap:12px; align-items:start; margin-bottom:14px; }
+.diagnosticContextTable { overflow:auto; }.diagnosticContextTable table { width:100%; border-collapse:collapse; }.diagnosticContextTable th,.diagnosticContextTable td { padding:9px; border-bottom:1px solid #334155; text-align:left; }
+.diagnosticEmpty { color:#94a3b8; padding:18px 0; }
+@media (max-width:900px) { .diagnosticLowerGrid { grid-template-columns:1fr; }.diagnosticChartBox { height:360px; }.featureHeader,.diagnosticChartToolbar { align-items:flex-start; flex-direction:column; }.diagnosticSelectRow label { min-width:min(100%,260px); flex:1; } }
+
+/* Shared readability refinements for fleet, device, HMI, topology, and history pages. */
+body { font-family: Inter, "Segoe UI", Arial, sans-serif; line-height: 1.5; }
+.main { min-width: 0; }
+.grid { gap: 14px; }
+.card { border-radius: 16px; }
+.tableWrap, .table-wrap, .table-container, .telemetry-table-wrap { max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; }
+.tableWrap table, .table-wrap table, .table-container table, .telemetry-table-wrap table { margin-top: 0; }
+.tableWrap thead th, .table-wrap thead th, .table-container thead th, .telemetry-table-wrap thead th { position: sticky; top: 0; z-index: 1; }
+.tableWrap tbody tr:nth-child(even), .table-wrap tbody tr:nth-child(even), .table-container tbody tr:nth-child(even), .telemetry-table-wrap tbody tr:nth-child(even) { background: rgba(148, 163, 184, .035); }
+.controls { align-items: center; }
+@media (max-width: 640px) {
+  .main { padding: 14px !important; }
+  .page-head h1 { font-size: clamp(22px, 7vw, 30px); }
+  .controls > input, .controls > select, .controls > button { min-width: 0; flex: 1 1 140px; }
+  .grid { grid-template-columns: minmax(0, 1fr); }
+}
+.rawTelemetryCard {
+  overflow: hidden;
+}
+
+.rawTelemetryHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.rawTelemetryHeader h3 {
+  margin: 0 0 6px;
+}
+
+.rawJsonViewer {
+  margin: 0;
+  padding: 20px;
+  max-height: 520px;
+  overflow: auto;
+  white-space: pre;
+  font-family:
+    Consolas,
+    "Cascadia Code",
+    monospace;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.allTelemetryTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.allTelemetryTable th,
+.allTelemetryTable td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  text-align: left;
+  vertical-align: top;
+}
+
+.allTelemetryTable th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.allTelemetryTable code {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.deviceSvgChartCard {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.deviceSvgChart {
+  width: 100%;
+  min-height: 210px;
+  display: block;
+}
+
+.deviceSvgChartLine {
+  vector-effect: non-scaling-stroke;
+}

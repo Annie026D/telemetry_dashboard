@@ -1,0 +1,548 @@
+{
+  "data_directory": "C:\\telemetry dashboard\\data",
+  "model_note": "All features are lagged 1-3 observations; test targets are later chronological observations; lag windows crossing gaps over five seconds were excluded.",
+  "results": [
+    {
+      "device": "IMU_UNIT",
+      "parameter": "roll",
+      "status": "MEASURED",
+      "samples": 34480,
+      "train_samples": 24136,
+      "test_samples": 10344,
+      "baseline": "previous observed value",
+      "baseline_mae": 0.05213912935034802,
+      "baseline_rmse": 0.10887612779320659,
+      "ml_model": "standardized ridge regression, alpha=1.0",
+      "ml_mae": 0.03182537643087622,
+      "ml_rmse": 0.06917661395071609,
+      "improvement_percent_mae": 38.96066768390756,
+      "important_features": [
+        [
+          "lag1_roll",
+          3.1675475475386414
+        ],
+        [
+          "lag2_roll",
+          2.4003265880647033
+        ],
+        [
+          "lag3_roll",
+          2.3874563333377727
+        ],
+        [
+          "lag3_pitch",
+          0.0413687313260255
+        ],
+        [
+          "lag2_pitch",
+          0.03825666766855333
+        ],
+        [
+          "lag1_pitch",
+          0.002702489750725002
+        ],
+        [
+          "lag2_yaw",
+          0.0008501770378928643
+        ],
+        [
+          "lag3_yaw",
+          0.00044592935962986226
+        ]
+      ],
+      "candidate": "YES"
+    },
+    {
+      "device": "IMU_UNIT",
+      "parameter": "pitch",
+      "status": "MEASURED",
+      "samples": 34480,
+      "train_samples": 24136,
+      "test_samples": 10344,
+      "baseline": "previous observed value",
+      "baseline_mae": 0.021171131960556845,
+      "baseline_rmse": 0.043482967715310364,
+      "ml_model": "standardized ridge regression, alpha=1.0",
+      "ml_mae": 0.01526668630274724,
+      "ml_rmse": 0.031966579785247425,
+      "improvement_percent_mae": 27.88913539819203,
+      "important_features": [
+        [
+          "lag1_pitch",
+          1.54164802393069
+        ],
+        [
+          "lag2_pitch",
+          1.0089908997554318
+        ],
+        [
+          "lag3_pitch",
+          0.9933013469495461
+        ],
+        [
+          "lag3_roll",
+          0.020648484206403046
+        ],
+        [
+          "lag2_roll",
+          0.020604927409239093
+        ],
+        [
+          "lag1_yaw",
+          0.00033800793115447365
+        ],
+        [
+          "lag1_roll",
+          0.00032301431677520106
+        ],
+        [
+          "lag2_yaw",
+          0.00024082129588801006
+        ]
+      ],
+      "candidate": "YES"
+    },
+    {
+      "device": "IMU_UNIT",
+      "parameter": "yaw",
+      "status": "MEASURED",
+      "samples": 34480,
+      "train_samples": 24136,
+      "test_samples": 10344,
+      "baseline": "previous observed value",
+      "baseline_mae": 0.9272733297563805,
+      "baseline_rmse": 1.599713084368216,
+      "ml_model": "standardized ridge regression, alpha=1.0",
+      "ml_mae": 0.8696798115062923,
+      "ml_rmse": 1.343487592991243,
+      "improvement_percent_mae": 6.211061658078708,
+      "important_features": [
+        [
+          "lag1_yaw",
+          2.492804391872316
+        ],
+        [
+          "lag2_yaw",
+          1.3073504103555385
+        ],
+        [
+          "lag3_yaw",
+          1.1663445419129705
+        ],
+        [
+          "lag1_pitch",
+          0.1910590711442203
+        ],
+        [
+          "lag3_pitch",
+          0.15988626608497472
+        ],
+        [
+          "lag3_roll",
+          0.06877957464791179
+        ],
+        [
+          "lag1_roll",
+          0.06397326380708859
+        ],
+        [
+          "lag2_pitch",
+          0.0341945734482077
+        ]
+      ],
+      "candidate": "NO"
+    },
+    {
+      "device": "DRIVE_UNIT",
+      "parameter": "rpm",
+      "status": "MEASURED",
+      "samples": 44011,
+      "train_samples": 30807,
+      "test_samples": 13204,
+      "baseline": "previous observed value",
+      "baseline_mae": 321.7291055740685,
+      "baseline_rmse": 390.5848321798102,
+      "ml_model": "standardized ridge regression, alpha=1.0",
+      "ml_mae": 9.405257145812907,
+      "ml_rmse": 10.587621714704154,
+      "improvement_percent_mae": 97.07665331396396,
+      "important_features": [
+        [
+          "lag2_rpm",
+          272.9915457561733
+        ],
+        [
+          "lag1_voltage",
+          12.908357597243274
+        ],
+        [
+          "lag3_voltage",
+          10.867326314386736
+        ],
+        [
+          "lag3_rpm",
+          6.859244669642803
+        ],
+        [
+          "lag1_rpm",
+          6.79169269499716
+        ],
+        [
+          "lag2_voltage",
+          2.097813451334636
+        ],
+        [
+          "lag1_current",
+          0.31851942344638123
+        ],
+        [
+          "lag3_current",
+          0.24198967592190967
+        ]
+      ],
+      "candidate": "YES"
+    },
+    {
+      "device": "DRIVE_UNIT",
+      "parameter": "current",
+      "status": "MEASURED",
+      "samples": 46409,
+      "train_samples": 32486,
+      "test_samples": 13923,
+      "baseline": "previous observed value",
+      "baseline_mae": 0.24067169431875313,
+      "baseline_rmse": 0.29239537976051094,
+      "ml_model": "standardized ridge regression, alpha=1.0",
+      "ml_mae": 0.015931638060692695,
+      "ml_rmse": 0.017737305881664882,
+      "improvement_percent_mae": 93.38034408001785,
+      "important_features": [
+        [
+          "lag2_current",
+          0.20098449198126217
+        ],
+        [
+          "lag3_voltage",
+          0.009052777987063498
+        ],
+        [
+          "lag1_voltage",
+          0.008332968116808883
+        ],
+        [
+          "lag3_rpm",
+          0.0010028595235526206
+        ],
+        [
+          "lag1_rpm",
+          0.0008690965865499782
+        ],
+        [
+          "lag2_voltage",
+          0.0007431120262567335
+        ],
+        [
+          "lag2_rpm",
+          0.0001629709090396713
+        ],
+        [
+          "lag1_current",
+          0.0001420480994296379
+        ]
+      ],
+      "candidate": "YES"
+    },
+    {
+      "device": "DRIVE_UNIT",
+      "parameter": "voltage",
+      "status": "MEASURED",
+      "samples": 46409,
+      "train_samples": 32486,
+      "test_samples": 13923,
+      "baseline": "previous observed value",
+      "baseline_mae": 0.0016726998491704375,
+      "baseline_rmse": 0.002599799991202042,
+      "ml_model": "standardized ridge regression, alpha=1.0",
+      "ml_mae": 0.0012136663438947915,
+      "ml_rmse": 0.0015860389631226048,
+      "improvement_percent_mae": 27.44267033343131,
+      "important_features": [
+        [
+          "lag1_voltage",
+          0.30133508316188634
+        ],
+        [
+          "lag2_voltage",
+          0.20056766941440463
+        ],
+        [
+          "lag3_voltage",
+          0.1503017538200914
+        ],
+        [
+          "lag1_rpm",
+          0.0006865193229556575
+        ],
+        [
+          "lag3_rpm",
+          0.0006861928836701174
+        ],
+        [
+          "lag3_current",
+          0.00012686774941707214
+        ],
+        [
+          "lag1_current",
+          0.00012343695279949516
+        ],
+        [
+          "lag2_current",
+          2.2935532956708527e-06
+        ]
+      ],
+      "candidate": "YES"
+    },
+    {
+      "device": "LCU_UNIT",
+      "parameter": "rpm",
+      "status": "MEASURED",
+      "samples": 20037,
+      "train_samples": 14025,
+      "test_samples": 6012,
+      "baseline": "previous observed value",
+      "baseline_mae": 324.4311393878909,
+      "baseline_rmse": 394.4758077443439,
+      "ml_model": "standardized ridge regression, alpha=1.0",
+      "ml_mae": 9.666033055671837,
+      "ml_rmse": 10.753838027227582,
+      "improvement_percent_mae": 97.0206210557011,
+      "important_features": [
+        [
+          "lag2_rpm",
+          273.1858367394707
+        ],
+        [
+          "lag3_rpm",
+          4.344838519839552
+        ],
+        [
+          "lag1_rpm",
+          4.229079473257573
+        ]
+      ],
+      "candidate": "YES"
+    },
+    {
+      "device": "EXTERNAL_TRACK_UNIT",
+      "parameter": "range",
+      "status": "MEASURED",
+      "samples": 3424,
+      "train_samples": 2396,
+      "test_samples": 1028,
+      "baseline": "previous observed value",
+      "baseline_mae": 3.3092480544747085,
+      "baseline_rmse": 3.6832414166950267,
+      "ml_model": "standardized ridge regression, alpha=1.0",
+      "ml_mae": 1.265620688885537,
+      "ml_rmse": 1.420185724087793,
+      "improvement_percent_mae": 61.75503715491541,
+      "important_features": [
+        [
+          "lag1_target_range",
+          100.449382706744
+        ],
+        [
+          "lag1_range",
+          100.44938270673194
+        ],
+        [
+          "lag3_range",
+          41.650175676467335
+        ],
+        [
+          "lag3_target_range",
+          41.65017567646733
+        ],
+        [
+          "lag2_target_range",
+          29.45877809723054
+        ],
+        [
+          "lag2_range",
+          29.4587780972305
+        ],
+        [
+          "lag3_bearing",
+          0.04891643752504854
+        ],
+        [
+          "lag3_target_bearing",
+          0.04891643752504791
+        ]
+      ],
+      "candidate": "YES"
+    },
+    {
+      "device": "EXTERNAL_TRACK_UNIT",
+      "parameter": "bearing",
+      "status": "MEASURED",
+      "samples": 3424,
+      "train_samples": 2396,
+      "test_samples": 1028,
+      "baseline": "previous observed value",
+      "baseline_mae": 4.225991245136187,
+      "baseline_rmse": 33.59781960892307,
+      "ml_model": "standardized ridge regression, alpha=1.0",
+      "ml_mae": 7.008178794349167,
+      "ml_rmse": 33.2722936779169,
+      "improvement_percent_mae": -65.835147018231,
+      "important_features": [
+        [
+          "lag1_bearing",
+          58.50518775963993
+        ],
+        [
+          "lag1_target_bearing",
+          58.50518775962941
+        ],
+        [
+          "lag3_range",
+          3.0421122666845717
+        ],
+        [
+          "lag3_target_range",
+          3.0421122666845677
+        ],
+        [
+          "lag1_range",
+          2.885271947742796
+        ],
+        [
+          "lag1_target_range",
+          2.885271947741151
+        ],
+        [
+          "lag3_bearing",
+          0.8934716474766187
+        ],
+        [
+          "lag3_target_bearing",
+          0.8934716474765974
+        ]
+      ],
+      "candidate": "NO"
+    },
+    {
+      "device": "EXTERNAL_TRACK_UNIT",
+      "parameter": "target_range",
+      "status": "MEASURED",
+      "samples": 3424,
+      "train_samples": 2396,
+      "test_samples": 1028,
+      "baseline": "previous observed value",
+      "baseline_mae": 3.3092480544747085,
+      "baseline_rmse": 3.6832414166950267,
+      "ml_model": "standardized ridge regression, alpha=1.0",
+      "ml_mae": 1.265620688885537,
+      "ml_rmse": 1.420185724087793,
+      "improvement_percent_mae": 61.75503715491541,
+      "important_features": [
+        [
+          "lag1_target_range",
+          100.449382706744
+        ],
+        [
+          "lag1_range",
+          100.44938270673194
+        ],
+        [
+          "lag3_range",
+          41.650175676467335
+        ],
+        [
+          "lag3_target_range",
+          41.65017567646733
+        ],
+        [
+          "lag2_target_range",
+          29.45877809723054
+        ],
+        [
+          "lag2_range",
+          29.4587780972305
+        ],
+        [
+          "lag3_bearing",
+          0.04891643752504854
+        ],
+        [
+          "lag3_target_bearing",
+          0.04891643752504791
+        ]
+      ],
+      "candidate": "YES"
+    },
+    {
+      "device": "EXTERNAL_TRACK_UNIT",
+      "parameter": "target_bearing",
+      "status": "MEASURED",
+      "samples": 3424,
+      "train_samples": 2396,
+      "test_samples": 1028,
+      "baseline": "previous observed value",
+      "baseline_mae": 4.225991245136187,
+      "baseline_rmse": 33.59781960892307,
+      "ml_model": "standardized ridge regression, alpha=1.0",
+      "ml_mae": 7.008178794349167,
+      "ml_rmse": 33.2722936779169,
+      "improvement_percent_mae": -65.835147018231,
+      "important_features": [
+        [
+          "lag1_bearing",
+          58.50518775963993
+        ],
+        [
+          "lag1_target_bearing",
+          58.50518775962941
+        ],
+        [
+          "lag3_range",
+          3.0421122666845717
+        ],
+        [
+          "lag3_target_range",
+          3.0421122666845677
+        ],
+        [
+          "lag1_range",
+          2.885271947742796
+        ],
+        [
+          "lag1_target_range",
+          2.885271947741151
+        ],
+        [
+          "lag3_bearing",
+          0.8934716474766187
+        ],
+        [
+          "lag3_target_bearing",
+          0.8934716474765974
+        ]
+      ],
+      "candidate": "NO"
+    },
+    {
+      "device": "CAMERA_UNIT / DRIVE_UNIT",
+      "parameter": "pan",
+      "status": "NOT_TESTABLE",
+      "reason": "No non-null pan observations in the historical device tables."
+    },
+    {
+      "device": "CAMERA_UNIT / DRIVE_UNIT",
+      "parameter": "tilt",
+      "status": "NOT_TESTABLE",
+      "reason": "No non-null tilt observations in the historical device tables."
+    }
+  ]
+}

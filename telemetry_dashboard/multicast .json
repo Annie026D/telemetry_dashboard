@@ -1,0 +1,636 @@
+{
+  "_metadata": {
+    "repo": "DRIVE_LCU_WCS_MQTT",
+    "scope": "C multicast (UDP) transport + telemetry-related structs used to build/consume multicast JSON payloads",
+    "multicast_transport": {
+      "config_file": "config.ini",      "source_files": ["transport.c", "transport.h", "ini.h"]
+    },
+    "wcs_lcu_tcp_transport": {
+      "config_file": "config.ini",
+      "server_bind": {
+        "ip": "0.0.0.0",
+        "port_config_key": "JSON_LCU_PORT",
+        "port_default": 2001,
+        "ip_config_key": "JSON_LCU_IP",
+        "ip_default": "170.523.214.101",
+        "notes": ["Current implementation binds INADDR_ANY and does not use JSON_LCU_IP."]
+      },
+      "client_connect_example": {
+        "ip_default": "111.0.0.1",
+        "port_default": 2001,
+        "source_file": "wcs_client.py"
+      },
+      "framing": "len_be_u32 + json_utf8_payload",
+      "source_files": ["lcu_comm.c", "lcu_comm.h", "ini.h", "wcs_client.py"]
+    },
+  "_constants": {
+    "TRANSPORT_MAGIC": {
+      "value_u32_hex": "0x4C430031",
+      "ascii": "LCU1",
+      "defined_in": "transport.c"
+    },
+    "TRANSPORT_VERSION": {
+      "value_u16": 1,
+      "defined_in": "transport.c"
+    },
+    "TRANSPORT_MAX_DATAGRAM": {
+      "value_u32": 1401,
+      "defined_in": "transport.c"
+    },
+    "TRANSPORT_HEADER_LEN_BYTES": {
+      "value_u32": 24,
+      "derived_from": "4 + 2 + 2 + 4 + 8 + 4"
+    },
+    "TelemetryMode_t": {
+      "defined_in": "telemetry.h",
+      "values": {
+        "TELEMETRY_ONCE": 0,
+        "TELEMETRY_PERIODIC": 1,
+        "TELEMETRY_CONTINUOUS": 2
+      }
+    },
+    "WcsLcuTcpFrame": {
+      "defined_in": ["lcu_comm.c", "wcs_client.py"],
+      "len_encoding": "uint32_t big-endian (network byte order)",
+      "max_rx_buffer_bytes": {
+        "macro": "LCU_RXBUF_CAP",
+        "default_value": 8192,
+        "defined_in": "lcu_comm.c"
+      }
+    },
+    "CommandType_t": {
+      "defined_in": "command_parser.h",
+      "underlying_type": "int (C enum)",
+      "values": {
+        "CMD_INVALID": 0,
+        "CMD_ENABLE": 1,
+        "CMD_DISABLE": 2,
+        "CMD_HALT": 3,
+        "CMD_RESET": 4,
+        "CMD_ESTOP": 5,
+        "CMD_SET_POS": 6,
+        "CMD_SET_ANGLE": 7,
+        "CMD_MOVE": 8,
+        "CMD_MOVE_DEG": 9,
+        "CMD_VELOCITY_FWD": 10,
+        "CMD_VELOCITY_REV": 11,
+        "CMD_SOLENOID": 12,
+        "CMD_IO_READ_DI_BIT": 13,
+        "CMD_IO_READ_DI_ALL": 14,
+        "CMD_IO_READ_DO_BIT": 15,
+        "CMD_IO_READ_DO_ALL": 16,
+        "CMD_IO_WRITE_DO_BIT": 17,
+        "CMD_IO_WRITE_DO_MASK": 18,
+        "CMD_RELAY_PAN_LOCK": 19,
+        "CMD_RELAY_PAN_UNLOCK": 20,
+        "CMD_RELAY_TILT_LOCK": 21,
+        "CMD_RELAY_TILT_UNLOCK": 22
+      }
+    },
+    "WcsAxisString": {
+      "defined_in": ["command_parser.h", "main.c", "drive_executor.c"],
+      "accepted_values": ["PAN", "TILT", "BOTH", "1", "2", "3"]
+    }
+  },
+  "ParsedCommand_t": {
+    "multicast_group": null,
+    "defined_in": "command_parser.h",
+    "description": "In-memory parse result of a WCS->LCU JSON command (received over framed TCP). This struct is not transmitted as a binary struct; it is filled from JSON fields.",
+    "fields": [
+      { "name": "v", "type": "int", "size_in_bytes": 4 },
+      { "name": "id", "type": "char[64]", "size_in_bytes": 64 },
+      { "name": "type", "type": "char[16]", "size_in_bytes": 16 },
+      { "name": "name", "type": "char[32]", "size_in_bytes": 32 },
+      { "name": "cmd", "type": "CommandType_t (enum)", "size_in_bytes": 4 },
+      { "name": "axis", "type": "char[8]", "size_in_bytes": 8 },
+      { "name": "target_deg", "type": "float", "size_in_bytes": 4 },
+      { "name": "target_pos", "type": "float", "size_in_bytes": 4 },
+      { "name": "velocity", "type": "float", "size_in_bytes": 4 },
+      { "name": "accel", "type": "float", "size_in_bytes": 4 },
+      { "name": "decel", "type": "float", "size_in_bytes": 4 },
+      { "name": "has_target_deg", "type": "int", "size_in_bytes": 4 },
+      { "name": "has_target_pos", "type": "int", "size_in_bytes": 4 },
+      { "name": "has_velocity", "type": "int", "size_in_bytes": 4 },
+      { "name": "has_accel", "type": "int", "size_in_bytes": 4 },
+      { "name": "has_decel", "type": "int", "size_in_bytes": 4 },
+      { "name": "solenoid_enable", "type": "int", "size_in_bytes": 4 },
+      { "name": "has_solenoid_enable", "type": "int", "size_in_bytes": 4 },
+      { "name": "channel", "type": "int", "size_in_bytes": 4 },
+      { "name": "has_channel", "type": "int", "size_in_bytes": 4 },
+      { "name": "mask", "type": "uint16_t", "size_in_bytes": 2 },
+      { "name": "has_mask", "type": "int", "size_in_bytes": 4 },
+      { "name": "bits", "type": "uint16_t", "size_in_bytes": 2 },
+      { "name": "has_bits", "type": "int", "size_in_bytes": 4 },
+      { "name": "value", "type": "int", "size_in_bytes": 4 },
+      { "name": "has_value", "type": "int", "size_in_bytes": 4 },
+      { "name": "t_rx_ms", "type": "uint32_t", "size_in_bytes": 4 },
+      { "name": "t_enq_ms", "type": "uint32_t", "size_in_bytes": 4 }
+    ],
+    "packed": false
+  },
+  "WcsAcceptedCommands": {
+    "transport": "WCS->LCU framed TCP (len_be_u32 + JSON)",
+    "defined_in": "command_parser.c",
+    "envelope_required": {
+      "v": "number",
+      "id": "string",
+      "type": "string",
+      "name": "string",
+      "body": "object"
+    },
+    "body_fields_parsed": {
+      "axis": "string (PAN|TILT|BOTH|1|2|3)",
+      "target_deg": "number (float)",
+      "target_pos": "number (float)",
+      "velocity": "number (float)",
+      "accel": "number (float)",
+      "decel": "number (float)",
+      "enable": "bool|number (used only for solenoid/brake control)",
+      "channel": "number (int) 0..15 (Digital I/O)",
+      "value": "bool|number (Digital I/O single-bit)",
+      "mask": "number|string (u16) (Digital I/O masked write)",
+      "bits": "number|string (u16) (Digital I/O masked write)"
+    },
+    "commands": [
+      { "name": "EnableDrive", "maps_to": "CMD_ENABLE", "body_required": ["axis"] },
+      { "name": "DisableDrive", "maps_to": "CMD_DISABLE", "body_required": ["axis"] },
+      { "name": "ResetDrive", "maps_to": "CMD_RESET", "body_required": ["axis"] },
+      { "name": "EStop", "maps_to": "CMD_ESTOP", "body_required": ["axis"] },
+      { "name": "Halt", "maps_to": "CMD_HALT", "body_required": ["axis"] },
+      { "name": "SetAngleParams", "maps_to": "CMD_SET_ANGLE", "body_required": ["axis", "velocity", "accel", "decel", "target_deg"] },
+      { "name": "SetMotionParams", "maps_to": "CMD_SET_POS", "body_required": ["axis", "velocity", "accel", "decel", "target_pos"] },
+      { "name": "Move", "maps_to": "CMD_MOVE", "body_required": ["axis"] },
+      { "name": "MovePosition", "maps_to": "CMD_MOVE", "body_required": ["axis"] },
+      { "name": "MoveDeg", "maps_to": "CMD_MOVE_DEG", "body_required": ["axis"] },
+      { "name": "MoveToPositionDeg", "maps_to": "CMD_MOVE_DEG", "body_required": ["axis"] },
+      { "name": "JogFwd", "maps_to": "CMD_VELOCITY_FWD", "body_required": ["axis"] },
+      { "name": "JogRev", "maps_to": "CMD_VELOCITY_REV", "body_required": ["axis"] },
+      { "name": "Jog", "maps_to": "CMD_VELOCITY_FWD", "body_required": ["axis"], "notes": ["Current parser ignores direction/mode fields; any Jog maps to forward velocity command."] },
+      { "name": "Solenoid", "maps_to": "CMD_SOLENOID", "body_required": ["axis"], "body_optional": ["enable"] },
+      { "name": "ReleaseBrake", "maps_to": "CMD_SOLENOID", "body_required": ["axis"], "implied": { "enable": true } },
+
+      { "name": "ReadDI", "maps_to": "CMD_IO_READ_DI_BIT", "body_required": ["channel"] },
+      { "name": "ReadDIAll", "maps_to": "CMD_IO_READ_DI_ALL", "body_required": [] },
+      { "name": "ReadDO", "maps_to": "CMD_IO_READ_DO_BIT", "body_required": ["channel"] },
+      { "name": "ReadDOAll", "maps_to": "CMD_IO_READ_DO_ALL", "body_required": [] },
+      { "name": "WriteDO", "maps_to": "CMD_IO_WRITE_DO_BIT", "body_required": ["channel", "value"] },
+      { "name": "WriteDOAll", "maps_to": "CMD_IO_WRITE_DO_MASK", "body_required": ["mask", "bits"] },
+
+      { "name": "PanLock", "maps_to": "CMD_RELAY_PAN_LOCK", "body_required": [] },
+      { "name": "PanUnlock", "maps_to": "CMD_RELAY_PAN_UNLOCK", "body_required": [] },
+      { "name": "TiltLock", "maps_to": "CMD_RELAY_TILT_LOCK", "body_required": [] },
+      { "name": "TiltUnlock", "maps_to": "CMD_RELAY_TILT_UNLOCK", "body_required": [] }
+    ],
+    "dio_latching_relay_notes": {
+      "summary": [
+        "Some deployments drive PAN/TILT lock/unlock via Advantech USB-5830 DO channels wired to latching relays.",
+        "These relays require a pulse (momentary 1) on one line while the paired line is held at 0.",
+        "Prefer using dedicated commands (PanLock/PanUnlock/TiltLock/TiltUnlock) so WCS does not need to craft masks/bits or handle timing.",
+        "Legacy level writes (WriteDO / WriteDOAll) are still supported for manual control and diagnostics."
+      ],
+      "config": {
+        "do_pair_mapping": "From config.ini [IoMap]: PanSolA_DO/PanSolB_DO and TiltSolA_DO/TiltSolB_DO",
+        "pulse_width_ms": "From config.ini [dio]: solenoid_pulse_ms (LCU uses this as the pulse width for PanLock/PanUnlock/TiltLock/TiltUnlock)",
+        "inversion": "Writes/reads are logical; raw hardware lines are XOR'd by [InvertDO] Mask (and DI by [InvertDI] Mask)."
+      },
+      "examples_using_default_iomap": {
+        "PanLock_Command": {
+          "json": {
+            "v": 1,
+            "id": "PAN_LOCK_001",
+            "type": "Command",
+            "name": "PanLock",
+            "src": "wcs",
+            "body": {},
+            "meta": {}
+          },
+          "meaning": "set D0=0 and pulse D1=1 for solenoid_pulse_ms, then clear D1 back to 0"
+        },
+        "PanUnlock_Command": {
+          "json": {
+            "v": 1,
+            "id": "PAN_UNLOCK_001",
+            "type": "Command",
+            "name": "PanUnlock",
+            "src": "wcs",
+            "body": {},
+            "meta": {}
+          },
+          "meaning": "set D1=0 and pulse D0=1 for solenoid_pulse_ms, then clear D0 back to 0"
+        },
+        "TiltLock_Command": {
+          "json": {
+            "v": 1,
+            "id": "TILT_LOCK_001",
+            "type": "Command",
+            "name": "TiltLock",
+            "src": "wcs",
+            "body": {},
+            "meta": {}
+          },
+          "meaning": "set D2=0 and pulse D3=1 for solenoid_pulse_ms, then clear D3 back to 0"
+        },
+        "TiltUnlock_Command": {
+          "json": {
+            "v": 1,
+            "id": "TILT_UNLOCK_001",
+            "type": "Command",
+            "name": "TiltUnlock",
+            "src": "wcs",
+            "body": {},
+            "meta": {}
+          },
+          "meaning": "set D3=0 and pulse D2=1 for solenoid_pulse_ms, then clear D2 back to 0"
+        },
+        "PanLock": {
+          "assumes": { "PanSolA_DO": 0, "PanSolB_DO": 1 },
+          "sequence": [
+            { "name": "WriteDOAll", "body": { "mask": 3, "bits": 2 }, "meaning": "set D0=0 and D1=1 (pulse start)" },
+            { "delay_ms": "solenoid_pulse_ms" },
+            { "name": "WriteDOAll", "body": { "mask": 2, "bits": 0 }, "meaning": "set D1=0 (pulse end), leave D0=0" }
+          ]
+        },
+        "PanUnlock": {
+          "assumes": { "PanSolA_DO": 0, "PanSolB_DO": 1 },
+          "sequence": [
+            { "name": "WriteDOAll", "body": { "mask": 3, "bits": 1 }, "meaning": "set D0=1 and D1=0 (pulse start)" },
+            { "delay_ms": "solenoid_pulse_ms" },
+            { "name": "WriteDOAll", "body": { "mask": 1, "bits": 0 }, "meaning": "set D0=0 (pulse end), leave D1=0" }
+          ]
+        },
+        "TiltLock": {
+          "assumes": { "TiltSolA_DO": 2, "TiltSolB_DO": 3 },
+          "sequence": [
+            { "name": "WriteDOAll", "body": { "mask": 12, "bits": 8 }, "meaning": "set D2=0 and D3=1 (pulse start)" },
+            { "delay_ms": "solenoid_pulse_ms" },
+            { "name": "WriteDOAll", "body": { "mask": 8, "bits": 0 }, "meaning": "set D3=0 (pulse end), leave D2=0" }
+          ]
+        },
+        "TiltUnlock": {
+          "assumes": { "TiltSolA_DO": 2, "TiltSolB_DO": 3 },
+          "sequence": [
+            { "name": "WriteDOAll", "body": { "mask": 12, "bits": 4 }, "meaning": "set D2=1 and D3=0 (pulse start)" },
+            { "delay_ms": "solenoid_pulse_ms" },
+            { "name": "WriteDOAll", "body": { "mask": 4, "bits": 0 }, "meaning": "set D2=0 (pulse end), leave D3=0" }
+          ]
+        }
+      }
+    }
+  },
+  "WcsLcuTcpFrameHeader": {
+    "multicast_group": null,
+    "defined_in": "lcu_comm.c",
+    "description": "WCS→LCU TCP framing header; 4-byte big-endian length of the following JSON UTF-8 payload.",
+    "fields": [
+      { "name": "payload_len", "type": "uint32_t", "size_in_bytes": 4 }
+    ],
+    "packed": true,
+    "struct_size_bytes": 4
+  },
+  "TransportDatagramHeader": {
+    "multicast_group": "239.255.0.1:50100",
+    "defined_in": "transport.c",
+    "description": "Fixed header prepended to each UDP multicast datagram; all multi-byte fields are serialized in network byte order (big-endian). JSON payload follows immediately after this header.",
+    "fields": [
+      { "name": "magic", "type": "uint32_t", "size_in_bytes": 4 },
+      { "name": "version", "type": "uint16_t", "size_in_bytes": 2 },
+      { "name": "topic_id", "type": "uint16_t", "size_in_bytes": 2 },
+      { "name": "seq", "type": "uint32_t", "size_in_bytes": 4 },
+      { "name": "timestamp_ms", "type": "uint64_t", "size_in_bytes": 8 },
+      { "name": "payload_len", "type": "uint32_t", "size_in_bytes": 4 }
+    ],
+    "packed": true,
+    "struct_size_bytes": 24
+  },
+  "transport_rx_meta_t": {
+    "multicast_group": "239.255.0.1:50100",
+    "defined_in": "transport.h",
+    "description": "Receiver-side metadata extracted from TransportDatagramHeader and passed to callbacks (not itself transmitted as a C struct).",
+    "fields": [
+      { "name": "topic_id", "type": "uint16_t", "size_in_bytes": 2 },
+      { "name": "seq", "type": "uint32_t", "size_in_bytes": 4 },
+      { "name": "timestamp_ms", "type": "uint64_t", "size_in_bytes": 8 }
+    ],
+    "packed": false
+  },
+  "transport_config_t": {
+    "multicast_group": "239.255.0.1:50100",
+    "defined_in": "transport.h",
+    "description": "Runtime multicast transport configuration (not transmitted on the wire).",
+    "fields": [
+      { "name": "group_addr", "type": "char[64]", "size_in_bytes": 64 },
+      { "name": "port", "type": "int", "size_in_bytes": 4 },
+      { "name": "iface", "type": "char[32]", "size_in_bytes": 32 },
+      { "name": "ttl", "type": "int", "size_in_bytes": 4 },
+      { "name": "loopback", "type": "int", "size_in_bytes": 4 },
+      { "name": "staleness_ms", "type": "int", "size_in_bytes": 4 },
+      { "name": "recvbuf_bytes", "type": "int", "size_in_bytes": 4 },
+      { "name": "drop_stale", "type": "int", "size_in_bytes": 4 },
+      { "name": "drop_out_of_order", "type": "int", "size_in_bytes": 4 }
+    ],
+    "packed": false
+  },
+  "HeartbeatEvent": {
+    "multicast_group": "239.255.0.1:5000",
+    "topic_config_key": "MQTT_TOPIC_APP_HEARTBEAT",
+    "defined_in": "heartbeat.c",
+    "description": "Application heartbeat event payload (JSON over UDP multicast).",
+    "envelope": {
+      "v": "number (1)",
+      "id": "string (heartbeat)",
+      "type": "string (Event)",
+      "name": "string (Heartbeat)",
+      "src": "string (LCU)",
+      "meta": "object (empty)"
+    },
+    "body_fields": {
+      "status": "string (alive)"
+    }
+  },
+  "AppHealthEvent": {
+    "multicast_group": "239.255.0.1:50000",
+    "topic_config_key": "MQTT_TOPIC_APP_HEALTH",
+    "defined_in": "app_health.c",
+    "description": "Application health/uptime event payload.",
+    "envelope": {
+      "v": "number (1)",
+      "type": "string (Event)",
+      "name": "string (AppHealth)",
+      "src": "string (lcu)",
+      "meta": "object (empty)"
+    },
+    "body_fields": {
+      "uptime_ms": "number (ms since process start)"
+    }
+  },
+  "ConnectionLogEvent": {
+    "multicast_group": "239.255.0.1:5000",
+    "topic_config_key": "MQTT_TOPIC_APP_HEALTH",
+    "defined_in": "main.c",
+    "description": "Connection/retry status events for WCS TCP, transport, MQTT, drive Modbus.",
+    "envelope": {
+      "v": "number (1)",
+      "type": "string (Event)",
+      "name": "string (ConnectionLog)",
+      "src": "string (lcu)",
+      "meta": "object (empty)"
+    },
+    "body_fields": {
+      "component": "string (e.g., wcs_tcp, transport, mqtt, drive_udp)",
+      "event": "string (e.g., connected, disconnected, waiting, ready)",
+      "message": "string (optional)",
+      "attempt": "number (optional; only when >=0)",
+      "error_code": "number (optional; only when non-zero)"
+    }
+  },
+  "WcsCommandReceivedEvent": {
+    "multicast_group": "239.255.0.1:5000",
+    "topic_config_key": "MQTT_TOPIC_WCS_COMMAND_RX",
+    "defined_in": "main.c",
+    "description": "Event emitted when a WCS command is parsed successfully.",
+    "envelope": {
+      "v": "number (1)",
+      "type": "string (Event)",
+      "name": "string (WcsCommandReceived)",
+      "src": "string (lcu)",
+      "meta": "object (empty)"
+    },
+    "body_fields": {
+      "id": "string",
+      "name": "string",
+      "axis": "string (PAN|TILT|BOTH|1|2|3)",
+      "cmd": "number (CommandType_t enum)",
+      "target_deg": "number (float; 0 if not provided)",
+      "target_pos": "number (float; 0 if not provided)",
+      "velocity": "number (float; 0 if not provided)",
+      "accel": "number (float; 0 if not provided)",
+      "decel": "number (float; 0 if not provided)"
+    }
+  },
+  "DriveCommandIssuedEvent": {
+    "multicast_group": "239.255.0.1:5000",
+    "topic_config_key": "MQTT_TOPIC_DRIVE_COMMAND",
+    "defined_in": "main.c",
+    "description": "Event emitted when the drive thread starts handling a command.",
+    "envelope": {
+      "v": "number (1)",
+      "type": "string (Event)",
+      "name": "string (DriveCommandIssued)",
+      "src": "string (lcu)",
+      "meta": "object (empty)"
+    },
+    "body_fields": {
+      "id": "string",
+      "name": "string",
+      "axis": "string",
+      "cmd": "number (CommandType_t enum)"
+    }
+  },
+  "DriveCommandResultEvent": {
+    "multicast_group": "239.255.0.1:5000",
+    "topic_config_key": "MQTT_TOPIC_DRIVE_RESPONSE",
+    "defined_in": "main.c",
+    "description": "Event emitted after command execution (result + drive_state snapshot).",
+    "envelope": {
+      "v": "number (1)",
+      "type": "string (Event)",
+      "name": "string (DriveCommandResult)",
+      "src": "string (lcu)",
+      "meta": "object (empty)"
+    },
+    "body_fields": {
+      "id": "string",
+      "name": "string",
+      "axis": "string",
+      "result_code": "string (e.g., OK, INVALID_AXIS, DRIVE_DISCONNECTED)",
+      "drive_state": {
+        "tilt": "object {has_motion_params, velocity, accel, decel, target_deg, target_pos}",
+        "pan": "object {has_motion_params, velocity, accel, decel, target_deg, target_pos}"
+      }
+    }
+  },
+  "WcsStatusReply": {
+    "multicast_group": "239.255.0.1:5000",
+    "topic_config_key": "MQTT_TOPIC_WCS_STATUS_TX",
+    "defined_in": ["ack_builder.c", "wcs_io_commands.c", "main.c"],
+    "description": "ACK/Reply payload corresponding to WCS commands (includes drive_state + optional IO reply).",
+    "envelope": {
+      "v": "number (1)",
+      "id": "string (matches command id)",
+      "type": "string (Reply)",
+      "name": "string (matches command name)",
+      "src": "string (lcu)",
+      "meta": "object (empty)"
+    },
+    "body_fields": {
+      "result": {
+        "ok": "boolean",
+        "code": "string (OK/ERROR/INVALID_AXIS/DRIVE_DISCONNECTED/IO_NOT_READY/etc.)",
+        "message": "string"
+      },
+      "drive_state": {
+        "tilt": "object {has_motion_params, velocity, accel, decel, target_deg, target_pos, last_update_ms}",
+        "pan": "object {has_motion_params, velocity, accel, decel, target_deg, target_pos, last_update_ms}"
+      },
+      "io": {
+        "kind": "string (DI_BIT|DI_ALL|DO_BIT|DO_ALL|DO_WRITE_ACK)",
+        "connected": "boolean",
+        "channel": "number (optional)",
+        "value": "number (optional)",
+        "di_bits": "number (optional)",
+        "di_bits_hex": "string (optional)",
+        "do_bits": "number (optional)",
+        "do_bits_hex": "string (optional)",
+        "mask": "number (optional)",
+        "mask_hex": "string (optional)",
+        "requested": "number (optional)",
+        "requested_hex": "string (optional)"
+      }
+    }
+  },
+  "TelemetryOncePayload": {
+    "multicast_group": "239.255.0.1:5000",
+    "topic_config_key": "MQTT_TOPIC_DRIVE_TELEMETRY",
+    "defined_in": "telemetry.c",
+    "description": "Boot/static telemetry payload (per-axis).",
+    "root_fields": {
+      "type": "string (once)",
+      "axis": "number (Axis_t)",
+      "version": "number (uint16)",
+      "revision": "number (uint16)",
+      "release": "number (uint16)"
+    }
+  },
+  "TelemetryPeriodicEvent": {
+    "multicast_group": "239.255.0.1:5000",
+    "topic_config_key": "MQTT_TOPIC_DRIVE_TELEMETRY",
+    "defined_in": "telemetry.c",
+    "description": "Periodic health/status telemetry (per-axis).",
+    "envelope": {
+      "v": "number (1)",
+      "id": "string (periodic)",
+      "type": "string (Event)",
+      "name": "string (TelemetryPeriodic)",
+      "src": "string (middleware)",
+      "meta": "object (empty)"
+    },
+    "body_fields": {
+      "axis": "number (Axis_t)",
+      "drive_connected": "boolean",
+      "motor_current": "number (float)",
+      "dc_bus": "number (float)",
+      "fault_raw": "number (uint16)",
+      "fault_bits": {
+        "short_circuit": "boolean",
+        "system_ok": "boolean",
+        "rated_current": "boolean",
+        "over_temp": "boolean",
+        "over_volt": "boolean",
+        "under_volt": "boolean",
+        "motion_error": "boolean",
+        "drive_disable": "boolean",
+        "eeprom_error": "boolean",
+        "commutation_err": "boolean",
+        "lock_rotor": "boolean",
+        "emergency_err": "boolean",
+        "command_error": "boolean",
+        "motion_complete": "boolean"
+      }
+    }
+  },
+  "TelemetryContinuousPayload": {
+    "multicast_group": "239.255.0.1:5000",
+    "topic_config_key": "MQTT_TOPIC_DRIVE_TELEMETRY",
+    "defined_in": "telemetry.c",
+    "description": "Continuous motion feedback telemetry (per-axis).",
+    "root_fields": {
+      "type": "string (continuous)",
+      "axis": "number (Axis_t)",
+      "actual_pos_mm": "number (float)",
+      "abs_pos_deg": "number (float)",
+      "pos_deg": "number (float)",
+      "pos_mm": "number (float)",
+      "rpm": "number (float)",
+      "io_status": "number (uint16)"
+    }
+  },
+  "TelemetryDioPeriodicEvent": {
+    "multicast_group": "239.255.0.1:5000",
+    "topic_config_key": "MQTT_TOPIC_DRIVE_TELEMETRY",
+    "defined_in": "telemetry.c",
+    "description": "Periodic digital I/O telemetry (not axis-specific).",
+    "envelope": {
+      "v": "number (1)",
+      "id": "string (dio_periodic)",
+      "type": "string (Event)",
+      "name": "string (TelemetryDioPeriodic)",
+      "src": "string (middleware)",
+      "meta": "object (empty)"
+    },
+    "body_fields": {
+      "dio_connected": "boolean",
+      "di_bits": "number (uint16)",
+      "do_bits": "number (uint16)"
+    }
+  },
+  "TelemetryDioContinuousEvent": {
+    "multicast_group": "239.255.0.1:5000",
+    "topic_config_key": "MQTT_TOPIC_DRIVE_TELEMETRY",
+    "defined_in": "telemetry.c",
+    "description": "Continuous digital I/O telemetry (not axis-specific).",
+    "envelope": {
+      "v": "number (1)",
+      "id": "string (dio_continuous)",
+      "type": "string (Event)",
+      "name": "string (TelemetryDioContinuous)",
+      "src": "string (middleware)",
+      "meta": "object (empty)"
+    },
+    "body_fields": {
+      "dio_connected": "boolean",
+      "di_bits": "number (uint16)",
+      "do_bits": "number (uint16)"
+    }
+  },
+  "FaultStatus_t": {
+    "multicast_group": "239.255.0.1:5000",
+    "defined_in": "drive_feedback.h",
+    "description": "TelemetryPeriodic source structure (decoded from Modbus fault register, then rendered into JSON fields before multicast publish).",
+    "fields": [
+      { "name": "raw_code", "type": "uint16_t", "size_in_bytes": 2 },
+      { "name": "short_circuit", "type": "uint8_t", "size_in_bytes": 1 },
+      { "name": "system_ok", "type": "uint8_t", "size_in_bytes": 1 },
+      { "name": "rated_current", "type": "uint8_t", "size_in_bytes": 1 },
+      { "name": "over_temp", "type": "uint8_t", "size_in_bytes": 1 },
+      { "name": "over_volt", "type": "uint8_t", "size_in_bytes": 1 },
+      { "name": "under_volt", "type": "uint8_t", "size_in_bytes": 1 },
+      { "name": "motion_error", "type": "uint8_t", "size_in_bytes": 1 },
+      { "name": "drive_disable", "type": "uint8_t", "size_in_bytes": 1 },
+      { "name": "eeprom_error", "type": "uint8_t", "size_in_bytes": 1 },
+      { "name": "commutation_err", "type": "uint8_t", "size_in_bytes": 1 },
+      { "name": "lock_rotor", "type": "uint8_t", "size_in_bytes": 1 },
+      { "name": "emergency_err", "type": "uint8_t", "size_in_bytes": 1 },
+      { "name": "command_error", "type": "uint8_t", "size_in_bytes": 1 },
+      { "name": "motion_complete", "type": "uint8_t", "size_in_bytes": 1 }
+    ],
+    "packed": false,
+    "struct_size_bytes": 16
+  },
+  "DriveAxisState": {
+    "multicast_group": "239.255.0.1:5000",
+    "defined_in": "drive_state.h",
+    "description": "Drive state snapshot included in ack/status JSON payloads before multicast publish.",
+    "fields": [
+      { "name": "has_motion_params", "type": "int", "size_in_bytes": 4 },
+      { "name": "velocity", "type": "float", "size_in_bytes": 4 },
+      { "name": "accel", "type": "float", "size_in_bytes": 4 },
+      { "name": "decel", "type": "float", "size_in_bytes": 4 },
+      { "name": "target_deg", "type": "float", "size_in_bytes": 4 },
+      { "name": "target_pos", "type": "float", "size_in_bytes": 4 },
+      { "name": "last_update_ms", "type": "uint32_t", "size_in_bytes": 4 }
+    ],
+    "packed": false,
+    "struct_size_bytes": 28
+  }
+}
+}

@@ -1,0 +1,126 @@
+<!doctype html> 
+<!-- Live device/link topology shell populated by topology.js. -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Live Topology</title>
+  <link rel="stylesheet" href="style.css?v=20261026-ui-2">
+</head>
+
+<body class="topologyPage">
+<!-- The sidebar contains ordinary page links; it does not control telemetry. -->
+<div class="layout">
+ <aside class="sidebar">
+  <h2>SCADA</h2>
+
+  <a href="critical-dashboard.html">Critical Dashboard</a>
+  <a href="drive-control.html">Drive &amp; Buttons</a>
+  <a href="dashboard.html">Main Dashboard</a>
+  <a href="history.html">History</a>
+  <a href="topology.html" class="active">Topology</a>
+  <a href="hmi.html">HMI</a>
+  <a href="diagnostic.html">Diagnostics</a>
+</aside>
+  <main class="main">
+    <div class="page-head topologyHeader">
+
+  <div>
+
+    <h1>
+      SCADA Network Topology
+    </h1>
+
+    <p class="muted">
+      Live packet-driven communication graph
+    </p>
+
+  </div>
+
+  <div id="topologyStats"></div>
+
+</div>
+
+    <div class="controls">
+  <span class="badge good">LIVE TOPOLOGY</span>
+  <span class="muted">
+    Green = live flow, Yellow = stale flow, Red = no live flow
+  </span>
+</div>
+
+ <div class="topologyDashboard">
+
+  <div class="card topologyCard">
+    <h3>Communication Diagram</h3>
+    <div class="topologyCanvas">
+      <svg id="topologySvg"></svg>
+      <div id="topologyDevices" class="topology-fixed-map"></div>
+    </div>
+  </div>
+
+  <div class="card topologyCard">
+    <h3>Device Health Summary</h3>
+    <div class="topologyTableWrap">
+    <table class="topologyDeviceTable">
+      <colgroup>
+        <col style="width:19%"><col style="width:14%"><col style="width:11%">
+        <col style="width:12%"><col style="width:14%"><col style="width:20%">
+        <col style="width:10%">
+      </colgroup>
+      <thead>
+      <tr>
+      <th>Device</th>
+      <th>Status</th>
+      <th>Rows</th>
+      <th>Anomalies</th>
+      <th>Traffic</th>
+      <th>Last Seen</th>
+      <th>Latency</th>
+</tr>
+      </thead>
+      <tbody id="topologyDeviceTable"></tbody>  
+    </table>
+    </div>
+  </div>
+
+  <div class="card topologyCard">
+    <h3>Communication Links</h3>
+    <div class="topologyTableWrap">
+    <table class="topologyLinkTable">
+      <colgroup>
+        <col style="width:10%"><col style="width:13%"><col style="width:13%">
+        <col style="width:15%"><col style="width:10%"><col style="width:10%">
+        <col style="width:11%"><col style="width:8%"><col style="width:15%">
+      </colgroup>
+      <thead>
+        <tr>
+      <th>Status</th>
+      <th>From</th>
+      <th>To</th>
+      <th>Process</th>
+      <th>Protocol</th>
+      <th>Expected Rate</th>
+      <th>Live Traffic</th>
+      <th>Anomalies</th>
+      <th>Last Seen</th>
+        </tr>
+      </thead>
+      <tbody id="topologyLinkTable"></tbody>
+    </table>
+    </div>
+  </div>
+
+</div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
+<script src="chart-fallback.js"></script>
+
+<script src="common.js?v=20261028-scada-1"></script>
+
+<script src="topology.js?v=20260715-drive-carrier"></script>
+</body>
+</html>  

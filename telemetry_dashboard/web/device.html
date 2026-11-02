@@ -1,0 +1,299 @@
+<!-- Declare that this document follows the HTML5 standard. -->
+<!doctype html>
+
+<!--
+  Single-device telemetry dashboard.
+
+  The requested device and optional database are supplied through URL query
+  parameters. common.js provides shared API, normalization, chart, escaping,
+  DOM, and WebSocket services. device.js owns this page's state and rendering.
+-->
+
+<!-- Begin the root element that contains the complete HTML document. -->
+<html>
+
+<!-- Define document metadata and resources required before page rendering. -->
+<head>
+  <!-- Decode this source as UTF-8 so standard characters render correctly. -->
+  <meta charset="utf-8">
+
+  <!-- Only Wallboard's explicit embed route receives embedded-page styling. -->
+  <script>
+    const deviceRoute = new URLSearchParams(location.search);
+    if (deviceRoute.get("embed") === "1") {
+      document.documentElement.classList.add("mission-embedded-device");
+    }
+  </script>
+
+  <!-- Display this page name in the browser tab and saved bookmarks. -->
+  <title>Device Dashboard</title>
+
+  <!--
+    Load shared dashboard layout and component styles. The version query forces
+    browsers to request the matching release instead of using stale CSS.
+  -->
+  <link rel="stylesheet" href="style.css?v=20261026-ui-3">
+  <link rel="stylesheet" href="mission.css?v=20261026-mission-2">
+</head>
+
+<!-- Begin all page content visible to the SCADA operator. -->
+<body>
+
+<!-- Create the two-column shell containing navigation and device information. -->
+<div class="layout">
+
+  <!-- Provide persistent navigation to the telemetry application's main pages. -->
+ <aside class="sidebar">
+
+  <h2>SCADA</h2>
+  <a href="dashboard.html">Main Dashboard</a>
+
+  <a id="dashboardLink" href="critical-dashboard.html">Critical Dashboard</a>
+
+  <a href="history.html">History</a>
+
+  <a href="topology.html">Topology</a>
+
+  <a href="hmi.html"> HMI</a>
+
+  <a href="diagnostic.html">Diagnostics</a>
+</aside>
+  <!-- Contain all information for the device selected through the page URL. -->
+  <main class="main">
+
+    <div class="page-head">
+
+      <!--
+        device.js replaces this default heading with the normalized name of the
+        device selected by the URL's `name` query parameter.
+      -->
+      <h1 id="deviceTitle">Device Dashboard</h1>
+
+      <!-- Explain the operational purpose of this page. -->
+      <p class="muted">
+        Live telemetry charts and latest device records
+      </p>
+    </div>
+
+    <!-- Group database, time-window, and manual-refresh controls. -->
+    <div class="controls">
+
+      <!--
+        common.js fills this selector with available daily database files;
+        device.js applies the database supplied through the URL when possible.
+      -->
+      <select id="dbSelect"></select>
+
+      <!--
+        Select the historical/live rolling window used for API queries and
+        device charts. Values are parsed by rangeToMs() in common.js.
+      -->
+      <select id="range">
+
+        <!-- Display telemetry from the most recent five seconds. -->
+        <option value="5s">5 secs</option>
+
+        <!-- Display telemetry from the most recent thirty seconds. -->
+        <option value="30s">30 secs</option>
+
+        <!-- Display telemetry from the most recent one minute. -->
+        <option value="1m">1 min</option>
+
+        <!-- Use five minutes as the initial device-page time window. -->
+        <option value="5m" selected>5 mins</option>
+
+        <!-- Display telemetry from the most recent ten minutes. -->
+        <option value="10m">10 mins</option>
+
+        <!-- Display telemetry from the most recent thirty minutes. -->
+        <option value="30m">30 mins</option>
+
+        <!-- Display telemetry from the most recent hour. -->
+        <option value="1h">1 hour</option>
+      </select>
+
+      <!-- Request an immediate API refresh using the current selections. -->
+      <button class="btn" id="refreshBtn">
+        Refresh
+      </button>
+    </div>
+
+    <!--
+      device.js inserts aggregate row, metric, anomaly, database, and range
+      summary cards into this responsive grid.
+    -->
+    <div id="deviceSummary" class="grid"></div>
+
+    <!--
+      Render the selected device's current health state, last-seen information,
+      and online/warning/offline presentation.
+    -->
+    <div id="deviceHealthBar"></div>
+
+    <!-- Render current anomaly and alarm information for the selected device. -->
+    <div id="alarmPanel"></div>
+
+    <!-- Identify the live state representation of the selected device. -->
+    <h2>Digital Twin Panel</h2>
+
+    <!--
+      device.js inserts live button, switch, state, session, and heartbeat cards
+      into this digital-twin grid.
+    -->
+    <div id="digitalTwin" class="digitalTwinGrid"></div>
+
+    <!-- Identify the process and subprocess relationship visualization. -->
+    <h2>Process Visualization</h2>
+
+    <!--
+      device.js creates the process-flow representation from the device's
+      normalized telemetry rows.
+    -->
+    <div id="processFlow" class="processFlow"></div>
+
+    <!-- Identify the dynamically generated telemetry metric charts. -->
+    <h2>Process Charts</h2>
+
+    <!--
+      device.js creates one bounded chart card for each suitable numeric metric.
+      The grid allows charts to adapt to the available page width.
+    -->
+    <div id="processCharts" class="grid"></div>
+    <h2>Complete Telemetry Payload</h2>
+
+<div class="card rawTelemetryCard">
+
+  <div class="rawTelemetryHeader">
+    <div>
+      <h3>RAW JSON — SOURCE OF TRUTH</h3>
+      <p class="muted">
+        Complete packet received from the device. Nothing is hidden or
+        truncated in this view.
+      </p>
+    </div>
+
+    <button
+      class="btn"
+      id="copyRawJsonBtn"
+      type="button">
+      Copy JSON
+    </button>
+  </div>
+
+  <pre
+    id="rawJsonViewer"
+    class="rawJsonViewer"
+    aria-label="Complete raw telemetry JSON">Waiting for telemetry...</pre>
+
+</div>
+
+<h2>All Telemetry Fields</h2>
+
+<div class="card tableWrap">
+
+  <table class="allTelemetryTable">
+
+    <thead>
+      <tr>
+        <th>Timestamp</th>
+        <th>Source IP</th>
+        <th>Port</th>
+        <th>Device</th>
+        <th>Field</th>
+        <th>Type</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+
+    <tbody id="allTelemetryFields">
+      <tr>
+        <td colspan="7">
+          Waiting for telemetry...
+        </td>
+      </tr>
+    </tbody>
+
+  </table>
+
+</div>
+
+    <!-- Identify the table containing the newest normalized device records. -->
+    <h2>Latest Device Data</h2>
+
+    <!-- Apply card styling and horizontal overflow handling to the wide table. -->
+    <div class="card tableWrap">
+
+      <!-- Present normalized telemetry fields in a consistent tabular format. -->
+      <table>
+
+        <!-- Define the meaning and order of every telemetry table column. -->
+        <thead>
+
+          <!-- Begin the single row containing column headings. -->
+          <tr>
+
+            <!-- Time when the backend server received the UDP packet. -->
+            <th>Server TS</th>
+
+            <!-- Timestamp reported by the originating hardware or simulator. -->
+            <th>Device TS</th>
+
+            <!-- Timestamp encoded inside the telemetry packet. -->
+            <th>Packet TS</th>
+
+            <!-- Calculated timing difference used for delay monitoring. -->
+            <th>Latency</th>
+
+            <!-- UDP multicast channel on which the packet was received. -->
+            <th>Channel</th>
+
+            <!-- Canonical name of the selected originating device. -->
+            <th>Device</th>
+
+            <!-- Optional hardware component belonging to the main device. -->
+            <th>Subdevice</th>
+
+            <!-- Software or hardware process that produced the measurement. -->
+            <th>Process</th>
+
+            <!-- Optional operation or component within the parent process. -->
+            <th>Subprocess</th>
+
+            <!-- Name of the flattened telemetry measurement. -->
+            <th>Key</th>
+
+            <!-- Numeric or textual value associated with the measurement. -->
+            <th>Value</th>
+
+            <!-- Indicate whether anomaly analysis flagged this record. -->
+            <th>Anomaly</th>
+
+            <!-- Explain why the record was classified as anomalous. -->
+            <th>Reason</th>
+          </tr>
+        </thead>
+
+        <!-- device.js inserts the latest escaped device telemetry rows here. -->
+        <tbody id="deviceTable"></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!--
+  Load shared services before the page controller. The version query prevents
+  an older cached script from being combined with this page release.
+-->
+<script src="common.js?v=20261026-mission-2"></script>
+
+<!--
+  Load the device controller after common.js because it depends on common API,
+  WebSocket, chart, timestamp, escaping, normalization, and DOM helpers.
+-->
+<script src="device.js?v=20261027-navigation-context-1"></script>
+
+<!-- Finish the visible document body. -->
+</body>
+
+<!-- Finish the HTML document root. -->
+</html>

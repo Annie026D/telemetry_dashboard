@@ -1,0 +1,409 @@
+<!-- Declare that this document uses the modern HTML5 standard. -->
+<!doctype html>
+<!--
+  SCADA fleet dashboard.
+
+  The document provides mounting points for dashboard.js; common.js owns shared
+  API, normalization, and WebSocket services. Chart.js is preferred when the
+  CDN is reachable, while chart-fallback.js keeps graphs available offline.
+-->
+
+<!--
+  Begin the document root and declare English as the page language. Screen
+  readers, translation tools, and search engines use this language metadata.
+
+  The original source contained a second nested <html> element, which is not
+  valid HTML. It has been consolidated into this single correct root element.
+-->
+<html lang="en">
+
+<!-- Metadata and dependencies required before the visible page is rendered. -->
+<head>
+
+  <!-- Decode the source using UTF-8 so standard symbols and text render safely. -->
+  <meta charset="utf-8">
+
+  <!-- Text displayed in the browser tab and bookmark name. -->
+  <title>Main Dashboard | SCADA</title>
+
+  <!-- Load the shared visual design, layout, colours, tables, and chart sizing. -->
+  <link rel="stylesheet" href="style.css?v=20261026-ui-2">
+
+  <!--
+    Prefer the full Chart.js implementation when internet/CDN access is
+    available. chart-fallback.js will take over if this request fails.
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Add date/time-axis support to the full Chart.js implementation. -->
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
+  <!--
+    Load the local offline renderer after the CDN scripts. It installs itself
+    only when window.Chart is still unavailable.
+  -->
+  <script src="chart-fallback.js"></script>
+
+  <!-- Make the layout responsive on desktop, tablet, and mobile displays. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<!-- Begin all content visible to the dashboard operator. -->
+<body>
+
+<!-- Two-column application shell: persistent navigation and dashboard content. -->
+<div class="layout">
+
+  <!-- Primary navigation. The active class identifies the current page. -->
+  <aside class="sidebar">
+
+    <!-- Product/navigation heading shown at the top of the sidebar. -->
+    <h2>SCADA</h2><a href="critical-dashboard.html">Critical Dashboard</a><a href="drive-control.html">Drive &amp; Buttons</a>
+
+    <!-- Link to this page; active supplies the selected-page styling. -->
+    <a href="dashboard.html" class="active">
+      Dashboard
+    </a>
+
+    <!-- Open the historical telemetry query and review page. -->
+    <a href="history.html">
+      History
+    </a>
+
+    <!-- Open the device and data-flow topology visualization. -->
+    <a href="topology.html">
+      Topology
+    </a>
+
+<!-- Open the interactive Human–Machine Interface page. -->
+<a href="hmi.html">
+  HMI
+</a>
+  </aside>
+
+  <!-- Live status, controls, charts, fleet health, and telemetry events. -->
+  <main class="main">
+
+   <!-- Page identity and the global connection/health status mount point. -->
+   <div class="page-head scadaHeader">
+
+  <!-- Textual identity of the current SCADA dashboard page. -->
+  <div>
+
+    <!-- Primary page heading. -->
+    <h1>
+      SCADA Command Center
+    </h1>
+
+    <!-- Secondary description styled with the shared muted-text class. -->
+    <p class="muted">
+      Real-Time Digital Twin Telemetry Platform
+    </p>
+
+  </div>
+
+  <!--
+    dashboard.js injects the aggregate online, warning, offline, and alarm
+    status cards into this initially empty container.
+  -->
+  <div id="globalStatus"></div>
+
+</div>
+
+    <!-- Database, history range, and telemetry search controls. -->
+    <div class="controls">
+
+<!-- Accessible label connected to the database selector by its id. -->
+<label for="dbSelect">Database</label>
+
+<!-- common.js fills this selector with the available daily database files. -->
+<select id="dbSelect"></select>
+
+      <!--
+        Select the general API/history range. The option values are compact
+        tokens parsed by rangeToMs() in common.js.
+      -->
+      <select id="range">
+
+        <!-- Request the most recent five seconds of telemetry. -->
+        <option value="5s">5 secs</option>
+
+        <!-- Request the most recent thirty seconds of telemetry. -->
+        <option value="30s">30 secs</option>
+
+        <!-- Request the most recent one minute of telemetry. -->
+        <option value="1m">1 min</option>
+
+        <!-- Request the most recent five minutes of telemetry. -->
+        <option value="5m">5 mins</option>
+
+        <!-- Request the most recent ten minutes of telemetry. -->
+        <option value="10m">10 mins</option>
+
+        <!-- Request the most recent thirty minutes of telemetry. -->
+        <option value="30m">30 mins</option>
+
+        <!-- Request the most recent one hour of telemetry. -->
+        <option value="1h">1 hour</option>
+
+        <!-- Request the most recent six hours of telemetry. -->
+        <option value="6h">6 hours</option>
+
+        <!-- Request the most recent twenty-four hours of telemetry. -->
+        <option value="24h">24 hours</option>
+
+      </select>
+
+      <!--
+        Accept a device, process, or telemetry-key search expression.
+        dashboard.js reads this field when searchBtn is activated.
+      -->
+      <input
+        id="search"
+        placeholder="Search device, process, key"
+      >
+
+      <!-- Run the telemetry search using the current database and range. -->
+      <button class="btn" id="searchBtn">
+        Search
+      </button>
+
+      <!-- Clear search/replay state and return the page to live operation. -->
+      <button class="btn" id="clearBtn">
+        Live
+      </button>
+
+    </div>
+
+    <!-- Database and fleet summary cards rendered by renderSummary(). -->
+
+    <!--
+      dashboard.js renders row, device, process, first/last timestamp, and
+      current-database summary cards inside this responsive grid.
+    -->
+    <div id="summary" class="grid"></div>
+    <!-- Anomaly center populated from the dashboard health-analysis state. -->
+
+<!-- Card containing generated telemetry health and anomaly information. -->
+<div class="card aiPanel">
+
+  <!-- Align the anomaly-center title and activity badge. -->
+  <div class="aiHeader">
+
+    <!-- Textual heading and purpose of the anomaly-analysis section. -->
+    <div>
+
+      <!-- Visible title for operator anomaly monitoring. -->
+      <h2>
+        AI Anomaly Detection Center
+      </h2>
+
+      <p class="muted">
+        Intelligent telemetry analysis and behavioral monitoring
+      </p>
+
+    </div>
+
+    <!-- Static visual indicator showing that anomaly analysis is enabled. -->
+    <div class="aiStatus">
+      ACTIVE
+    </div>
+
+  </div>
+
+  <!-- dashboard.js inserts active, deduplicated anomaly alerts here. -->
+  <div id="aiAlerts"></div>
+
+</div>
+
+    <!-- One shared time-window selection keeps both graph sections synchronized. -->
+<!--
+  Group the synchronized graph-range controls as one accessible UI component.
+  aria-labelledby connects this group to the Graph Timeline heading.
+-->
+<div class="card graphTimelineControl" role="group" aria-labelledby="graphTimelineLabel">
+  <div>
+    <!-- Accessible and visible name of the synchronized timeline control. -->
+    <h2 id="graphTimelineLabel">Graph Timeline</h2>
+
+    <!-- Clarify that this selection affects both charts below. -->
+    <p class="muted">Applies to both telemetry graph sections.</p>
+  </div>
+
+  <!-- Accessible label associated with the graph-range selector. -->
+  <label for="graphRange">Time range</label>
+
+  <!--
+    Select the rolling window applied by dashboard.js to both graph datasets.
+    Values use the same second/minute/hour tokens understood by common.js.
+  -->
+  <select id="graphRange">
+    <option value="5s">5 seconds</option>
+    <option value="30s">30 seconds</option>
+    <option value="1m">1 minute</option>
+    <option value="5m">5 minutes</option>
+    <option value="10m">10 minutes</option>
+    <option value="30m">30 minutes</option>
+    <option value="1h">1 hour</option>
+    <option value="6h">6 hours</option>
+    <option value="24h">24 hours</option>
+  </select>
+  <!--
+    Report the applied range. aria-live="polite" announces changes to assistive
+    technology without interrupting the operator.
+  -->
+  <span id="graphRangeStatus" class="graphRangeStatus" aria-live="polite">Showing 5 seconds</span>
+</div>
+
+   <!-- Numeric telemetry from motion, operator-input, and tracking devices. -->
+   <div class="card dashboardChartCard">
+
+  <!-- Title identifying the device families assigned to the first chart. -->
+  <h2>
+    Motion / Operator / Tracker Systems
+  </h2>
+
+  <!-- Operator guidance describing the measurements eligible for this chart. -->
+  <p class="muted chartHint">
+    Shows important live numeric fields from IMU, camera, joystick, tracker, and external tracker devices.
+  </p>
+
+<!-- Position the canvas together with its empty-state message. -->
+<div class="chartContainer">
+  <!-- dashboard.js renders the first grouped telemetry line chart here. -->
+  <canvas id="multiChartA"></canvas>
+
+  <!-- Displayed when no suitable numeric series exists for the first group. -->
+  <div id="multiEmptyA" class="chartEmpty"></div>
+</div>
+
+  <!-- Generated colour/key legend for the first graph's visible series. -->
+  <div id="multiLegendA" class="legendBox compactLegend"></div>
+
+</div>
+
+<!-- Numeric telemetry from platform, gateway, display, and control devices. -->
+<div class="card dashboardChartCard">
+
+  <!-- Title identifying the device families assigned to the second chart. -->
+  <h2>
+    Platform / Control Systems
+  </h2>
+
+  <!-- Operator guidance describing the measurements eligible for this chart. -->
+  <p class="muted chartHint">
+    Shows numeric telemetry from platform, display, gateway, and control devices when those values are available.
+  </p>
+
+<!-- Position the second canvas together with its empty-state message. -->
+<div class="chartContainer">
+  <!-- dashboard.js renders platform and control telemetry on this canvas. -->
+  <canvas id="multiChartB"></canvas>
+
+  <!-- Displayed when no suitable numeric series exists for the second group. -->
+  <div id="multiEmptyB" class="chartEmpty"></div>
+</div>
+
+  <!-- Generated colour/key legend for the second graph's visible series. -->
+  <div id="multiLegendB" class="legendBox compactLegend"></div>
+
+</div>
+
+    <!-- Fleet device cards; each card links to its detailed device page. -->
+
+  <!-- Visible heading separating the fleet matrix from the graph section. -->
+  <h2 class="sectionTitle">
+  Fleet Status Matrix
+</h2>
+
+    <!--
+      dashboard.js inserts deduplicated device cards here. Each card shows live
+      health and can open the corresponding detailed device page.
+    -->
+    <div id="devices" class="grid"></div>
+
+    <!-- Bounded, continuously refreshed event stream with anomaly context. -->
+
+   <!-- Visible heading for the continuously updated telemetry table. -->
+   <h2 class="sectionTitle">
+  Telemetry Event Stream
+</h2>
+
+    <!-- Provide card styling and horizontal overflow handling for the table. -->
+    <div class="card tableWrap">
+
+      <!-- Structured display of recent normalized telemetry measurements. -->
+      <table>
+
+        <!-- Define stable descriptions for each telemetry data column. -->
+        <thead>
+
+          <tr>
+
+            <!-- Time at which the backend server received the packet. -->
+            <th>Server TS</th>
+
+            <!-- Timestamp reported by the originating device. -->
+            <th>Device TS</th>
+
+            <!-- Timestamp encoded in the received telemetry packet. -->
+            <th>Packet TS</th>
+
+            <!-- Calculated difference between relevant device/server times. -->
+            <th>Latency</th>
+
+            <!-- Canonical originating device name. -->
+            <th>Device</th>
+
+            <!-- Optional component or subdevice within the main device. -->
+            <th>Subdevice</th>
+
+            <!-- Process that produced or transported the measurement. -->
+            <th>Process</th>
+
+            <!-- Optional operation within the parent process. -->
+            <th>Subprocess</th>
+
+            <!-- Name of the flattened telemetry field. -->
+            <th>Key</th>
+
+            <!-- Numeric or textual value associated with the field. -->
+            <th>Value</th>
+
+            <!-- Indicates whether anomaly analysis flagged the measurement. -->
+            <th>Anomaly</th>
+
+            <!-- Human-readable explanation for the anomaly decision. -->
+            <th>Reason</th>
+
+          </tr>
+
+        </thead>
+
+        <!-- dashboard.js continuously inserts bounded live telemetry rows here. -->
+        <tbody id="liveBody"></tbody>
+
+      </table>
+
+    </div>
+
+  </main>
+
+</div>
+
+<!--
+  Load the shared runtime first. The version query helps browsers invalidate a
+  previously cached copy after this release changes.
+-->
+<script src="common.js?v=20261028-scada-1"></script>
+
+<!--
+  Load the page controller after common.js because dashboard.js depends on its
+  API, WebSocket, normalization, chart, escaping, and DOM helper functions.
+-->
+<script src="dashboard.js?v=20260715-drive-carrier"></script>
+
+</body>
+
+</html>

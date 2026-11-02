@@ -1,0 +1,228 @@
+<!-- Declare that this document follows the modern HTML5 standard. -->
+<!doctype html>
+
+<!--
+  Historical telemetry query and replay page.
+
+  common.js provides shared API, database, timestamp, normalization, chart,
+  escaping, DOM, and WebSocket services. history.js owns filters, historical
+  queries, chart construction, table rendering, and deterministic replay.
+-->
+
+<!-- Begin the root element containing the complete HTML document. -->
+<html>
+
+<!-- Define document metadata, styling, and other non-visible configuration. -->
+<head>
+
+  <!-- Decode the source as UTF-8 so text and symbols render consistently. -->
+  <meta charset="utf-8">
+
+  <!-- Display this page name in the browser tab and saved bookmarks. -->
+  <title>History</title>
+
+  <!-- Load the shared application layout and visual component definitions. -->
+  <link rel="stylesheet" href="style.css?v=20261026-ui-2">
+
+  <!-- Use Chart.js when available and retain the project's offline renderer. -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+  <script src="chart-fallback.js"></script>
+</head>
+
+<!-- Begin all page content visible to the telemetry operator. -->
+<body>
+
+<!-- Create the two-column application shell: navigation and main workspace. -->
+<div class="layout">
+
+  <!-- Provide persistent navigation to the telemetry application's pages. -->
+<aside class="sidebar">
+  <h2>SCADA</h2>
+
+  <a href="critical-dashboard.html">Critical Dashboard</a>
+  <a href="drive-control.html">Drive &amp; Buttons</a>
+  <a href="dashboard.html">Main Dashboard</a>
+  <a href="history.html" class="active">History</a>
+  <a href="topology.html">Topology</a>
+  <a href="hmi.html">HMI</a>
+  <a href="diagnostic.html">Diagnostics</a>
+</aside>
+
+  <!-- Contain historical controls, charts, status information, and records. -->
+  <main class="main">
+
+    <div class="page-head">
+
+      <!-- Keep heading text together for flexible header layout styling. -->
+      <div>
+
+        <!-- Identify the page as the application's historical analysis center. -->
+        <h1>
+          Tactical History Center
+        </h1>
+
+        <!-- Explain the page's charting and event-inspection responsibilities. -->
+        <p class="muted">
+          Historical telemetry charts and event inspection
+        </p>
+      </div>
+    </div>
+
+    <!-- Group query selectors and current history-mode status in one card. -->
+    <div class="card historyTopBar">
+
+      <!-- Contain all operator inputs used to build a history request. -->
+      <div class="historySelectors">
+
+        <!-- common.js populates this selector with available daily databases. -->
+        <select id="dbSelect"></select>
+
+        <!-- history.js populates devices available in the selected database. -->
+        <select id="deviceSelect"></select>
+
+        <!-- history.js discovers fields in this database/device selection. -->
+        <select id="metricSelect" aria-label="Telemetry field">
+          <option value="">All fields</option>
+        </select>
+
+        <!-- Select the historical time window used by history queries. -->
+        <select id="range">
+
+          <!-- Request the most recent five seconds of matching telemetry. -->
+          <option value="5s">5 secs</option>
+
+          <!-- Request the most recent thirty seconds of matching telemetry. -->
+          <option value="30s">30 secs</option>
+
+          <!-- Request the most recent one minute of matching telemetry. -->
+          <option value="1m">1 min</option>
+
+          <!-- Show stored records across the selected database by default. -->
+          <option value="5m">5 mins</option>
+
+          <!-- Request the most recent ten minutes of matching telemetry. -->
+          <option value="10m">10 mins</option>
+
+          <option value="30m">30 mins</option>
+
+          <option value="1h">1 hour</option>
+
+          <option value="6h">6 hours</option>
+
+          <option value="24h">24 hours</option>
+
+          <!-- Request all matching records without a rolling time restriction. -->
+          <option value="all" selected>All Time</option>
+        </select>
+
+        <!-- Invoke history.js to execute the current historical query. -->
+        <button
+          class="btn"
+          onclick="loadHistory()">
+          Load History
+        </button>
+      </div>
+
+      <div class="historyStatusPanel">
+
+        <!-- Display whether the page is combining live and historical data. -->
+        <div class="historyStatusCard">
+
+          <h3>
+            MODE
+          </h3>
+
+          <!-- history.js updates this text when playback or mode state changes. -->
+          <p id="historyLiveMode">
+            LIVE + HISTORY
+          </p>
+        </div>
+
+        <div class="historyStatusCard">
+
+          <h3>
+            TELEMETRY
+          </h3>
+
+          <!-- history.js updates this value after queries and live events. -->
+          <p id="historyPacketCount">
+            0 records
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!--
+      history.js dynamically creates one chart card per suitable numeric metric
+      and inserts those chart cards into this responsive grid.
+    -->
+    <div
+      id="historyCharts"
+      class="historyChartsGrid">
+    </div>
+
+    <!-- Contain the normalized historical telemetry records in table form. -->
+    <div class="card">
+
+      <!-- Identify the record table for the operator. -->
+      <h3>
+        History Table
+      </h3>
+
+      <!-- Present matching historical telemetry using consistent columns. -->
+      <table>
+
+        <!-- Define the meaning and order of every history table column. -->
+        <thead>
+
+          <!-- Begin the single row containing all column headings. -->
+          <tr>
+
+            <!-- Timestamp selected from the normalized historical record. -->
+            <th>Time</th>
+
+            <!-- UDP multicast channel on which the packet arrived. -->
+            <th>Channel</th>
+
+            <!-- Canonical originating device name. -->
+            <th>Device</th>
+
+            <!-- Optional component belonging to the main device. -->
+            <th>Subdevice</th>
+
+            <!-- Process that produced or transported the telemetry value. -->
+            <th>Process</th>
+
+            <!-- Telemetry field represented by this expanded packet record. -->
+            <th>Metric</th>
+
+            <!-- Numeric or textual value associated with the record. -->
+            <th>Value</th>
+
+            <!-- Indicate whether anomaly analysis flagged the record. -->
+            <th>Anomaly</th>
+
+            <!-- Explain the anomaly decision when a reason is available. -->
+            <th>Reason</th>
+          </tr>
+        </thead>
+
+        <!-- history.js inserts escaped historical and replay rows here. -->
+        <tbody id="historyBody"></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- Load shared services before the history-specific page controller. -->
+<script src="common.js?v=20261028-scada-1"></script>
+
+<!-- Load historical query, chart, table, live-update, and replay behaviour. -->
+<script src="history.js?v=20261027-history-field-filter-1"></script>
+
+<!-- Finish the visible page content. -->
+</body>
+
+<!-- Finish the complete HTML document. -->
+</html>
